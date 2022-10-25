@@ -1,0 +1,243 @@
+\documentclass{amsart}
+\usepackage[foot]{amsaddr} % put addresses on first page
+
+\usepackage{geometry}
+\usepackage{graphicx,psfrag,epsf}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\allowdisplaybreaks
+\usepackage{longtable}
+\usepackage{bigints}
+\usepackage{siunitx}
+\usepackage{amsthm}
+\usepackage{soul}
+\usepackage{tikz}
+\usepackage{color}
+\usepackage{easyReview} % for \comment, \alert, etc.
+
+\newcommand{\addition}[1]{#1}
+
+\usepackage{hyperref}
+\usepackage[capitalise]{cleveref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+%
+
+\usepackage[numbers]{natbib}
+\usepackage{url} % not crucial - just used below for the URL 
+\usepackage{doi}
+
+\newcommand{\x}{\boldsymbol{X}}
+\renewcommand{\b}{\hat{\beta}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\lexp}{\underline{\text{E}}}
+\newcommand{\uexp}{\overline{\text{E}}}
+
+
+\keywords{high dimensional data; variable selection; Bayesian analysis; imprecise probability}
+
+\begin{document}
+
+\title{Robust Bayesian Analysis of Causal Inference Problems}
+\author{Tathagata Basu$^1$}
+\email{tathagatabasumaths@gmail.com}
+\author{Matthias C.~M.~Troffaes$^2$}
+\email{matthias.troffaes@durham.ac.uk}
+\author{Jochen Einbeck$^{2,3}$}
+\email{jochen.einbeck@durham.ac.uk}
+\address{$^1$UMR CNRS 7253 Heudiasyc, Universit\'{e} de Technologie de
+Compi\`{e}gne}
+\address{$^2$Department of Mathematical Sciences, Durham University}
+\address{$^3$Durham Research Methods Centre}
+
+\begin{abstract}
+Causal inference using observational data is an important aspect in
+many fields such as epidemiology, social science, economics, etc. In
+particular, our goal is to find the treatment effect on the subjects
+along with the causal links between the variables and the outcome.
+However, estimation for such problems are extremely 
+difficult as the treatment effects may vary from subject 
+to subject and modelling the underlying heterogeneity explicitly makes the 
+problem practically unsolvable. Another issue we face is the 
+dimensionality of the problem and we may wish to find a subset of 
+explanatory variables. However, standard variable selection methods
+tend to maximise the predictive performance of the outcome model only and
+can also be sensitive with respect to the choice of priors, particularly 
+in the case of limited information. So, in this paper, we suggest a 
+robust Bayesian analysis of causal inferential methods for 
+high-dimensional problems in a regressional framework. We consider
+a set of spike and slab priors to obtain robust estimates for
+both the treatment and outcome model. We are specifically interested 
+in the importance of priors in the high dimensional causal inference
+as well as the identifying the confounder variables. However, indicator
+based confounder selection can be deceptive in some cases. Especially, 
+when the predictor is strongly associated with either the treatment or 
+the outcome. This increases the posterior expectation of the selection
+indicators. To avoid that we also apply a post-hoc selection scheme
+which successfully remove negligible non-zero effects from the model
+attaining a sparser model. Finally, we illustrate
+our result using synthetic \alert{and real} dataset.
+
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+In causal inference, we are interested in estimating the causal
+effect of independent variables on a dependent variable. Ideally,
+randomised trials are the most efficient way to perform this task.
+However, this is not very practical for several reasons; ethical 
+concerns, design cost, population size, to name a few. This
+leaves us with observational studies which are usually obtained
+by means collecting data though surveys or record keeping. 
+
+Let an observational study give us the outcomes $Y=(Y_1$, \dots, $Y_n)$ along with 
+corresponding treatment indicators $T=(T_1$, \dots, $T_n)$. Then the
+individual causal
+effect of the treatment $T_i$ on outcome $Y_i$ is given by:
+\begin{align}
+\delta \coloneqq E(Y\mid T=1) - E(Y\mid T=0).
+\end{align}
+However, we can not observe $(Y_i\mid T_i=1)$ and $(Y_i\mid T_i=0)$
+simultaneously for the $i$-th individual. Instead, we can estimate
+average causal effect of the treatment $T$ so that
+\begin{align}
+\hat{\delta} \coloneqq 
+\frac{\sum_{i=1}^n(Y_i\mid T_i=1) - (Y_i\mid T_i=0)}{n}.
+\end{align}
+Now, let $X\coloneqq$ $[X_1$, \dots, $X_n]^T$ 
+denote the $p$-dimensional covariates present in the studies and $\beta \coloneqq (\beta_1$, \dots, $\beta_p)$ denotes the vector of regression
+coefficients. Then we can define a linear model for the outcome
+so that
+\begin{equation}
+    Y_i = \beta_{T} T_i + \beta_0 + X\beta + \epsilon_i
+\end{equation}
+where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$. Clearly, when
+the underlying true outcome model is linear,
+\begin{equation}
+    \delta = \beta_{T}\quad\text{and hence } 
+    \hat{\delta} - \delta = \hat{\beta}_T - \beta_T.
+\end{equation}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[roundnode/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm},
+squarednode/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum size=5mm}]
+    \node (1) at (0,0) {Treatment ($T$)};
+    \node (2) [right = of 1] {Outcome ($Y$)};
+    \node (4) [below = of 1] {Input ($X$)};
+
+    \path (1) edge[->]  (2);
+    \path (1) edge[<-]  (4);
+    \path (2) edge[<-] (4);
+\end{tikzpicture}
+\caption{Confounding in causal models.}
+    \label{fig:my_label}
+\end{figure}
+
+\citet{koch2020} suggested the use of a probit model to specify the conditional probability that
+subject $i$ receives the treatment. That is,
+\begin{align}
+    P(T_i=1\mid X_i) = \Phi(X_i^T\gamma).
+\end{align}
+Therefore, we can define intermediate variables $T_i^*$ so that, $T_i=1$ if $T_i^*>0$ and
+$T_i=0$ if $T_i^*\le0$. Now, following the approach of \citet{koch2018}, we define an adjusted
+output vector $W\coloneqq(Y, T^*)^T$ and corresponding $2n\times(2p+1)$ dimensional design matrix
+\begin{align}
+    \boldsymbol{Z} &=
+    \begin{bmatrix}
+     X_O & 0 \\
+     0 & X
+    \end{bmatrix},
+\end{align}
+where, $X_0 = [T, X]$. Then, assuming Gaussian error term, we have the following likelihood function
+\begin{align}
+W\mid Z, \alpha, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \sigma^2\mathbf{I}_{2n}\right),
+\end{align}
+where $\nu = (\alpha, \beta, \gamma)^T$.
+
+\section{Robust Bayesian Analysis}
+\subsection{Hierarchical model}
+We perform a robust Bayesian analysis to obtain robust estimates. To do so, we propose the
+following spike and slab priors \cite{ishwaran2005} to specify $\beta$ and $\gamma$.
+For $1\le j\le p$,
+\begin{align}
+    \beta_j \mid \pi_{\beta}, \sigma^2 &\sim 
+    \pi_{\beta}\normal\left(0, \tau_1^2\sigma^2\right) 
+    + (1-\pi_{\beta}) \normal\left(0, \tau_0^2\sigma^2\right)\\
+    \gamma_j \mid \pi_{\gamma} &\sim 
+    \pi_{\gamma}\normal\left(0, \tau_1^2\right) 
+    + (1-\pi_{\gamma}) \normal\left(0, \tau_0^2\right)\\
+    \alpha\mid \sigma^2 &\sim \normal(0, \sigma^2)\\
+    \sigma^2&\sim \text{InvGamma}(a, b)\\
+    \pi_{\beta}, \pi_{\gamma}&\sim\text{Beta}\left(sq, s(1-q)\right).
+\end{align}
+We fix sufficiently small $\tau^2_0$
+$(1\gg\tau_0^2>0)$ so that  $(\beta_j, \gamma_j) = (0,0)$ has its probability mass 
+concentrated around zero. Therefore, this represents the spike component of our prior specification. 
+To construct the slab component, we consider $\tau_1^2$ to be large so that 
+$\tau_1^2\gg\tau_0^2$. This allows the prior for $(\beta_j, \gamma_j)\not=(0,0)$ to be flat.
+
+We use a set beta priors to specify the selection probability
+$\pi_j$ of the $j$-th group where  $q_j$ represents our prior expectation of the 
+selection probability ($\pi_j$) and `$s$' represents a concentration parameter. We perform our
+robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
+\begin{equation}
+    \mathcal{P} \coloneqq \mathcal{P}_1\times\cdots\times\mathcal{P}_p\subseteq \left(0, 1\right)^{p}.
+\end{equation}
+
+\subsection{Co-variate selection}
+For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
+We consider the $j$-th group to be active, if
+\begin{align}
+    \lexp (\pi_j\mid W)\coloneqq \inf_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) > 1/2
+\end{align}
+and inactive, if
+\begin{align}
+    \uexp(\pi_j\mid W) \coloneqq \sup_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W)< 1/2.
+\end{align}
+We consider the rest to be indecisive. 
+
+This way, we get a robust group selection routine. However, this type of variable 
+selection includes both treatment and outcome effects at the same time. This may not be the
+case in some cases especially when either treatment effect or the outcome effect is zero or
+weak. To deal with such problems, we suggest the following ad-hoc method to obtain 
+adjusted sparse estimate of the zero effect in a selected group.
+Let $\mathcal{S}$ denote the set of active co-variates present in the model. That is,
+\begin{equation}
+    \mathcal{S}\coloneqq
+    \left\{j : \lexp(\pi_j\mid W) > 1/2\right\}.
+\end{equation}
+Let $\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression
+coefficients for the non-zero outcome effects and
+$\hat{\gamma}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression
+coefficients for the non-zero treatment effects. We apply the 
+``decoupled shrinkage and selection'' method proposed by \citet{hahn2015}, to obtain
+the sparse estimate. To do so, we solve the following adaptive LASSO-type \cite{Zou2006}
+problems
+
+\begin{align}
+    \hat{\beta}^*_{\mathcal{S}}(q_{\mathcal{S}}) &= 
+    \arg\min_{\beta_{\mathcal{S}}} \frac{1}{n}\|\x_{\mathcal{S}}\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})
+    - \x_{\mathcal{S}} \beta_{\mathcal{S}}\|_2^2 + \lambda_1\sum_{j\in\mathcal{S}} 
+    \frac{|\beta_j|}{|\hat{\beta}_j(q_j)|}
+\end{align}
+and
+\begin{align}
+    \hat{\gamma}^*_{\mathcal{S}}(q_{\mathcal{S}}) &= 
+    \arg\min_{\gamma_{\mathcal{S}}} \frac{1}{n}\|\x_{\mathcal{S}}\hat{\gamma}_{\mathcal{S}}(q_{\mathcal{S}})
+    - \x_{\mathcal{S}} \gamma_{\mathcal{S}}\|_2^2 + \lambda_1\sum_{j\in\mathcal{S}} 
+    \frac{|\gamma_j|}{|\hat{\gamma}_j(q_j)|}
+\end{align}
+where $q_{\mathcal{S}}\in \mathcal{P}_{\mathcal{S}}$.
+
+\bibliographystyle{agsm}
+\bibliography{basu22}
+\end{document}
