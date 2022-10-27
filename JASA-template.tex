@@ -96,7 +96,41 @@ randomised trials are the most efficient way to perform this task.
 However, this is not very practical for several reasons; ethical 
 concerns, design cost, population size, to name a few. This
 leaves us with observational studies which are usually obtained
-by means collecting data though surveys or record keeping. 
+by means collecting data though surveys or record keeping. But this
+can be problematic in the presence of confounders. That is when
+the variables are associated with both the treatment and the outcome.
+In such cases, we need to be extra cautious as otherwise it will
+lead to unwanted bias in the treatment effect estimator \cite{rosenbaum83}.
+
+Several works have been done in order to tackle the presence of
+confounder variables. One such work in the topic was 
+by \citet{Robins1986ANA} where the author used  a graphical
+approach for the identification of the causal parameters.
+\citet{rosenbaum1985} suggested the use of a link model to estimate
+the propensity scores for all individuals. Later on several other
+methods have been proposed based on propensity score matching.
+A brief review on such methods can be found in \cite{winship99, stuart10}.
+
+Bayesian approach in causal effect estimation has become a popular
+topic in recent days. However, one of the earlier works on this can be
+found in \cite{rubin1978}. Lately with the notion of variable selection
+of high dimensional problems, Bayesian methodologies have become
+more significant.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[params/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm}]
+	\node (1) at (0,0) {Treatment ($T$)};
+	\node (2) [right = of 1] {Outcome ($Y$)};
+	\node (4) [below = of 1] {Input ($X$)};
+	
+	\path (1) edge[->]  (2);
+	\path (1) edge[<-]  (4);
+	\path (2) edge[<-] (4);
+	\end{tikzpicture}
+	\caption{Confounding in causal models.}
+	\label{fig:confounding}
+\end{figure}
 
 Let an observational study give us the outcomes $Y=(Y_1$, \dots, $Y_n)$ along with 
 corresponding treatment indicators $T=(T_1$, \dots, $T_n)$. Then the
@@ -112,6 +146,11 @@ average causal effect of the treatment $T$ so that
 \hat{\delta} \coloneqq 
 \frac{\sum_{i=1}^n(Y_i\mid T_i=1) - (Y_i\mid T_i=0)}{n}.
 \end{align}
+This relies on an important assumption that the treatment effect
+on the $i$-th subject given that they received the treatment is
+equal to the treatment effect when they remain as the control
+\cite{winship99}.
+
 Now, let $X\coloneqq$ $[X_1$, \dots, $X_n]^T$ 
 denote the $p$-dimensional covariates present in the studies and $\beta \coloneqq (\beta_1$, \dots, $\beta_p)$ denotes the vector of regression
 coefficients. Then we can define a linear model for the outcome
@@ -125,22 +164,6 @@ the underlying true outcome model is linear,
     \delta = \beta_{T}\quad\text{and hence } 
     \hat{\delta} - \delta = \hat{\beta}_T - \beta_T.
 \end{equation}
-
-\begin{figure}
-    \centering
-    \begin{tikzpicture}[roundnode/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm},
-squarednode/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum size=5mm}]
-    \node (1) at (0,0) {Treatment ($T$)};
-    \node (2) [right = of 1] {Outcome ($Y$)};
-    \node (4) [below = of 1] {Input ($X$)};
-
-    \path (1) edge[->]  (2);
-    \path (1) edge[<-]  (4);
-    \path (2) edge[<-] (4);
-\end{tikzpicture}
-\caption{Confounding in causal models.}
-    \label{fig:my_label}
-\end{figure}
 
 \citet{koch2020} suggested the use of a probit model to specify the conditional probability that
 subject $i$ receives the treatment. That is,
@@ -165,6 +188,50 @@ where $\nu = (\alpha, \beta, \gamma)^T$.
 
 \section{Robust Bayesian Analysis}
 \subsection{Hierarchical model}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[params/.style={circle, draw=black!60, very thick, minimum size=7mm},
+	hyper/.style={circle, draw=black!60, fill=black!20, thick, minimum size=7mm},
+	latent/.style={rectangle, draw=black!60, fill=black!10, dashed, minimum size=7mm},
+	data/.style={rectangle, draw=black!60, thick, minimum size=8mm}]
+	\node[params] (1) at (0,0) {$\pi$};
+	\node[data] (2) at (3,0) {$X$};
+	\node[data] (3) at (6,0) {$T$};
+	\node[params] (4) at (1.5,1.5) {$\gamma$};
+	\node[latent] (5) at (4.5,1.5) {$T^*$};
+	\node[params] (6) at (1.5,-1.5) {$\beta$};
+	\node[data] (7) at (3.5,-1.5) {$Y$};
+	\node[hyper] (8) at (-1.5,-3) {$\sigma^2$};
+	\node[params] (9) at (3,-3) {$\beta_0$};
+	\node[params] (10) at (5.5,-1.5) {$\beta_T$};
+	\node[hyper] (11) at (-1.5,-1) {$s$};
+	\node[hyper] (12) at (-1.5,1) {$\alpha$};
+	\draw[black, dashed] (-0.75,-3.75) rectangle (7,2.5);
+	
+	\path (1) edge[->]  (6);
+	\path (1) edge[->]  (4);
+	\path (8) edge[->]  (6);
+	\path (6) edge[->]  (7);
+	\path (2) edge[->]  (7);
+	\path (2) edge[->]  (5);
+	\path (5) edge[<-] (4);
+	\path (5) edge[->] (3);
+	\path (3) edge[->]  (7);
+	\path (9) edge[->]  (7);
+	\path (10) edge[->]  (7);
+	\path (2) edge[dashed][->] (3);
+	\path (8) edge[bend right = 60][->]  (10);
+	\path (8) edge[->]  (9);
+	\path (11) edge[->]  (1);
+	\path (12) edge[->]  (1);
+	
+	\end{tikzpicture}
+	\caption{Probabilistic graphical representation for causal inference with Bayesian hierarchical model.}
+	\label{fig:regress}
+\end{figure}
+
+
 We perform a robust Bayesian analysis to obtain robust estimates. To do so, we propose the
 following spike and slab priors \cite{ishwaran2005} to specify $\beta$ and $\gamma$.
 For $1\le j\le p$,
