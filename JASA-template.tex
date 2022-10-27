@@ -113,9 +113,27 @@ A brief review on such methods can be found in \cite{winship99, stuart10}.
 
 Bayesian approach in causal effect estimation has become a popular
 topic in recent days. However, one of the earlier works on this can be
-found in \cite{rubin1978}. Lately with the notion of variable selection
-of high dimensional problems, Bayesian methodologies have become
-more significant.
+found in \cite{rubin1978}. Lately with the notion of high dimensional problems, Bayesian methodologies have become
+more appealing. \citet{Crainiceanu2008} proposed a bi-level 
+Bayesian model averaging based method for estimating the causal 
+effect. \citet{wang2015} suggested BAC (or, Bayesian adjustment for
+confounding) where they use an informative prior obtained from
+the treatment model and apply them on the outcome model for
+estimating causal effect. Several other methods were also
+proposed to tackle confounders from the point of view of Bayesian
+variable selection such as: \citet{Zigler2014}, \citet{Hahn2018} etc.
+
+In this paper we closely follow the approach of \citet{koch2020}, where
+they proposed a bilevel spike and slab prior for causal effect 
+estimation. They considered a data-driven adaptive approach to
+reduce the variance of the causal estimate. Instead of that,
+we suggest a robust Bayesian analysis based approach where instead
+of using a single prior, we consider a set of priors \cite{BERGER1990303}. This is particularly interesting as in
+many cases, causal effect estimation can be performed through a 
+meta analysis and hence having a single prior can be problematic.
+Moreover, for some problems we have to rely on very limited data to
+perform our Bayesian analysis and choosing a data-driven prior
+can lead to overfitting.
 
 \begin{figure}
 	\centering

@@ -144,3 +144,74 @@ doi = {10.1146/annurev.soc.25.1.659}
 	doi = {10.1214/aos/1176344064},
 	URL = {https://doi.org/10.1214/aos/1176344064}
 }
+
+@article{Crainiceanu2008,
+	ISSN = {00063444, 14643510},
+	URL = {http://www.jstor.org/stable/20441491},
+	abstract = {Often there is substantial uncertainty in the selection of confounders when estimating the association between an exposure and health. We define this type of uncertainty as 'adjustment uncertainty'. We propose a general statistical framework for handling adjustment uncertainty in exposure effect estimation for a large number of confounders, we describe a specific implementation, and we develop associated visualization tools. Theoretical results and simulation studies show that the proposed method provides consistent estimators of the exposure effect and its variance. We also show that, when the goal is to estimate an exposure effect accounting for adjustment uncertainty, Bayesian model averaging with posterior model probabilities approximated using information criteria can fail to estimate the exposure effect and can over- or underestimate its variance. We compare our approach to Bayesian model averaging using time series data on levels of fine particulate matter and mortality.},
+	author = {Ciprian M. Crainiceanu and Francesca Dominici and Giovanni Parmigiani},
+	journal = {Biometrika},
+	number = {3},
+	pages = {635--651},
+	publisher = {[Oxford University Press, Biometrika Trust]},
+	title = {Adjustment Uncertainty in Effect Estimation},
+	urldate = {2022-10-27},
+	volume = {95},
+	year = {2008}
+}
+
+@article{wang2015,
+	author = {Wang, Chi and Dominici, Francesca and Parmigiani, Giovanni and Zigler, Corwin Matthew},
+	title = {Accounting for uncertainty in confounder and effect modifier selection when estimating average causal effects in generalized linear models},
+	journal = {Biometrics},
+	volume = {71},
+	number = {3},
+	pages = {654-665},
+	keywords = {Average causal effect, Bayesian adjustment for confounding, Confounder selection, Treatment effect heterogeneity},
+	doi = {https://doi.org/10.1111/biom.12315},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/biom.12315},
+	eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/biom.12315},
+	abstract = {Summary Confounder selection and adjustment are essential elements of assessing the causal effect of an exposure or treatment in observational studies. Building upon work by Wang et al. (2012, Biometrics 68, 661–671) and Lefebvre et al. (2014, Statistics in Medicine 33, 2797–2813), we propose and evaluate a Bayesian method to estimate average causal effects in studies with a large number of potential confounders, relatively few observations, likely interactions between confounders and the exposure of interest, and uncertainty on which confounders and interaction terms should be included. Our method is applicable across all exposures and outcomes that can be handled through generalized linear models. In this general setting, estimation of the average causal effect is different from estimation of the exposure coefficient in the outcome model due to noncollapsibility. We implement a Bayesian bootstrap procedure to integrate over the distribution of potential confounders and to estimate the causal effect. Our method permits estimation of both the overall population causal effect and effects in specified subpopulations, providing clear characterization of heterogeneous exposure effects that may vary considerably across different covariate profiles. Simulation studies demonstrate that the proposed method performs well in small sample size situations with 100–150 observations and 50 covariates. The method is applied to data on 15,060 US Medicare beneficiaries diagnosed with a malignant brain tumor between 2000 and 2009 to evaluate whether surgery reduces hospital readmissions within 30 days of diagnosis.},
+	year = {2015}
+}
+
+@article{Zigler2014,
+	ISSN = {01621459},
+	URL = {http://www.jstor.org/stable/24247140},
+	abstract = {Causal inference with observational data frequently relies on the notion of the propensity score (PS) to adjust treatment comparisons for observed confounding factors. As decisions in the era of "big data" are increasingly reliant on large and complex collections of digital data, researchers are frequently confronted with decisions regarding which of a high-dimensional covariate set to include in the PS model to satisfy the assumptions necessary for estimating average causal effects. Typically, simple or ad hoc methods are employed to arrive at a single PS model, without acknowledging the uncertainty associated with the model selection. We propose three Bayesian methods for PS variable selection and model averaging that (a) select relevant variables from a set of candidate variables to include in the PS model and (b) estimate causal treatment effects as weighted averages of estimates under different PS models. The associated weight for each PS model reflects the data-driven support for that model's ability to adjust for the necessary variables. We illustrate features of our proposed approaches with a simulation study, and ultimately use our methods to compare the effectiveness of surgical versus nonsurgical treatment for brain tumors among 2606 Medicare beneficiaries. Supplementary materials for this article are available online.},
+	author = {Corwin Matthew Zigler and Francesca Dominici},
+	journal = {Journal of the American Statistical Association},
+	number = {505},
+	pages = {95--107},
+	publisher = {[American Statistical Association, Taylor & Francis, Ltd.]},
+	title = {Uncertainty in Propensity Score Estimation: Bayesian Methods for Variable Selection and Model-Averaged Causal Effects},
+	urldate = {2022-10-27},
+	volume = {109},
+	year = {2014}
+}
+
+@article{Hahn2018,
+	author = {P. Richard Hahn and Carlos M. Carvalho and David Puelz and Jingyu He},
+	title = {{Regularization and Confounding in Linear Regression for Treatment Effect Estimation}},
+	volume = {13},
+	journal = {Bayesian Analysis},
+	number = {1},
+	publisher = {International Society for Bayesian Analysis},
+	pages = {163 -- 182},
+	keywords = {Causal inference, observational data, shrinkage estimation},
+	year = {2018},
+	doi = {10.1214/16-BA1044},
+	URL = {https://doi.org/10.1214/16-BA1044}
+}
+
+@article{BERGER1990303,
+	title = "Robust Bayesian analysis: sensitivity to the prior",
+	journal = "Journal of Statistical Planning and Inference",
+	volume = "25",
+	number = "3",
+	pages = "303 - 328",
+	year = "1990",
+	issn = "0378-3758",
+	doi = "10.1016/0378-3758(90)90079-A",
+	author = "James O. Berger"
+}
