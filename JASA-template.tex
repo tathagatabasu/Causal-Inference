@@ -101,7 +101,6 @@ can be problematic in the presence of confounders. That is when
 the variables are associated with both the treatment and the outcome.
 In such cases, we need to be extra cautious as otherwise it will
 lead to unwanted bias in the treatment effect estimator \cite{rosenbaum83}.
-
 Several works have been done in order to tackle the presence of
 confounder variables. One such work in the topic was 
 by \citet{Robins1986ANA} where the author used  a graphical
@@ -123,32 +122,41 @@ estimating causal effect. Several other methods were also
 proposed to tackle confounders from the point of view of Bayesian
 variable selection such as: \citet{Zigler2014}, \citet{Hahn2018} etc.
 
-In this paper we closely follow the approach of \citet{koch2020}, where
+In this paper we take inspiration from the approach of \citet{koch2020}, where
 they proposed a bilevel spike and slab prior for causal effect 
 estimation. They considered a data-driven adaptive approach to
-reduce the variance of the causal estimate. Instead of that,
-we suggest a robust Bayesian analysis based approach where instead
+propose their prior which reduce the variance of the causal estimate. 
+In our approach,
+we suggest a sensitivity analysis based approach where instead
 of using a single prior, we consider a set of priors \cite{BERGER1990303}. This is particularly interesting as in
 many cases, causal effect estimation can be performed through a 
-meta analysis and hence having a single prior can be problematic.
+meta analysis and hence robust Bayesian analysis can be beneficial
+\cite{raices_cruz22} under severe uncertainty.
 Moreover, for some problems we have to rely on very limited data to
 perform our Bayesian analysis and choosing a data-driven prior
-can lead to overfitting.
+can lead to overfitting. Therefore, as to propose our
+robust Bayesian framework,
+we consider a set of continuous spike and slab priors \cite{ishwaran2005}
+for confounder selection and construct a Bayesian group LASSO
+\cite{xu2015}. To perform the sensitivity analysis, we consider
+a set of beta priors on the covariate selection probability
+of the spike and slab priors. This sensitivity analysis allows us
+to investigate the regression coefficients with respect to a different
+level of sparsity of the model. Following that, we consider a post-hoc
+variable selection method as suggested by \citet{hahn2015}. This
+ensures that we can efficiently separate the confounder variables
+with others and reduce the bias of treatment effect estimation.
 
-\begin{figure}
-	\centering
-	\begin{tikzpicture}[params/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm}]
-	\node (1) at (0,0) {Treatment ($T$)};
-	\node (2) [right = of 1] {Outcome ($Y$)};
-	\node (4) [below = of 1] {Input ($X$)};
-	
-	\path (1) edge[->]  (2);
-	\path (1) edge[<-]  (4);
-	\path (2) edge[<-] (4);
-	\end{tikzpicture}
-	\caption{Confounding in causal models.}
-	\label{fig:confounding}
-\end{figure}
+The rest of the paper is organised as follows. In \cref{sec:causal}
+we give a formal description of causal estimation problem in the
+context of linear regression. \cref{sec:bayes} is focused on the
+Bayesian analysis of causal inference problems, followed by the
+motivation of a robust Bayesian analysis. In \cref{sec:sim}, we
+provide our result of simulation studies under different 
+scenarios and in data analysis with real data in \cref{sec:data:analysis}. Finally we discuss our findings and 
+conclude this paper in \cref{sec:conc}.
+
+\section{Causal Estimation}\label{sec:causal}
 
 Let an observational study give us the outcomes $Y=(Y_1$, \dots, $Y_n)$ along with 
 corresponding treatment indicators $T=(T_1$, \dots, $T_n)$. Then the
@@ -182,6 +190,21 @@ the underlying true outcome model is linear,
     \delta = \beta_{T}\quad\text{and hence } 
     \hat{\delta} - \delta = \hat{\beta}_T - \beta_T.
 \end{equation}
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[params/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm}]
+	\node (1) at (0,0) {Treatment ($T$)};
+	\node (2) [right = of 1] {Outcome ($Y$)};
+	\node (4) [below = of 1] {Input ($X$)};
+	
+	\path (1) edge[->]  (2);
+	\path (1) edge[<-]  (4);
+	\path (2) edge[<-] (4);
+	\end{tikzpicture}
+	\caption{Confounding in causal models.}
+	\label{fig:confounding}
+\end{figure}
+
 
 \citet{koch2020} suggested the use of a probit model to specify the conditional probability that
 subject $i$ receives the treatment. That is,
@@ -204,7 +227,7 @@ W\mid Z, \alpha, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \sigma^2\mathbf{
 \end{align}
 where $\nu = (\alpha, \beta, \gamma)^T$.
 
-\section{Robust Bayesian Analysis}
+\section{Bayesian Hierarchical model}\label{sec:bayes}
 \subsection{Hierarchical model}
 
 \begin{figure}
@@ -322,6 +345,13 @@ and
     \frac{|\gamma_j|}{|\hat{\gamma}_j(q_j)|}
 \end{align}
 where $q_{\mathcal{S}}\in \mathcal{P}_{\mathcal{S}}$.
+
+
+\section{Simulation Studies}\label{sec:sim}
+
+\section{Data Analysis}\label{sec:data:analysis}
+
+\section{Conclusion}\label{sec:conc}
 
 \bibliographystyle{agsm}
 \bibliography{basu22}
