@@ -163,16 +163,28 @@ corresponding treatment indicators $T=(T_1$, \dots, $T_n)$. Then the
 individual causal
 effect of the treatment $T_i$ on outcome $Y_i$ is given by:
 \begin{align}
-\delta \coloneqq E(Y\mid T=1) - E(Y\mid T=0).
+\delta_i \coloneqq (Y_i\mid T_i=1) - (Y_i\mid T_i=0).
 \end{align}
+That is, the difference between the outcome when $i$-th subject receives
+the treatment and when $i$-th subject remain as a control. Similarly, treatment 
+effect of the population is given by the expectation of difference
+in outcome between the treatment and controls. 
+\begin{align}
+	\delta = \mathbb{E}(Y\mid T =1) - E(Y\mid T=0).
+\end{align}
+
+In theory, both of these quantities exist.
 However, we can not observe $(Y_i\mid T_i=1)$ and $(Y_i\mid T_i=0)$
 simultaneously for the $i$-th individual. Instead, we can estimate
-average causal effect of the treatment $T$ so that
+average causal effect of the treatment $T$ by calculating the averaged
+outcome of all the subjects those received the treatment and
+all the subjects those remained as control.
 \begin{align}
 \hat{\delta} \coloneqq 
-\frac{\sum_{i=1}^n(Y_i\mid T_i=1) - (Y_i\mid T_i=0)}{n}.
+\frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1) - 
+	\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}.
 \end{align}
-This relies on an important assumption that the treatment effect
+However, this relies on an important assumption that the treatment effect
 on the $i$-th subject given that they received the treatment is
 equal to the treatment effect when they remain as the control
 \cite{winship99}.
