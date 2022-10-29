@@ -1,6 +1,8 @@
+% !TeX spellcheck = en_GB
+
 \documentclass{amsart}
 \usepackage[foot]{amsaddr} % put addresses on first page
-
+\usepackage[british]{babel}
 \usepackage{geometry}
 \usepackage{graphicx,psfrag,epsf}
 \usepackage{enumerate}
@@ -12,7 +14,7 @@
 \allowdisplaybreaks
 \usepackage{longtable}
 \usepackage{bigints}
-\usepackage{siunitx}
+%\usepackage{siunitx}
 \usepackage{amsthm}
 \usepackage{soul}
 \usepackage{tikz}
@@ -160,18 +162,19 @@ conclude this paper in \cref{sec:conc}.
 
 Let an observational study give us the outcomes $Y=(Y_1$, \dots, $Y_n)$ along with 
 corresponding treatment indicators $T=(T_1$, \dots, $T_n)$. Then the
-individual causal
+treatment 
+effect in the population is given by the expectation of the difference
+in outcome between the treatment and controls. 
+\begin{align}
+\delta = \mathbb{E}(Y\mid T =1) - E(Y\mid T=0).
+\end{align}
+Similarly, individual causal
 effect of the treatment $T_i$ on outcome $Y_i$ is given by:
 \begin{align}
 \delta_i \coloneqq (Y_i\mid T_i=1) - (Y_i\mid T_i=0).
 \end{align}
 That is, the difference between the outcome when $i$-th subject receives
-the treatment and when $i$-th subject remain as a control. Similarly, treatment 
-effect of the population is given by the expectation of difference
-in outcome between the treatment and controls. 
-\begin{align}
-	\delta = \mathbb{E}(Y\mid T =1) - E(Y\mid T=0).
-\end{align}
+the treatment and when $i$-th subject remain as a control. 
 
 In theory, both of these quantities exist.
 However, we can not observe $(Y_i\mid T_i=1)$ and $(Y_i\mid T_i=0)$
@@ -189,8 +192,13 @@ on the $i$-th subject given that they received the treatment is
 equal to the treatment effect when they remain as the control
 \cite{winship99}.
 
-Now, let $X\coloneqq$ $[X_1$, \dots, $X_n]^T$ 
-denote the $p$-dimensional covariates present in the studies and $\beta \coloneqq (\beta_1$, \dots, $\beta_p)$ denotes the vector of regression
+\subsection{Regression Model}
+Regression methods are widely used in causal effect estimation. The
+main idea behind these regression methods is to remove the
+correlation between the treatment indicator and the error term
+\cite{winship99,HECKMAN1985}. To do so, we rely on $p$ different observed quantities
+or predictors denoted by $X\coloneqq$ $[X_1$, \dots, $X_n]^T$. Now, let
+$\beta \coloneqq (\beta_1$, \dots, $\beta_p)$ denotes the vector of regression
 coefficients. Then we can define a linear model for the outcome
 so that
 \begin{equation}
@@ -227,13 +235,13 @@ Therefore, we can define intermediate variables $T_i^*$ so that, $T_i=1$ if $T_i
 $T_i=0$ if $T_i^*\le0$. Now, following the approach of \citet{koch2018}, we define an adjusted
 output vector $W\coloneqq(Y, T^*)^T$ and corresponding $2n\times(2p+1)$ dimensional design matrix
 \begin{align}
-    \boldsymbol{Z} &=
+    Z &=
     \begin{bmatrix}
      X_O & 0 \\
      0 & X
     \end{bmatrix},
 \end{align}
-where, $X_0 = [T, X]$. Then, assuming Gaussian error term, we have the following likelihood function
+where, $X_O = [T, X]$. Then, assuming Gaussian error term, we have the following likelihood function
 \begin{align}
 W\mid Z, \alpha, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \sigma^2\mathbf{I}_{2n}\right),
 \end{align}
