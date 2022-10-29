@@ -202,7 +202,7 @@ $\beta \coloneqq (\beta_1$, \dots, $\beta_p)$ denotes the vector of regression
 coefficients. Then we can define a linear model for the outcome
 so that
 \begin{equation}
-    Y_i = \beta_{T} T_i + \beta_0 + X\beta + \epsilon_i
+    Y_i = \beta_{T} T_i + \beta_0 + X_i\beta + \epsilon_i
 \end{equation}
 where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$. Clearly, when
 the underlying true outcome model is linear,
@@ -215,7 +215,7 @@ the underlying true outcome model is linear,
 	\begin{tikzpicture}[params/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm}]
 	\node (1) at (0,0) {Treatment ($T$)};
 	\node (2) [right = of 1] {Outcome ($Y$)};
-	\node (4) [below = of 1] {Input ($X$)};
+	\node (4) [below = of 1] {Predictors ($X$)};
 	
 	\path (1) edge[->]  (2);
 	\path (1) edge[<-]  (4);
@@ -225,14 +225,27 @@ the underlying true outcome model is linear,
 	\label{fig:confounding}
 \end{figure}
 
-
-\citet{koch2020} suggested the use of a probit model to specify the conditional probability that
-subject $i$ receives the treatment. That is,
+In the presence of confounders we also need to consider the
+association between the treatment indicators and the predictors.
+\citet{koch2020} suggested the use of a probit link function to 
+construct the regression model. This way, we can
+specify the conditional probability that subject $i$ receives the treatment through a linear model. 
+That is, for another vector of regression coefficients 
+$\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)$ we define
 \begin{align}
-    P(T_i=1\mid X_i) = \Phi(X_i^T\gamma).
+    P(T_i=1\mid X_i) \coloneqq \Phi(\gamma_0+X_i\gamma)
 \end{align}
-Therefore, we can define intermediate variables $T_i^*$ so that, $T_i=1$ if $T_i^*>0$ and
-$T_i=0$ if $T_i^*\le0$. Now, following the approach of \citet{koch2018}, we define an adjusted
+where $\Phi(\cdot)$ denotes the cumulative distribution function
+of a standard normal distribution.
+
+This allows us to define intermediate latent variables 
+\begin{equation}
+	T_i^* = \gamma_0 + X_i\gamma +u_i
+\end{equation}
+where, $u_i\sim\mathcal{N}(0,1)$. Therefore, $T_i=1$ if $T_i^*>0$ and
+$T_i=0$ if $T_i^*\le0$. 
+
+Now, following the approach of \citet{koch2018}, we define an adjusted
 output vector $W\coloneqq(Y, T^*)^T$ and corresponding $2n\times(2p+1)$ dimensional design matrix
 \begin{align}
     Z &=
