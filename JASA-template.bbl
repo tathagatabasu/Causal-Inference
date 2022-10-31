@@ -1,0 +1,130 @@
+\begin{thebibliography}{xx}
+
+\harvarditem{Albert \harvardand\ Chib}{1993}{albert93}
+Albert, J.~H. \harvardand\ Chib, S.  \harvardyearleft 1993\harvardyearright ,
+  `Bayesian analysis of binary and polychotomous response data', {\em Journal
+  of the American Statistical Association} {\bf 88}(422),~669--679.
+\newline\harvardurl{http://www.jstor.org/stable/2290350}
+
+\harvarditem{Berger}{1990}{BERGER1990303}
+Berger, J.~O.  \harvardyearleft 1990\harvardyearright , `Robust bayesian
+  analysis: sensitivity to the prior', {\em Journal of Statistical Planning and
+  Inference} {\bf 25}(3),~303 -- 328.
+
+\harvarditem[Crainiceanu et~al.]{Crainiceanu, Dominici \harvardand\
+  Parmigiani}{2008}{Crainiceanu2008}
+Crainiceanu, C.~M., Dominici, F. \harvardand\ Parmigiani, G.  \harvardyearleft
+  2008\harvardyearright , `Adjustment uncertainty in effect estimation', {\em
+  Biometrika} {\bf 95}(3),~635--651.
+\newline\harvardurl{http://www.jstor.org/stable/20441491}
+
+\harvarditem{Hahn \harvardand\ Carvalho}{2015}{hahn2015}
+Hahn, P.~R. \harvardand\ Carvalho, C.~M.  \harvardyearleft
+  2015\harvardyearright , `Decoupling shrinkage and selection in bayesian
+  linear models: A posterior summary perspective', {\em Journal of the American
+  Statistical Association} {\bf 110}(509),~435--448.
+
+\harvarditem[Hahn et~al.]{Hahn, Carvalho, Puelz \harvardand\
+  He}{2018}{Hahn2018}
+Hahn, P.~R., Carvalho, C.~M., Puelz, D. \harvardand\ He, J.  \harvardyearleft
+  2018\harvardyearright , `{Regularization and Confounding in Linear Regression
+  for Treatment Effect Estimation}', {\em Bayesian Analysis} {\bf 13}(1),~163
+  -- 182.
+\newline\harvardurl{https://doi.org/10.1214/16-BA1044}
+
+\harvarditem{Heckman \harvardand\ Robb}{1985}{HECKMAN1985}
+Heckman, J.~J. \harvardand\ Robb, R.  \harvardyearleft 1985\harvardyearright ,
+  `Alternative methods for evaluating the impact of interventions: An
+  overview', {\em Journal of Econometrics} {\bf 30}(1),~239--267.
+\newline\harvardurl{https://www.sciencedirect.com/science/article/pii/0304407685901393}
+
+\harvarditem{Ishwaran \harvardand\ Rao}{2005}{ishwaran2005}
+Ishwaran, H. \harvardand\ Rao, J.~S.  \harvardyearleft 2005\harvardyearright ,
+  `Spike and slab variable selection: Frequentist and bayesian strategies',
+  {\em Ann. Statist.} {\bf 33}(2),~730--773.
+
+\harvarditem[Koch et~al.]{Koch, Vock \harvardand\ Wolfson}{2018}{koch2018}
+Koch, B., Vock, D.~M. \harvardand\ Wolfson, J.  \harvardyearleft
+  2018\harvardyearright , `Covariate selection with group lasso and doubly
+  robust estimation of causal effects', {\em Biometrics} {\bf 74}(1),~8--17.
+
+\harvarditem[Koch et~al.]{Koch, Vock, Wolfson \harvardand\
+  Vock}{2020}{koch2020}
+Koch, B., Vock, D.~M., Wolfson, J. \harvardand\ Vock, L.~B.  \harvardyearleft
+  2020\harvardyearright , `Variable selection and estimation in causal
+  inference using bayesian spike and slab priors', {\em Statistical Methods in
+  Medical Research} {\bf 29}(9),~2445--2469.
+
+\harvarditem[Raices~Cruz et~al.]{Raices~Cruz, Troffaes, Lindström \harvardand\
+  Sahlin}{2022}{raices_cruz22}
+Raices~Cruz, I., Troffaes, M. C.~M., Lindström, J. \harvardand\ Sahlin, U.
+  \harvardyearleft 2022\harvardyearright , `A robust bayesian bias-adjusted
+  random effects model for consideration of uncertainty about bias terms in
+  evidence synthesis', {\em Statistics in Medicine} {\bf 41}(17),~3365--3379.
+\newline\harvardurl{https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.9422}
+
+\harvarditem{Robins}{1986}{Robins1986ANA}
+Robins, J.~M.  \harvardyearleft 1986\harvardyearright , `A new approach to
+  causal inference in mortality studies with a sustained exposure
+  period—application to control of the healthy worker survivor effect', {\em
+  Mathematical Modelling} {\bf 7},~1393--1512.
+
+\harvarditem{ROSENBAUM \harvardand\ RUBIN}{1983}{rosenbaum83}
+ROSENBAUM, P.~R. \harvardand\ RUBIN, D.~B.  \harvardyearleft
+  1983\harvardyearright , `{The central role of the propensity score in
+  observational studies for causal effects}', {\em Biometrika} {\bf
+  70}(1),~41--55.
+\newline\harvardurl{https://doi.org/10.1093/biomet/70.1.41}
+
+\harvarditem{Rosenbaum \harvardand\ Rubin}{1985}{rosenbaum1985}
+Rosenbaum, P.~R. \harvardand\ Rubin, D.~B.  \harvardyearleft
+  1985\harvardyearright , `Constructing a control group using multivariate
+  matched sampling methods that incorporate the propensity score', {\em The
+  American Statistician} {\bf 39}(1),~33--38.
+\newline\harvardurl{http://www.jstor.org/stable/2683903}
+
+\harvarditem{Rubin}{1978}{rubin1978}
+Rubin, D.~B.  \harvardyearleft 1978\harvardyearright , `{Bayesian Inference for
+  Causal Effects: The Role of Randomization}', {\em The Annals of Statistics}
+  {\bf 6}(1),~34 -- 58.
+\newline\harvardurl{https://doi.org/10.1214/aos/1176344064}
+
+\harvarditem{Stuart}{2010}{stuart10}
+Stuart, E.~A.  \harvardyearleft 2010\harvardyearright , `{Matching Methods for
+  Causal Inference: A Review and a Look Forward}', {\em Statistical Science}
+  {\bf 25}(1),~1 -- 21.
+\newline\harvardurl{https://doi.org/10.1214/09-STS313}
+
+\harvarditem[Wang et~al.]{Wang, Dominici, Parmigiani \harvardand\
+  Zigler}{2015}{wang2015}
+Wang, C., Dominici, F., Parmigiani, G. \harvardand\ Zigler, C.~M.
+  \harvardyearleft 2015\harvardyearright , `Accounting for uncertainty in
+  confounder and effect modifier selection when estimating average causal
+  effects in generalized linear models', {\em Biometrics} {\bf
+  71}(3),~654--665.
+\newline\harvardurl{https://onlinelibrary.wiley.com/doi/abs/10.1111/biom.12315}
+
+\harvarditem{Winship \harvardand\ Morgan}{1999}{winship99}
+Winship, C. \harvardand\ Morgan, S.~L.  \harvardyearleft 1999\harvardyearright
+  , `The estimation of causal effects from observational data', {\em Annual
+  Review of Sociology} {\bf 25}(1),~659--706.
+
+\harvarditem{Xu \harvardand\ Ghosh}{2015}{xu2015}
+Xu, X. \harvardand\ Ghosh, M.  \harvardyearleft 2015\harvardyearright ,
+  `{Bayesian Variable Selection and Estimation for Group Lasso}', {\em Bayesian
+  Analysis} {\bf 10}(4),~909 -- 936.
+\newline\harvardurl{https://doi.org/10.1214/14-BA929}
+
+\harvarditem{Zigler \harvardand\ Dominici}{2014}{Zigler2014}
+Zigler, C.~M. \harvardand\ Dominici, F.  \harvardyearleft 2014\harvardyearright
+  , `Uncertainty in propensity score estimation: Bayesian methods for variable
+  selection and model-averaged causal effects', {\em Journal of the American
+  Statistical Association} {\bf 109}(505),~95--107.
+\newline\harvardurl{http://www.jstor.org/stable/24247140}
+
+\harvarditem{Zou}{2006}{Zou2006}
+Zou, H.  \harvardyearleft 2006\harvardyearright , `{The Adaptive Lasso and Its
+  Oracle Properties}', {\em Journal of the American Statistical Association}
+  {\bf 101}(476),~1418--1429.
+
+\end{thebibliography}

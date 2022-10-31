@@ -313,11 +313,12 @@ for $1\le j\le p$,
 We fix sufficiently small $\tau^2_0$
 $(1\gg\tau_0^2>0)$ so that  $(\beta_j, \gamma_j) = (0,0)$ has its probability mass 
 concentrated around zero. Therefore, this represents the spike component of our prior specification. 
-To construct the slab component, we consider $\tau_1^2$ to be large so that 
-$\tau_1^2\ge 1$. This allows the prior for $(\beta_j, \gamma_j)\not=(0,0)$ to be flat.
+To construct the slab component, we consider $\tau_1^2$ to be large so that $\tau_1^2\ge 1$. This allows the prior for $(\beta_j, \gamma_j)\not=(0,0)$ to be flat. Inverse-Gamma is a natural choice
+for the variance of the Gaussian noise because of conjugacy. To
+make the prior flat, we consider $1\gg a, b >0$.
 
-As mentioned earlier, $\pi_j$ is used as the rejection probability
-of the $j$-th predictor and we use a set beta priors to specify 
+As indicated earlier, $\pi_j$ is used as the rejection probability
+of the $j$-th predictor and we use a beta prior to specify 
 these rejection probabilities where  $q_j$ represents our prior expectation of the rejection probability ($\pi_j$) and `$s$' acts as 
 a concentration parameter.
 For the intercept terms of the outcome model and the causal effect, 
@@ -326,7 +327,18 @@ $\beta_0. \beta_T\sim \normal(0,\sigma^2)$. Similarly, for the
 intercept term in the treatment model, we consider 
 $\gamma_0\sim \normal(0,1)$. 
 
-
+In \cref{fig:regress}, we show a probabilistic graphical representation
+of our hierarchical model. In the figure, grey circular nodes represent the
+prior hyper-parameters which will be used for sensitivity analysis
+of the model. The transparent circular nodes are used to denote
+the modelling parameters which are our quantities of interest. 
+The observed quantities are denoted with transparent rectangular
+nodes. We also use a grey rectangular node to denote the intermediate
+latent variable $T^*$. We use directed edges to denote the
+relationship between different nodes. However, we use a dashed
+edge between $X$ and $T$ as we they are related through the latent
+variable $T^*$. This dashed edge also establish the notion of
+confounding as shown in \cref{fig:confounding}.
 
 \begin{figure}
 	\centering
