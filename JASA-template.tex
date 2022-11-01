@@ -387,51 +387,82 @@ confounding as shown in \cref{fig:confounding}.
 	\label{fig:regress}
 \end{figure}
 
-\subsection{Co-variate selection}
+\subsection{Variable selection and coefficient adjustment}
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
-We consider the $j$-th group to be active, if
+We consider the $j$-th predictor to be removed from both the
+treatment and outcome model, if
 \begin{align}
-    \lexp (\pi_j\mid W)\coloneqq \inf_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) > 1/2
+    \lexp (\pi_j\mid W)\coloneqq \inf_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) > 1/2.
 \end{align}
-and inactive, if
-\begin{align}
-    \uexp(\pi_j\mid W) \coloneqq \sup_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W)< 1/2.
-\end{align}
-We consider the rest to be indecisive. 
 
-This way, we get a robust group selection routine. However, this type of variable 
-selection includes both treatment and outcome effects at the same time. This may not be the
-case in some cases especially when either treatment effect or the outcome effect is zero or
-weak. To deal with such problems, we suggest the following ad-hoc method to obtain 
-adjusted sparse estimate of the zero effect in a selected group.
-Let $\mathcal{S}$ denote the set of active co-variates present in the model. That is,
+For the rest of the variables, some of them will be present
+in the model as confounders and some will only be associated with
+either the treatment. Let $\mathcal{S}$ denote the set of
+predictors such that,
 \begin{equation}
     \mathcal{S}\coloneqq
-    \left\{j : \lexp(\pi_j\mid W) > 1/2\right\}.
+    \left\{j : \lexp(\pi_j\mid W) < 1/2\right\}.
 \end{equation}
-Let $\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression
-coefficients for the non-zero outcome effects and
+That is the set that contains all the variables which are not
+removed from both treatment and outcome model. Now, for
+each fixed value of $q$,
+let $\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression coefficients of the outcome model with respect to
+the predictors that belong to $\mathcal{S}$. Similarly,
 $\hat{\gamma}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression
-coefficients for the non-zero treatment effects. We apply the 
-``decoupled shrinkage and selection'' method proposed by \citet{hahn2015}, to obtain
-the sparse estimate. To do so, we solve the following adaptive LASSO-type \cite{Zou2006}
+coefficients for the treatment effects. Since, we use a continuous type
+selection prior, these regression coefficients are non-zero in nature.
+Therefore, to adjust the sparsity, we apply the 
+``decoupled shrinkage and selection'' method proposed by \citet{hahn2015}. To do so, we solve the following adaptive LASSO-type \cite{Zou2006}
 problems
 
 \begin{align}
-    \hat{\beta}^*_{\mathcal{S}}(q_{\mathcal{S}}) &= 
-    \arg\min_{\beta_{\mathcal{S}}} \frac{1}{n}\|\x_{\mathcal{S}}\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})
-    - \x_{\mathcal{S}} \beta_{\mathcal{S}}\|_2^2 + \lambda_1\sum_{j\in\mathcal{S}} 
+    \hat{\beta}^*_{\mathcal{S}}(q) &= 
+    \arg\min_{\beta_{\mathcal{S}}} \frac{1}{n}\|X_{\mathcal{S}}\hat{\beta}_{\mathcal{S}}(q)
+    - X_{\mathcal{S}} \beta_{\mathcal{S}}\|_2^2 + \lambda\sum_{j\in\mathcal{S}} 
     \frac{|\beta_j|}{|\hat{\beta}_j(q_j)|}
 \end{align}
 and
 \begin{align}
-    \hat{\gamma}^*_{\mathcal{S}}(q_{\mathcal{S}}) &= 
-    \arg\min_{\gamma_{\mathcal{S}}} \frac{1}{n}\|\x_{\mathcal{S}}\hat{\gamma}_{\mathcal{S}}(q_{\mathcal{S}})
-    - \x_{\mathcal{S}} \gamma_{\mathcal{S}}\|_2^2 + \lambda_1\sum_{j\in\mathcal{S}} 
+    \hat{\gamma}^*_{\mathcal{S}}(q) &= 
+    \arg\min_{\gamma_{\mathcal{S}}} \frac{1}{n}\|X_{\mathcal{S}}\hat{\gamma}_{\mathcal{S}}(q)
+    - X_{\mathcal{S}} \gamma_{\mathcal{S}}\|_2^2 + \lambda\sum_{j\in\mathcal{S}} 
     \frac{|\gamma_j|}{|\hat{\gamma}_j(q_j)|}
 \end{align}
-where $q_{\mathcal{S}}\in \mathcal{P}_{\mathcal{S}}$.
+where $q_{j}\in \mathcal{P}_{j}$ for all $j\in\mathcal{S}$.
 
+\iffalse
+\subsection{Causal effect adjustment} The DSS method explained
+above give us adjusted coefficient estimates for the treatment
+and outcome model. However, as result the causal effect estimate
+remains the same and modelling with such adjusted sparse effect 
+will contribute to the prediction error. Therefore, we need to 
+adjust the causal effect estimate as well. We do that in three steps
+similar to double residual regression procedure as suggested by
+\citet{robinson1988}.
+
+First we compute the predicted values of $Y$ with respect to
+the adjusted regression coefficients so that,
+\begin{equation}
+\hat{Y}(q) 
+= \hat{\beta}_0(q) + X_{\mathcal{S}}\hat{\beta}^*_{\mathcal{S}}(q)
+\end{equation}
+and the values of $T$ with respect to the adjusted
+regression coefficients so that
+\begin{equation}
+\hat{T}(q) 
+= \Phi\left(\hat{\gamma}_0(q) + X_{\mathcal{S}}\hat{\gamma}^*_{\mathcal{S}}(q)\right).
+\end{equation}
+Then we estimate the adjusted causal effect using the following linear
+model
+\begin{equation}
+\left(Y-\hat{Y}(q)\right) = \left(T - \hat{T}(q)\right)\beta_{T} + \epsilon^*_i.
+\end{equation}
+That is 
+\begin{equation}
+\beta_{T}^* = \left(\left(T - \hat{T}(q)\right)^T\left(T - \hat{T}(q)\right)\right)^{-1}\left(T - \hat{T}(q)\right)^T\left(Y-\hat{Y}(q)\right)
+\end{equation}
+
+\fi
 \subsection{Robust Bayesian Analysis}
 We perform our
 robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where

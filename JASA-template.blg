@@ -3,44 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: JASA-template.aux
 The style file: agsm.bst
 Database file #1: basu22.bib
-You've used 20 entries,
+You've used 21 entries,
             2909 wiz_defined-function locations,
-            799 strings with 8890 characters,
-and the built_in function-call counts, 76398 in all, are:
-= -- 12289
-> -- 1047
+            808 strings with 9048 characters,
+and the built_in function-call counts, 78788 in all, are:
+= -- 12662
+> -- 1071
 < -- 0
-+ -- 5765
-- -- 315
-* -- 6683
-:= -- 15417
-add.period$ -- 20
-call.type$ -- 20
-change.case$ -- 280
-chr.to.int$ -- 20
-cite$ -- 20
-duplicate$ -- 320
-empty$ -- 725
-format.name$ -- 397
-if$ -- 13705
++ -- 5926
+- -- 322
+* -- 6880
+:= -- 15924
+add.period$ -- 21
+call.type$ -- 21
+change.case$ -- 294
+chr.to.int$ -- 21
+cite$ -- 21
+duplicate$ -- 336
+empty$ -- 761
+format.name$ -- 406
+if$ -- 14127
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 20
-newline$ -- 75
-num.names$ -- 206
-pop$ -- 54
+missing$ -- 21
+newline$ -- 79
+num.names$ -- 216
+pop$ -- 57
 preamble$ -- 1
-purify$ -- 300
+purify$ -- 315
 quote$ -- 0
-skip$ -- 255
+skip$ -- 267
 stack$ -- 0
-substring$ -- 17324
-swap$ -- 60
-text.length$ -- 280
+substring$ -- 17842
+swap$ -- 63
+text.length$ -- 294
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 80
+type$ -- 84
 warning$ -- 0
-while$ -- 449
+while$ -- 472
 width$ -- 0
-write$ -- 266
+write$ -- 279
