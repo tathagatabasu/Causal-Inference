@@ -19,10 +19,10 @@ a1_dum = 1/(1 + exp(-x[,1:length(beta1)] %*% gamma1))
 a1 = sapply(1:50, function(j)rbinom(1,1,a1_dum[j]))
 
 
-y1 = 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .5)
+y1 = 2+ 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .1)
 
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-10, tau_1 = 1, gam_a = 1e-2, gam_b = 1e-2, n.iter = 500, n.adapt = 500, n.sample = 5000){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 1e-2, n.iter = 5000, n.adapt = 2000, n.sample = 5000){
   MCMC = list()
   
   string = "
@@ -32,7 +32,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-10, tau_1 = 1, gam_a = 1e-2, gam_b =
     
     for (i in 1:N) 
     {
-      mean[i] = b0 + b_T * a[i] + inprod(x[i,], b)
+      mean[i] = b_T * a[i] + inprod(x[i,], b) + b0
       y[i] ~ dnorm(mean[i], inv.var)
       
       a[i] ~ dbern(a_dumm[i])
@@ -52,11 +52,6 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-10, tau_1 = 1, gam_a = 1e-2, gam_b =
     
     sigma2 = 1 / inv.var
     
-    sig[1,1] = inv.var
-    sig[1,2] = 0
-    sig[2,1] = 0
-    sig[2,2] = 1
-      
     ## Prior on the regression parameters 
     
     for (j in 1:p) 
@@ -66,17 +61,15 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-10, tau_1 = 1, gam_a = 1e-2, gam_b =
       
       
       # Prior on beta
-
-      spike[j, 1:2] ~ dmnorm(c(0,0),  1/tau_0^2 * sig[1:2,1:2])
-      slab[j, 1:2] ~ dmnorm(c(0,0),  1/tau_1^2 * sig[1:2,1:2])
       
-      #spikeg[j] ~ dnorm(0, (1 / tau_0^2))
-      #slabg[j] ~ dnorm(0, (1 / tau_1^2))
+      spike[j] ~ dnorm(0, (inv.var / tau_0^2))
+      slab[j] ~ dnorm(0, (inv.var / tau_1^2))
       
-      coef[j, 1:2] = (1 - w[j]) * slab[j,1:2]  + w[j] * spike[j,1:2]
+      spikeg[j] ~ dnorm(0, (1 / tau_0^2))
+      slabg[j] ~ dnorm(0, (1 / tau_1^2))
       
-      b[j] = coef[j,1]
-      g[j] = coef[j,2]
+      b[j] = (1 - w[j]) * slab[j]  + w[j] * spike[j]
+      g[j] = (1 - w[j]) * slabg[j]  + w[j] * spikeg[j]
     }
     
   }
@@ -161,17 +154,16 @@ for (i in 1:2) {
   gamma_dss = rbind(gamma_dss, coef(cv.glmnet(x[,active], x[,active]%*%gamma_exp[i,active], penalty.factor = 1/abs(gamma_exp[i,active]), intercept = F))[-1])
 }
 
-causal_corr = c()
+causal_est = c()
 
 for (i in 1:2) {
-  y_new = y1 - beta0_exp[i] - x[,active] %*% beta_dss[i,]
- T_new = a1 - round(pnorm(gamma_exp[i] + x[,active] %*% gamma_dss[i,]))
-
-  causal_corr = rbind(causal_corr, (t(T_new)%*%T_new)^(-1)%*%t(T_new)%*%y_new)
+  y_new = y1 - x[,active] %*% beta_exp[i,active]
+  T_new = a1 - (pnorm(x[,active] %*% gamma_exp[i,active]))>0.5
+  
+  causal_est = rbind(causal_est, (t(T_new)%*%T_new)^(-1)%*%t(T_new)%*%y_new)
 }
-
 Causal_exp
-causal_corr
+causal_est
 
 #causal_est = Causal_exp + causal_corr
 #causal_est
