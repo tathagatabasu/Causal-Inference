@@ -19,10 +19,10 @@ a1_dum = 1/(1 + exp(-x[,1:length(beta1)] %*% gamma1))
 a1 = sapply(1:50, function(j)rbinom(1,1,a1_dum[j]))
 
 
-y1 = 2+ 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .1)
+y1 = 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .1)
 
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 1e-2, n.iter = 5000, n.adapt = 2000, n.sample = 5000){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 1e-2, n.iter = 10000, n.adapt = 5000, n.sample = 10000){
   MCMC = list()
   
   string = "
@@ -32,12 +32,12 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 
     
     for (i in 1:N) 
     {
-      mean[i] = b_T * a[i] + inprod(x[i,], b) + b0
+      mean[i] = b_T * a[i] + inprod(x[i,], b)
       y[i] ~ dnorm(mean[i], inv.var)
       
-      a[i] ~ dbern(a_dumm[i])
+      a[i] ~ dinterval(a_dumm[i], 0)
       
-      a_dumm[i] = phi(inprod(x[i,], g) + g0)
+      a_dumm[i] ~ dnorm(inprod(x[i,], g), 1)
     }
     
     # Prior on the mean
@@ -57,7 +57,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 
     for (j in 1:p) 
     {
       # prior on the selection probability
-      w[j] ~ dbeta(2*alpha[j], 2*(1-alpha[j]))I(0.001,0.999)
+      w[j] ~ dbeta(2*alpha, 2*(1-alpha))I(0.001,0.999)
       
       
       # Prior on beta
@@ -78,7 +78,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 
   
   for (i in 1:length(alphas)) {
     
-    alpha = as.vector(rep(alphas[i], ncol(x)))
+    alpha = as.vector(alphas[i])
     
     ISVS <- textConnection(string, open = "r")
     
