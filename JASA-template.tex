@@ -53,8 +53,7 @@
 \email{matthias.troffaes@durham.ac.uk}
 \author{Jochen Einbeck$^{2,3}$}
 \email{jochen.einbeck@durham.ac.uk}
-\address{$^1$UMR CNRS 7253 Heudiasyc, Universit\'{e} de Technologie de
-Compi\`{e}gne}
+\address{$^1$Civil and Environmental Engineering, University of Strathclyde}
 \address{$^2$Department of Mathematical Sciences, Durham University}
 \address{$^3$Durham Research Methods Centre}
 
@@ -66,24 +65,25 @@ along with the causal links between the variables and the outcome.
 However, estimation for such problems are extremely 
 difficult as the treatment effects may vary from subject 
 to subject and modelling the underlying heterogeneity explicitly makes the 
-problem practically unsolvable. Another issue we face is the 
-dimensionality of the problem and we may wish to find a subset of 
-explanatory variables. However, standard variable selection methods
-tend to maximise the predictive performance of the outcome model only and
-can also be sensitive with respect to the choice of priors, particularly 
-in the case of limited information. So, in this paper, we suggest a 
-robust Bayesian analysis of causal inferential methods for 
-high-dimensional problems in a regressional framework. We consider
-a set of spike and slab priors to obtain robust estimates for
+problem practically unsolvable. Another issue we often face is the 
+dimensionality of the problem and we need to find a subset of 
+explanatory variables to initiate the treatment. However, currently variable selection methods
+tend to maximise the predictive performance of the outcome model only. This can be problematic in the case of limited information. 
+As the consequence of mistreatment can be harmful. 
+So, in this paper, we suggest a general framework with
+robust Bayesian analysis which accounts for abstention in deciding
+an explanatory variable in the high dimensional regression model. 
+To achieve that, we consider a set of spike and slab priors 
+through prior elicitation to obtain robust estimates for
 both the treatment and outcome model. We are specifically interested 
-in the importance of priors in the high dimensional causal inference
-as well as the identifying the confounder variables. However, indicator
+in the sensitivity of the treatment effect in the high dimensional causal inference
+as well as the identifying the confounder variables by means of variable selection. However, indicator
 based confounder selection can be deceptive in some cases. Especially, 
 when the predictor is strongly associated with either the treatment or 
 the outcome. This increases the posterior expectation of the selection
-indicators. To avoid that we also apply a post-hoc selection scheme
+indicators. To avoid that we apply a post-hoc selection scheme
 which successfully remove negligible non-zero effects from the model
-attaining a sparser model. Finally, we illustrate
+attaining a smaller set of confounders. Finally, we illustrate
 our result using synthetic \alert{and real} dataset.
 
 \end{abstract}
@@ -113,7 +113,8 @@ methods have been proposed based on propensity score matching.
 A brief review on such methods can be found in \cite{winship99, stuart10}.
 
 Bayesian approach in causal effect estimation has become a popular
-topic in recent days. However, one of the earlier works on this can be
+topic in recent days. However, it has been a topic of interest for about 50 
+years and one of the earlier works on this can be
 found in \cite{rubin1978}. Lately with the notion of high dimensional problems, Bayesian methodologies have become
 more appealing. \citet{Crainiceanu2008} proposed a bi-level 
 Bayesian model averaging based method for estimating the causal 
@@ -125,38 +126,40 @@ proposed to tackle confounders from the point of view of Bayesian
 variable selection such as: \citet{Zigler2014}, \citet{Hahn2018} etc.
 
 In this paper we take inspiration from the approach of \citet{koch2020}, where
-they proposed a bilevel spike and slab prior for causal effect 
+they proposed a bi-level spike and slab prior for causal effect 
 estimation. They considered a data-driven adaptive approach to
 propose their prior which reduce the variance of the causal estimate. 
-In our approach,
-we suggest a sensitivity analysis based approach where instead
-of using a single prior, we consider a set of priors \cite{BERGER1990303}. This is particularly interesting as in
-many cases, causal effect estimation can be performed through a 
-meta analysis and hence robust Bayesian analysis can be beneficial
-\cite{raices_cruz22} under severe uncertainty.
-Moreover, for some problems we have to rely on very limited data to
-perform our Bayesian analysis and choosing a data-driven prior
-can lead to overfitting. Therefore, as to propose our
-robust Bayesian framework,
-we consider a set of continuous spike and slab priors \cite{ishwaran2005}
-for confounder selection and construct a Bayesian group LASSO
-\cite{xu2015}. To perform the sensitivity analysis, we consider
-a set of beta priors on the covariate selection probability
-of the spike and slab priors. This sensitivity analysis allows us
-to investigate the regression coefficients with respect to a different
-level of sparsity of the model. Following that, we consider a post-hoc
-variable selection method as suggested by \citet{hahn2015}. This
-ensures that we can efficiently separate the confounder variables
-with others and reduce the bias of treatment effect estimation.
+In our approach, we are interested in the decision theoretic notion of 
+variable selection and its effect in causal estimation. We suggest a 
+sensitivity analysis based approach where instead of using a single prior, 
+we consider a set of priors \cite{BERGER1990303}. This is particularly 
+interesting as in many cases, causal effect estimation can be performed 
+through a meta analysis and hence robust Bayesian analysis can be beneficial
+\cite{raices_cruz22} under severe uncertainty. Moreover, for some problems 
+we have to rely on very limited data to perform our Bayesian analysis and 
+choosing a data-driven prior can lead to overfitting. Instead we can 
+benefit from expert opinion and elicit prior based on empirical evidence.
+This also allows us to construct the problem of confounder selection 
+in a framework where abstention has a positive gain. To propose our 
+framework, we consider a set of continuous spike and slab priors 
+\cite{ishwaran2005} for confounder selection and construct a Bayesian 
+group LASSO \cite{xu2015} type problem. To perform the prior sensitivity 
+analyses, we consider a set of beta priors on the covariate selection 
+probability of the spike and slab priors. We use the posteriors of these
+covariate selection probability for identifying the confounders. Finally, 
+we consider a post-hoc coefficient adjustment method \citet{hahn2015}
+to recover sparse estimates. This post hoc treatment also helps us to 
+reduce the bias of treatment effect estimation. 
 
 The rest of the paper is organised as follows. In \cref{sec:causal}
 we give a formal description of causal estimation problem in the
 context of linear regression. \cref{sec:bayes} is focused on the
 Bayesian analysis of causal inference problems, followed by the
-motivation of a robust Bayesian analysis. In \cref{sec:sim}, we
-provide our result of simulation studies under different 
-scenarios and in data analysis with real data in \cref{sec:data:analysis}. Finally we discuss our findings and 
-conclude this paper in \cref{sec:conc}.
+motivation of a robust Bayesian analysis along with our proposed decision 
+theoretic framework for confounder (variable) selection. In \cref{sec:sim}, 
+we provide our result of simulation studies under different scenarios 
+and data analysis with \alert{real data} in \cref{sec:data:analysis}. Finally 
+we discuss our findings and conclude this paper in \cref{sec:conc}.
 
 \section{Causal Estimation}\label{sec:causal}
 
@@ -387,6 +390,13 @@ confounding as shown in \cref{fig:confounding}.
 	\label{fig:regress}
 \end{figure}
 
+\subsection{Robust Bayesian Analysis}
+We perform our
+robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
+\begin{equation}
+	\mathcal{P} \coloneqq \mathcal{P}_1\times\cdots\times\mathcal{P}_p\subseteq \left(0, 1\right)^{p}.
+\end{equation}
+
 \subsection{Variable selection and coefficient adjustment}
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
 We consider the $j$-th predictor to be removed from both the
@@ -430,7 +440,7 @@ and
 \end{align}
 where $q_{j}\in \mathcal{P}_{j}$ for all $j\in\mathcal{S}$.
 
-\iffalse
+\iftrue
 \subsection{Causal effect adjustment} The DSS method explained
 above give us adjusted coefficient estimates for the treatment
 and outcome model. However, as result the causal effect estimate
@@ -463,13 +473,6 @@ That is
 \end{equation}
 
 \fi
-\subsection{Robust Bayesian Analysis}
-We perform our
-robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
-\begin{equation}
-\mathcal{P} \coloneqq \mathcal{P}_1\times\cdots\times\mathcal{P}_p\subseteq \left(0, 1\right)^{p}.
-\end{equation}
-
 
 
 \section{Simulation Studies}\label{sec:sim}

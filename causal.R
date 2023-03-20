@@ -22,7 +22,7 @@ a1 = sapply(1:50, function(j)rbinom(1,1,a1_dum[j]))
 y1 = 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .1)
 
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 1e-2, n.iter = 10000, n.adapt = 5000, n.sample = 10000){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 10, gam_a = 1e-2, gam_b = 1e-2, n.iter = 1000, n.adapt = 500, n.sample = 1000){
   MCMC = list()
   
   string = "
@@ -130,40 +130,46 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 1, gam_a = 1e-2, gam_b = 
   
 }
 
-sim1_rbvs1 = ISVS(x, y1, a1, alphas = seq(0.8,0.9, length.out = 2), tau_1 = 1)
+sim1_rbvs1 = ISVS(x, y1, a1, alphas = seq(0.2,0.9, length.out = 5), tau_1 = 10)
 
-prob_exp = matrix(unlist(lapply(sim1_rbvs1$probs, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+prob_exp = matrix(unlist(lapply(sim1_rbvs1$probs, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-active = c(1:100)[-c(which(apply(prob_exp, 2, min)>0.5))] 
+active = t(sapply(1:5, function(i) (prob_exp[i,] >0.5)))
+  #c(1:100)[-c(which(apply(prob_exp, 2, min)>0.5))] 
 
-beta_exp = matrix(unlist(lapply(sim1_rbvs1$Betas, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+beta_exp = matrix(unlist(lapply(sim1_rbvs1$Betas, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-gamma_exp = matrix(unlist(lapply(sim1_rbvs1$Gammas, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+gamma_exp = matrix(unlist(lapply(sim1_rbvs1$Gammas, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-beta0_exp = matrix(unlist(lapply(sim1_rbvs1$Beta_int, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+beta0_exp = matrix(unlist(lapply(sim1_rbvs1$Beta_int, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-Causal_exp = matrix(unlist(lapply(sim1_rbvs1$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+Causal_exp = matrix(unlist(lapply(sim1_rbvs1$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-gamma0_exp = matrix(unlist(lapply(sim1_rbvs1$Gamma_int, function(x)colMeans(as.matrix(x)))), nrow = 2, byrow = T)
+gamma0_exp = matrix(unlist(lapply(sim1_rbvs1$Gamma_int, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-beta_dss = c()
-gamma_dss = c()
+beta_dss = list()
+gamma_dss = list()
 
-for (i in 1:2) {
-  beta_dss = rbind(beta_dss, coef(cv.glmnet(x[,active], x[,active]%*%beta_exp[i,active], penalty.factor = 1/abs(beta_exp[i,active]), intercept = F))[-1])
-  gamma_dss = rbind(gamma_dss, coef(cv.glmnet(x[,active], x[,active]%*%gamma_exp[i,active], penalty.factor = 1/abs(gamma_exp[i,active]), intercept = F))[-1])
+for (i in 1:5) {
+  beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+  gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
 }
 
-causal_est = c()
+causal_corr = c()
 
-for (i in 1:2) {
-  y_new = y1 - x[,active] %*% beta_exp[i,active]
-  T_new = a1 - (pnorm(x[,active] %*% gamma_exp[i,active]))>0.5
+for (i in 1:5) {
+  y_new = y1 - x[,which(active[i,] ==T)] %*% beta_dss[[i]] - beta0_exp[i]
+  print(sum(y_new))
+  T_new = a1 - ((pnorm(x[,which(active[i,] ==T)] %*% gamma_dss[[i]] + gamma0_exp[i])))
+  print(sum(T_new))
+  if (sum(T_new) == 0)
+    dumm_corr = 0
+  else
+    dumm_corr = (t(T_new)%*%T_new)^(-1)%*%t(T_new)%*%y_new
   
-  causal_est = rbind(causal_est, (t(T_new)%*%T_new)^(-1)%*%t(T_new)%*%y_new)
+  causal_corr = rbind(causal_corr, dumm_corr)
 }
 Causal_exp
-causal_est
 
-#causal_est = Causal_exp + causal_corr
-#causal_est
+causal_est = Causal_exp + causal_corr
+causal_est
