@@ -8,6 +8,8 @@ library(glmnet)
 library(ncvreg)
 library(xtable)
 
+set.seed(1e3)
+
 sig1 = diag(100)
 
 x = rmvnorm(50, sigma = sig1)
@@ -22,7 +24,7 @@ a1 = sapply(1:50, function(j)rbinom(1,1,a1_dum[j]))
 y1 = 4*a1 + x[,1:length(beta1)] %*% beta1 + rnorm(50, sd = .1)
 
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 10, gam_a = 1e-2, gam_b = 1e-2, n.iter = 1000, n.adapt = 500, n.sample = 1000){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-5, tau_1 = 10, gam_a = 1e-2, gam_b = 1e-2, n.iter = 1000, n.adapt = 500, n.sample = 1000){
   MCMC = list()
   
   string = "
@@ -130,11 +132,11 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-2, tau_1 = 10, gam_a = 1e-2, gam_b =
   
 }
 
-sim1_rbvs1 = ISVS(x, y1, a1, alphas = seq(0.2,0.9, length.out = 5), tau_1 = 10)
+sim1_rbvs1 = ISVS(x, y1, a1, alphas = seq(0.8,0.9, length.out = 5), tau_1 = 5)
 
 prob_exp = matrix(unlist(lapply(sim1_rbvs1$probs, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
 
-active = t(sapply(1:5, function(i) (prob_exp[i,] >0.5)))
+active = t(sapply(1:5, function(i) (prob_exp[i,] <= 0.5)))
   #c(1:100)[-c(which(apply(prob_exp, 2, min)>0.5))] 
 
 beta_exp = matrix(unlist(lapply(sim1_rbvs1$Betas, function(x)colMeans(as.matrix(x)))), nrow = 5, byrow = T)
@@ -160,8 +162,7 @@ causal_corr = c()
 for (i in 1:5) {
   y_new = y1 - x[,which(active[i,] ==T)] %*% beta_dss[[i]] - beta0_exp[i]
   print(sum(y_new))
-  T_new = a1 - ((pnorm(x[,which(active[i,] ==T)] %*% gamma_dss[[i]] + gamma0_exp[i])))
-  print(sum(T_new))
+  T_new = a1 - ((pnorm(x[,which(active[i,] ==T)] %*% gamma_dss[[i]] + gamma0_exp[i]))) 
   if (sum(T_new) == 0)
     dumm_corr = 0
   else
@@ -171,5 +172,4 @@ for (i in 1:5) {
 }
 Causal_exp
 
-causal_est = Causal_exp + causal_corr
-causal_est
+causal_corr
