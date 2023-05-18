@@ -391,6 +391,16 @@ confounding as shown in \cref{fig:confounding}.
 \end{figure}
 
 \subsection{Robust Bayesian Analysis}
+The hierarchical model presented above is fairly common in
+Bayesian analysis and performs well when we have sufficient data to begin with. However, especially
+in the case of causal inference having sufficient data may not be practical. Moreover, since there’s
+an aspect of intervention in causal effect estimator, we also need to be cautious around the side
+effects of a treatment.
+Therefore, we are interested in having a more robust framework for selecting a variable. So
+that, once we are initiating our treatment, we can decide whether we require more data to conduct
+our analysis. For instance, we can assign a cost for false positives and false negatives and also for
+conducting more tests. This way we can have a more generalised utility based framework with
+which we can incorporate the notion of indeterminacy.
 We perform our
 robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
 \begin{equation}

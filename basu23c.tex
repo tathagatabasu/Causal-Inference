@@ -391,62 +391,148 @@ variable $T^*$.
 \end{figure}
 
 \subsection{Robust Bayesian Analysis}
-We perform our
-robust Bayesian analysis on $q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
+
+The hierarchical model presented above is a standard spike and slab model for
+variable selection and performs well when we have sufficient data to begin with. 
+However, especially in the case of causal inference having sufficient data may not 
+be practical. Moreover, since there’s an aspect of intervention in causal effect 
+estimator, we also need to be cautious about the side effects of a treatment.
+Therefore, we are particularly interested in constructing a robust Bayesian framework
+for variable selection. So that, once we are preparing a guideline for treatment, we 
+can decide whether we require more data to conduct our analysis. For instance, 
+we want to evaluate the problem based on the cost associated with different aspects
+of variable selection including the possibility of abstention that is
+conducting more tests. This way we can have a generalised utility based framework with
+which we can interpret the lack of evidence efficiently without having an adverse
+effect.
+
+In general, a possible outcome of mistreating a subject can have an outcome
+which can not be associated with a loss function for obvious reasons. Instead, we
+assume that we can always treat a subject to normality after an initial mistreatment.
+and we can associate a loss function with the cost of further treatments. This way, 
+for in simplest case, can associate two constant values for false positives and
+false negatives. Clearly, false positives will lead to unwanted side effects and
+false negatives will lead to mistreatment of the patient. Finally, we associate
+a loss value for abstention which can be interpreted as the cost of further tests.
+We present this notion in the following table.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|ccc}
+       &  False Positive & False Negative & Abstention \\
+       \hline
+       Value  &  $\ell_1$ & $\ell_2$ & $\ell_3$
+    \end{tabular}
+    \caption{Losses with respect to different types of variable selection}
+    \label{tab:loss:vs}
+\end{table}
+Ideally, in most cases, $\ell_3\ll \ell_1,\ell_2$. However, in certain scenarios,
+this might not be the case. Especially when the condition of a subject deteriorates rapidly
+over time.
+
+Now, based on this notion of abstaining from selecting a variable, we can perform
+a sensitivity analysis over a set of priors on the prior selection probability.
+That is, we can consider a set of possible values for $q_j$ such that
+$q\coloneqq(q_1$, \dots, $q_p)\in\mathcal{P}$, where
 \begin{equation}
 	\mathcal{P} \coloneqq \mathcal{P}_1\times\cdots\times\mathcal{P}_p\subseteq \left(0, 1\right)^{p}.
 \end{equation}
+Here the equality occurs for the near vacuous case. However, in real-life
+situations, performing a robust Bayesian analysis for near vacuous case is 
+not practical. Instead, we incorporate expert elicitation to define our model.
+For instance, for the equiprobable case, we can consider $q = q_1=q_2=\cdots = q_p$
+and $q\in \left[\underline{q}, \overline{q}\right]$
+where $p\underline{q}$ and $p\overline{q}$ represent the bounds of the prior expectation on the
+total number of variables present in either of the models.
 
 \subsection{Variable selection and coefficient adjustment}
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
 We consider the $j$-th predictor to be removed from both the
 treatment and outcome model, if
 \begin{align}
-	\lexp (\pi_j\mid W)\coloneqq \inf_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) > 1/2.
+	\uexp (\pi_j\mid W)\coloneqq \sup_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) < 1/2.
+\end{align}
+Similarly, we consider the $j$-th predictor to be present in at least one of the models, if
+\begin{align}\label{eq:vs:sel}
+	\lexp (\pi_j\mid W)\coloneqq \sup_{q_j\in \mathcal{P}_j} \text{E}(\pi_j\mid W) > 1/2.
+\end{align}
+Otherwise, we consider the variable to be indeterminate and abstain from putting
+it in any of the models and reports lack of information.
+
+In general, this framework is self sufficient for variable selection. However, for
+model fitting and prediction, we need to evaluate the values 
+of the regression coefficients. For that we first need to find the set of active
+predictors with respect to our prior expectation of the selection probability $q$.
+We define the set $S(q)$ such that for any fixed $q$.
+\begin{equation}
+	S(q)\coloneqq
+	\left\{j : E(\pi_j\mid W) \ge 1/2\right\}.
+\end{equation}
+That is the set that contains all the variables which are active
+either in the treatment model and or in the outcome model for a fixed value of $q$. 
+Clearly, if we take intersection over all $q$ then it gives us back the set of
+active variables obtained through \cref{eq:vs:sel}. That is 
+\begin{align}
+    \mathcal{S}\coloneqq \left\{j:\lexp (\pi_j\mid W)>1/2\right\}
+    = \bigcap_{q\in \mathcal{P}}S(q)
 \end{align}
 
-For the rest of the variables, some of them will be present
-in the model as confounders and some will only be associated with
-either the treatment. Let $\mathcal{S}$ denote the set of
-predictors such that,
-\begin{equation}
-	\mathcal{S}\coloneqq
-	\left\{j : \lexp(\pi_j\mid W) < 1/2\right\}.
-\end{equation}
-That is the set that contains all the variables which are not
-removed from both treatment and outcome model. Now, for
-each fixed value of $q$,
-let $\hat{\beta}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression coefficients of the outcome model with respect to
-the predictors that belong to $\mathcal{S}$. Similarly,
-$\hat{\gamma}_{\mathcal{S}}(q_{\mathcal{S}})$ be the posterior means of the regression
-coefficients for the treatment effects. Since, we use a continuous type
-selection prior, these regression coefficients are non-zero in nature.
-Therefore, to adjust the sparsity, we apply the 
-``decoupled shrinkage and selection'' method proposed by \cite{hahn2015}. To do so, we solve the following adaptive LASSO-type \cite{Zou2006}
+Now, for each fixed value of $q$, let $\hat{\beta}_{S(q)}$ be the posterior means 
+of the regression coefficients of the outcome model with respect to
+the predictors that belong to $S(q)$. Similarly,
+$\hat{\gamma}_{S(q)}$ be the posterior means of the regression
+coefficients for the treatment effects. Since, we use continuous 
+spike and slab priors, these regression coefficients are not sparse.
+Moreover, with our variable selection we only determine whether the variable 
+is included in at least one of the models. But, we can not determine a specific 
+association. Therefore, to adjust the sparsity of the estimates and understand
+the specific association with the treatment/outcome/both, we apply the 
+``decoupled shrinkage and selection'' method proposed by \cite{hahn2015}. 
+For that, we solve the following adaptive LASSO-type \cite{Zou2006}
 problems
 
 \begin{align}
-	\hat{\beta}^*_{\mathcal{S}}(q) &= 
-	\arg\min_{\beta_{\mathcal{S}}} \frac{1}{n}\|X_{\mathcal{S}}\hat{\beta}_{\mathcal{S}}(q)
-	- X_{\mathcal{S}} \beta_{\mathcal{S}}\|_2^2 + \lambda\sum_{j\in\mathcal{S}} 
-	\frac{|\beta_j|}{|\hat{\beta}_j(q_j)|}
+	\hat{\beta}^D_{S(q)} &= 
+	\arg\min_{\beta_{S(q)}} \frac{1}{n}\|X_{S(q)}\hat{\beta}_{S(q)}
+	- X_{S(q)} \beta_{S(q)}\|_2^2 + \lambda\sum_{j\in S(q)} 
+	\frac{|\beta_{j,S(q)}|}{|\hat{\beta}_{j,S(q)}|}
 \end{align}
 and
 \begin{align}
-	\hat{\gamma}^*_{\mathcal{S}}(q) &= 
-	\arg\min_{\gamma_{\mathcal{S}}} \frac{1}{n}\|X_{\mathcal{S}}\hat{\gamma}_{\mathcal{S}}(q)
-	- X_{\mathcal{S}} \gamma_{\mathcal{S}}\|_2^2 + \lambda\sum_{j\in\mathcal{S}} 
-	\frac{|\gamma_j|}{|\hat{\gamma}_j(q_j)|}
+	\hat{\gamma}^D_{S(q)} &= 
+	\arg\min_{\gamma_{S(q)}} \frac{1}{n}\|X_{S(q)}\hat{\gamma}_{S(q)}
+	- X_{S(q)} \gamma_{S(q)}\|_2^2 + \lambda\sum_{j\in S(q)} 
+	\frac{|\gamma_{j,S(q)}|}{|\hat{\gamma}_{j,S(q)}|}
 \end{align}
-where $q_{j}\in \mathcal{P}_{j}$ for all $j\in\mathcal{S}$.
+where $q\in \mathcal{P}$.
 
-\iftrue
-\subsection{Causal effect adjustment} The DSS method explained
+The DSS method explained
 above give us adjusted coefficient estimates for the treatment
 and outcome model. However, as result the causal effect estimate
 remains the same and modelling with such adjusted sparse effect 
 will contribute to the prediction error. Therefore, we need to 
-adjust the causal effect estimate as well. We do that in three steps
+adjust the causal effect estimate as well. Let
+\begin{equation}
+    \hat{T}^D = \mathbb{I}\left(\hat{\gamma}_0+X_{S(q)}\hat{\gamma}^D_{S(q)} >0\right)
+    \quad\text{and}\quad
+    \hat{T} = \mathbb{I}\left(\hat{\gamma}_0+X\hat{\gamma}^q >0\right).
+\end{equation}
+and let $\beta_{T}^D(q)$
+be the causal effect after applying `DSS' and $\hat{\beta}_{T}(q)$ be the
+posterior estimate of the causal effect for any fixed $q\in\mathcal{P}$. Then
+the adjusted estimate is given by:
+\begin{equation}
+    \beta_{T}^D(q) = \left(\left(\hat{T}^D\right)^T \hat{T}^D\right)^{-1}
+    \left(\hat{T}^D\right)^T \left[\hat{\beta}_{T}(q)\hat{T} 
+    + X_{S(q)}\left(\hat{\beta}_{S(q)} - \hat{\beta}^D_{S(q)}\right) 
+    +X_{S^C(q)}\hat{\beta}_{S^C(q)}\right]
+\end{equation}
+where
+\begin{equation}
+    S^C(q)\coloneqq \left\{1,2,\cdots, p\right\} \neg S(q).
+\end{equation}
+
+\iffalse
+\subsection{Causal effect adjustment}  We do that in three steps
 similar to double residual regression procedure as suggested by
 \cite{robinson1988}.
 
