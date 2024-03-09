@@ -1,42 +1,34 @@
-% !TeX spellcheck = en_GB
-
-\documentclass{amsart}
-\usepackage[foot]{amsaddr} % put addresses on first page
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[oribibl]{llncs}
+%
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{amsfonts}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{mathtools}
+\usepackage{blindtext}
+\usepackage[capitalise]{cleveref}
 \usepackage[british]{babel}
 \usepackage{geometry}
 \usepackage{graphicx,psfrag,epsf}
 \usepackage{enumerate}
 \usepackage{enumitem}
-\usepackage{amsfonts}
-\usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\allowdisplaybreaks
 \usepackage{longtable}
 \usepackage{bigints}
 %\usepackage{siunitx}
-\usepackage{amsthm}
 \usepackage{soul}
 \usepackage{tikz}
 \usepackage{color}
 \usepackage{easyReview} % for \comment, \alert, etc.
-
-\newcommand{\addition}[1]{#1}
-
-\usepackage{hyperref}
-\usepackage[capitalise]{cleveref}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-\newtheorem{lemma}[theorem]{Lemma}
-%
-
-\usepackage[numbers]{natbib}
-\usepackage{url} % not crucial - just used below for the URL 
-\usepackage{doi}
 \usepackage{multicol}
 \usepackage{multirow}
-\usepackage{subcaption}
-
 \newcommand{\x}{\boldsymbol{X}}
 \renewcommand{\b}{\hat{\beta}}
 \newcommand{\reals}{\mathbb{R}}
@@ -45,53 +37,61 @@
 \newcommand{\uexp}{\overline{\text{E}}}
 
 
-\keywords{high dimensional data; variable selection; Bayesian analysis; imprecise probability}
-
 \begin{document}
 
-\title{Robust Bayesian Analysis of Causal Inference Problems}
-\author{Tathagata Basu$^1$}
-\email{tathagatabasumaths@gmail.com}
-\author{Matthias C.~M.~Troffaes$^2$}
-\email{matthias.troffaes@durham.ac.uk}
-\author{Jochen Einbeck$^{2,3}$}
-\email{jochen.einbeck@durham.ac.uk}
-\address{$^1$Civil and Environmental Engineering, University of Strathclyde}
-\address{$^2$Department of Mathematical Sciences, Durham University}
-\address{$^3$Durham Research Methods Centre}
-
+\title{A Robust Bayesian Approach for Causal Inference Problems
+%\thanks{}
+}
+%
+\author{Tathagata Basu\inst{1}\orcidID{0000-0002-6851-154X} \and
+Matthias C.~M.~Troffaes\inst{2}\orcidID{0000-0002-1294-600X} \and
+Jochen Einbeck\inst{2,3}\orcidID{0000-0002-9457-2020}}
+%
+\authorrunning{Basu et al.}
+%
+\institute{Civil and Environmental Engineering, University of Strathclyde, UK \and
+Department of Mathematical Sciences, Durham University, UK \and
+Durham Research Methods Centre, UK}
+%
+\maketitle              
+%
 \begin{abstract}
-Causal inference using observational data is an important aspect in
-many fields such as epidemiology, social science, economics, etc. In
-particular, our goal is to find the treatment effect on the subjects
-along with the causal links between the variables and the outcome.
-However, estimation for such problems are extremely 
-difficult as the treatment effects may vary from subject 
-to subject and modelling the underlying heterogeneity explicitly makes the 
-problem practically unsolvable. Another issue we often face is the 
-dimensionality of the problem and we need to find a subset of 
-explanatory variables to initiate the treatment. However, currently variable selection methods
-tend to maximise the predictive performance of the outcome model only. This can be problematic in the case of limited information. 
-As the consequence of mistreatment can be harmful. 
-So, in this paper, we suggest a general framework with
-robust Bayesian analysis which accounts for abstention in deciding
-an explanatory variable in the high dimensional regression model. 
-To achieve that, we consider a set of spike and slab priors 
-through prior elicitation to obtain robust estimates for
-both the treatment and outcome model. We are specifically interested 
-in the sensitivity of the treatment effect in the high dimensional causal inference
-as well as the identifying the confounder variables by means of variable selection. However, indicator
-based confounder selection can be deceptive in some cases. Especially, 
-when the predictor is strongly associated with either the treatment or 
-the outcome. This increases the posterior expectation of the selection
-indicators. To avoid that we apply a post-hoc selection scheme
-which successfully remove negligible non-zero effects from the model
-attaining a smaller set of confounders. Finally, we illustrate
-our result using synthetic dataset.
+Causal inference
+%using observational data is an important problem in
+%many fields such as epidemiology, social science, economics, etc.
+%Our goal is to find
+concerns finding
+the treatment effect on subjects
+along with causal links between the variables and the outcome.
+However,
+the underlying heterogeneity between subjects makes the
+problem practically unsolvable. Additionally, we often
+need to find a subset of
+explanatory variables to understand the treatment effect.
+Currently, variable selection methods tend to maximise the
+predictive performance of the underlying model, and unfortunately,
+under limited data, the predictive performance is hard to assess,
+leading to
+harmful consequences. To address these issues, in this paper, we consider a
+robust Bayesian analysis which accounts for abstention in selecting
+explanatory variables in the high dimensional regression model.
+To achieve that, we consider a set of spike and slab priors
+through prior elicitation to obtain a set of posteriors for
+both the treatment and outcome model. We are specifically interested
+in the sensitivity of the treatment effect in high dimensional causal
+inference as well as identifying confounder variables.
+However, confounder selection can be deceptive
+in this setting, especially when a predictor is strongly associated
+with either the treatment or the outcome.
+To avoid that we apply a post-hoc selection scheme,
+attaining a smaller set of confounders as well as separate sets of variables
+which are only related to treatment or outcome model. Finally, we illustrate
+our method to show its applicability.
 
+\keywords{high dimensional data \and variable selection \and Bayesian analysis \and imprecise probability.}
 \end{abstract}
 
-\maketitle
+
 \section{Introduction}\label{sec:intro}
 
 In causal inference, we are interested in estimating the causal
@@ -772,6 +772,9 @@ is in good agreement with other methods with an added level of robustness.
 This confirms that our method has good potential for real-life problems,
 and we intend to apply it on a real dataset in future work.
 
-\bibliographystyle{agsm}
+
+
+\bibliographystyle{splncs04}
 \bibliography{basu_causal}
+
 \end{document}
