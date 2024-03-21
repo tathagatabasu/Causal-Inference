@@ -311,14 +311,14 @@ and corresponding $2n\times(2p+1)$ dimensional design matrix
 		0 & X_T
 	\end{bmatrix}
 \end{align}
-where, $X_O = [T, X]$ and $X_T = X$. Then, considering the assumption of
+where, $X_O \coloneqq [T, X]$ and $X_T \coloneqq X$. Then, considering the assumption of
 Gaussian error terms, we have the following likelihood distribution
 \begin{align}
 	W\mid Z, \beta_T, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \Sigma\right)\label{eq:like:group},
 \end{align}
-where $\nu = (\beta_T, \beta^T, \gamma^T)^T$ and
+where $\nu \coloneqq (\beta_T, \beta^T, \gamma^T)^T$ and
 \begin{align}
-	\Sigma &=
+	\Sigma &\coloneqq
 	\begin{bmatrix}
 		\sigma^2{I}_n & 0 \\
 		0 & {I}_n
@@ -341,10 +341,10 @@ computation.
 \subsection{Hierarchical model}
 
 Let $\pi_j$ denote the prior probability that the $j$-th
-predictor is associated to the outcome or the 
+predictor is associated with the outcome or the 
 treatment. That is, 
 \begin{equation}
-	\pi_j = P\left((\beta_j,\gamma_j)\not=(0,0)\right).
+	\pi_j \coloneqq P\left((\beta_j,\gamma_j)\not=(0,0)\right).
 \end{equation}
 Then we can define the following hierarchical model for spike and 
 slab group LASSO so that,
