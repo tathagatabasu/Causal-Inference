@@ -374,7 +374,7 @@ for $1\le j\le p$,
 In the hierarchical model, we fix sufficiently small $\tau_0$
 $(1\gg\tau_0>0)$ so that  $(\beta_j, \gamma_j)$ has its probability mass 
 concentrated around zero. Therefore, this represents the spike component of our prior specification. 
-For the slab component, we consider $\tau_1$ to be large so that $\tau_1\ge 1$. This allows the prior for $(\beta_j,\gamma_j)$ to be flat, besides the spike component at the origin.. 
+For the slab component, we consider $\tau_1$ to be large so that $\tau_1\ge 1$. This allows the prior for $(\beta_j,\gamma_j)$ to be flat beyond the spike component at the origin. 
 We illustrate the components of a bivariate spike and slab prior in 
 \cref{fig:ssbl} (with fixed $\sigma=1$). We generate the spike component 
 with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
@@ -388,10 +388,15 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
 \end{figure}
 
 For the precision term $1/\sigma^2$, a natural choice of prior is the gamma distribution
-as it allows the control of both the location and the scale of the precision. To
-ensure that the prior is able to represent the data, we consider $b=1$ and 
-fix $a$ so that it represents the prior mean of the precision. In cases where we have no prior information,
-we can simply consider a large value for $a$ so that the interval
+as it allows the control of both the location and the scale of the precision.
+%%% MT to TB: why not simply say the prior is exponential?
+To ensure that the prior is able to represent the data, we consider $b=1$ and 
+fix $a$ so that it represents the prior mean of the precision.
+%%% MT to TB: "no prior information" seems a bit misleading here? I suggest removing
+% In cases where we have no prior information,
+We can simply consider a large enough value for $a$
+%%% MT to TB: the next phrase is confusing... do you mean to say "with probability ..." (not sure what that is for [0,2a]))
+so that the interval
 $[0, 2a]$ contains the true value of the precision.
 As defined earlier, $\pi_j$ is used as the selection probability
 of the $j$-th predictor in either of the models and we use a beta prior to specify 
