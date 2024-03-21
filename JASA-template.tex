@@ -520,6 +520,7 @@ total number of variables present in either of the models.
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
 We consider the $j$-th predictor to be removed from both the
 treatment and outcome model, if
+%%% MT to TB: should we add a subscript q to \mathbb{E} to emphasize the dependence?
 \begin{align}\label{eq:vs:remove}
 	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}(\pi_j\mid W) < 1/2.
 \end{align}
