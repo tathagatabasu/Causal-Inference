@@ -262,8 +262,7 @@ To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
 we also need to consider the
 association between the treatment indicators $T$ and the predictors $X$.
-In literature, authors often suggest a probit link function to 
-construct the regression model.
+A common choice in the literature is to use a probit link function.
 In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 
@@ -283,7 +282,14 @@ link function, we assume that we can model the $T_i$ through the following \cite
     0 & \text{otherwise}
     \end{cases}
 \end{align}
-where $u_i\sim\mathcal{N}(0,1)$. 
+where $u_i\sim\mathcal{N}(0,1)$.
+%%% MT to TB: not entirely trivial so I added a quick derivation
+With this model, indeed
+\begin{align}
+  P(T_i=1\mid X_i)
+  &=P(T_i^*>0)=P(u_i>-X_i\gamma)=1-P(u_i\le -X_i\gamma) \\
+  &=1-\Phi(-X_i\gamma)=\Phi(X_i\gamma)
+\end{align}
 
 Now, to construct the joint likelihood function, we define an extended
 output $2n\times 1$ column vector
