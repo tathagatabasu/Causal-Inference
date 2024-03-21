@@ -171,6 +171,14 @@ we discuss our findings and conclude this paper in \cref{sec:conc}.
 
 \section{Causal Estimation}\label{sec:causal}
 
+%%% MT to TB: there is a slight disjoint between this section and what
+%%% comes later: only \delta_i is ever being referred to, \hat{\delta}
+%%% is never referred to later on (also I find its definition
+%%% confusing); can we simply say that we try to estimate
+%%% $\delta_{n+1}$, the main difficulty being that $\delta_1$, \dots,
+%%% $\delta_n$ are not directly observable, instead we only observe
+%%% each $Y_i$ under either $T_i=0$ or $T_i=1$ but never both?
+
 Let an observational study on $n$ individuals give us the outcomes $Y\coloneqq(Y_1, \dots, Y_n)$ along with 
 corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$. Then the
 treatment 
