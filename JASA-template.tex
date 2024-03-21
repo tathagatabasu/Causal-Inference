@@ -233,13 +233,17 @@ so that
 \end{equation}
 where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$. Clearly, when
 the underlying true outcome model is linear with respect to the treatment,
+%%% MT to BT: should we say $\delta_{n+1}$ here (and Y_{n+1}, T_{n+1})?
 \begin{equation}
 	\delta_i = \mathbb{E}(Y_i\mid T_i =1) - \mathbb{E}(Y_i\mid T_i=0) = \beta_{T}.
 \end{equation}
-In the presence of confounders we also need to consider the
+To estimate $\beta_T$,
+especially in the presence of confounders,
+we also need to consider the
 association between the treatment indicators and the predictors.
 In literature, authors often suggest a probit link function to 
-construct the regression model. This way, we can
+construct the regression model.
+In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 
 $\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we define
