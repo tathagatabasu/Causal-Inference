@@ -467,20 +467,21 @@ variable $T^*$.
 \subsection{Robust Bayesian Analysis}
 
 The hierarchical model presented above is a standard spike and slab model for
-variable selection and performs well when we have sufficient data to begin with. 
-However, especially in the case of causal inference having sufficient data may not 
-be feasible. Moreover, 
-we also need to be cautious about the side effects of a treatment.
+variable selection and performs well when we have sufficient data. 
+However, especially in the case of causal inference, we do not always have sufficient data. Moreover, 
+we also must be cautious about the side effects of a treatment.
 Therefore, we are particularly interested in constructing a robust Bayesian framework
-for variable selection. This way, when we are preparing a guideline for treatment, we 
+for variable selection. In this way, when we are preparing guidelines for treatment, we 
 can have the option to ask for more data before reaching any conclusion. To achieve this,
-we consider a utility based framework with three possible ways of determining a variable.
+we consider a utility based framework with three possible ways of
+%%% MT to TB: not sure what is meant, subsequent text does not consider "determining a variable"
+determining a variable.
 
 In general, an unsuccessful treatment of a subject can have severe consequences 
 which cannot be associated with a suitable loss function. Instead, we
 assume that we can always revert any initial mistreatment by further treatments, 
-and we can associate a loss function with the cost of further treatments. This way, 
-in the simplest case, we can associate two constant loss values $\ell_1,\ell_2$ 
+and we can associate a loss function with the cost of further treatments.
+So, we will associate two constant loss values $\ell_1$ and $\ell_2$ 
 with false positives and false negatives respectively. 
 Clearly, false positives will lead to unwanted side effects and
 false negatives will lead to mistreatment of the patient. Finally, we associate
