@@ -178,53 +178,25 @@ we discuss our findings and conclude this paper in \cref{sec:conc}.
 
 \section{Causal Estimation}\label{sec:causal}
 
-%%% MT to TB: there is a slight disjoint between this section and what
-%%% comes later: only \delta_i is ever being referred to, \hat{\delta}
-%%% is never referred to later on (also I find its definition
-%%% confusing); can we simply say that we try to estimate
-%%% $\delta_{n+1}$, the main difficulty being that $\delta_1$, \dots,
-%%% $\delta_n$ are not directly observable, instead we only observe
-%%% each $Y_i$ under either $T_i=0$ or $T_i=1$ but never both?
-
-Let an observational study on $n$ individuals give us the outcomes $Y\coloneqq(Y_1, \dots, Y_n)$ along with 
-corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$. Then the
-treatment 
-effect in the population is given by the expectation of the difference
-in outcomes between the treatment and controls:
-%%% MT to TB: I don't understand this equation; since Y and T are vectors, is \delta simply \delta_1,\dots,\delta_n? I think something else is meant? or remove this equation?
-\begin{align}
-	\delta = \mathbb{E}(Y\mid T =1) - \mathbb{E}(Y\mid T=0).
-\end{align}
-Similarly, the individual causal
-effect of treatment $T_i$ on outcome $Y_i$ is given by:
-\begin{align}
-	\delta_i \coloneqq \mathbb{E}(Y_i\mid T_i=1) - \mathbb{E}(Y_i\mid T_i=0).
-\end{align}
-%%% MT to TB: are we interested in predicting the effect on an individual that is not yet observed, i.e. say $\delta_{n+1}$?
-That is, we are interested in the difference between the outcomes when the $i$-th subject receives
-the treatment and when they remain as a control. 
-
-In theory, both $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$ exist.
-However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
-What we can observe is the average causal effect of the treatment,
-by calculating the averaged
-outcome of all the subjects that received the treatment
-minus that of all the subjects that remained as control:
-\begin{align}
-  \hat{\delta} \coloneqq 
-  %\frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1)-\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}
-  %%% MT to TB check if this is correct, it seems a bit simpler to write like this
-  \frac{\sum_{i=1}^n Y_iT_i-\sum_{i=1}^n Y_i(1-T_i)}{n}.
-\end{align}
-%%% MT to TB: is it assumed both groups have the same size, namely n/2? or not?
-However, this relies on an important assumption that the treatment effect
-on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \cite{winship99}.
-
 \subsection{Regression Model}
+
+Let an observational study on $n$ individuals give us
+the outcomes $Y\coloneqq(Y_1, \dots, Y_n)$ along with 
+corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$.
 Regression methods are widely used in causal effect estimation. The
 main idea behind these regression methods is to remove the
 correlation between the treatment indicator and the error term
-\cite{winship99,HECKMAN1985}. To do so, we rely on $p$ different observed quantities
+\cite{winship99,HECKMAN1985}.
+
+%%% MT to TB: not sure where this text needs to go, omitted for now...
+
+% In theory, both $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$ exist.
+% However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
+
+% We rely on the important assumption that the treatment effect
+% on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \cite{winship99}.
+
+To do so, we rely on $p$ different observed quantities
 or predictors denoted by $X\coloneqq$ $[X_1^T, \dots, X_n^T]^T$
 where each $X_i\in\mathbb{R}^p$.
 Each $X_i$ is treated as a $p$-dimensional row vector,
@@ -238,32 +210,27 @@ so that
 \begin{equation}
 	Y_i =  T_i \beta_{T} + X_i\beta + \epsilon_i
 \end{equation}
-where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$. Clearly, when
-the underlying true outcome model is linear with respect to the treatment,
-%%% MT to BT: should we say $\delta_{n+1}$ here (and Y_{n+1}, T_{n+1})?
-\begin{equation}
-	\delta_i = \mathbb{E}(Y_i\mid T_i =1) - \mathbb{E}(Y_i\mid T_i=0) = \beta_{T}.
-\end{equation}
-*** MT to TB: trying to derive this\dots ***      
-\begin{align}
-  \delta_i
-  &=\mathbb{E}(Y_i\mid T_i =1) - \mathbb{E}(Y_i\mid T_i=0)\\
-  &=\beta_T+\mathbb{E}(X_i\beta+\epsilon_i\mid T_i =1) - \mathbb{E}(X_i\beta+\epsilon_i\mid T_i=0)\\
-  %%% MT to BT:
-  \intertext{*** I get why $\epsilon_i$ has expectation zero (assumed independent from $T_i$); but why do the $X_i\beta$ terms vanish, since $X_i$ and $T_i$ are not assumed independent? maybe this can only assumed to hold for $i=n+1$ i.e. for the `next' person, not for the person in the data\dots another even better solution is just to condition on $X_{n+1}$ since this is known, then the entire problem goes away ***}
-  &=\beta_{T}.
-\end{align}
-*** MT to BT: derivation v2; this shows the causal effect does not depend on the value of $X_{n+1}$: ***
+where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$.
+
+%%% MT to TB: check if you're happy with this paragraph
+To decide whether or not to treat a new individual with given predictors,
+we are mainly interested in the effect of the treatment on the outcome.
+More precisely, the treatment effect of a new individual, indexed as $n+1$,
+whose outcome $Y_{n+1}$ is not yet observed, and with observed predictors $X_{n+1}=x_{n+1}$, is defined by:
 \begin{align}
   \delta(x_{n+1})
-  &=\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)\\
+  &\coloneqq\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)
+\end{align}
+For our model, due to linearity of expectation, we have that
+\begin{align}
+  \delta(x_{n+1})
   &=\beta_T+x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \\
   &\quad - x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)\\
-  %%% MT to BT:
   \intertext{and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
   &=\beta_{T}.
 \end{align}
-Note that, for this model, the causal effect $\delta(x_{n+1})$ does not depend on the value $x_{n+1}$ of $X_{n+1}$.
+Note that, for this model, the treatment effect $\delta(x_{n+1})$ does not depend on the value $x_{n+1}$ of $X_{n+1}$.
+So, to find the treatment effect, we simply need to estimate $\beta_T$.
 
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
