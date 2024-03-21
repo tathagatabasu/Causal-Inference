@@ -58,19 +58,19 @@
 \address{$^2$Department of Mathematical Sciences, Durham University}
 
 \begin{abstract}
-Causal inference using observational data is an important aspect in
-many fields such as epidemiology, social science, economics, etc. In
-particular, our goal is to find the treatment effect on the subjects
-along with the causal links between the variables and the outcome.
-However, estimation for such problems are extremely 
-difficult as the treatment effects may vary from subject 
-to subject and modelling the underlying heterogeneity explicitly makes the 
+Causal inference using observational data is important in
+many fields, including epidemiology, social science, economics, and many more.
+The goal of causal inference is to find the treatment effect on the subjects
+by identifying causal links between the variables and the outcome.
+However, estimation of such causal links is extremely 
+difficult because the treatment effects may vary from subject 
+to subject. Unfortunately, modelling the underlying heterogeneity explicitly makes the 
 problem practically unsolvable. Additionally, for high dimensional problems,
 we often need to find a subset of 
 explanatory variables to initiate the treatment. However, current variable selection methods
-tend to maximise the predictive performance of the outcome model only. This can be problematic under limited information,
+simply tend to maximise the predictive performance of the outcome model. This can be problematic when information and data are limited,
 as the consequence of mistreatment can be harmful. 
-So, in this paper, we develop our model using
+So, in this paper, we develop a model for causal inference using
 robust Bayesian analysis, to allow for abstention when selecting
 explanatory variables.
 Our robust Bayesian model uses a set of spike and slab priors 
@@ -85,10 +85,10 @@ indicators. To avoid that, we apply a post-hoc selection scheme
 which successfully removes negligible non-zero effects from the model,
 attaining a smaller set of confounders. Finally, we illustrate
 our method using a synthetic dataset.
-
 \end{abstract}
 
 \maketitle
+
 \section{Introduction}\label{sec:intro}
 
 In causal inference, we are interested in estimating the causal
