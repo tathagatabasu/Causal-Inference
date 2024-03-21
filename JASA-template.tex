@@ -140,16 +140,19 @@ inference with a single prior may not be reliable.
 %%% MT to TB: I don't quite understand the heteroscedasticity argument;
 %%% I added "inference with a single prior" above instead
 % in presence of heteroscedasticity within the data.
-Instead, we use expert opinion and elicit a set of priors 
+Instead, we use expert opinion to elicit a set of priors 
 based on empirical evidence. 
-This also allows us to construct the problem of confounder identification 
+This allows us to construct the problem of confounder identification 
 in a framework where abstention has a relatively positive gain i.e.~
 when the cost of further tests/data collection is cheaper than
-mistreating a subject. To propose our 
-framework, we consider a set of continuous spike and slab priors 
-\cite{ishwaran2005} for confounder identification and construct a Bayesian 
-group LASSO \cite{xu2015} type problem. To perform the prior sensitivity 
-analysis, we consider a set of beta priors on the covariate selection 
+mistreating a subject.
+
+Our framework considers a set of continuous spike and slab priors 
+\cite{ishwaran2005} for confounder identification.
+%%% MT to TB: check if you are happy with this next sentence
+We thereby construct a Bayesian group LASSO \cite{xu2015} type problem.
+To perform sensitivity analysis,
+we consider a set of beta priors on the covariate selection 
 probability of the spike and slab priors. We use the posteriors of this
 covariate selection probability for identifying the confounders. Finally, 
 we consider a post-hoc coefficient adjustment method \cite{hahn2015}
