@@ -12,13 +12,22 @@ library(doParallel)
 
 source("other_causal.R")
 
+
 set.seed(1e8)
 
-sig1 = diag(50)
+sig1 = matrix(nrow=50,ncol = 50)#diag(50)#
 
+for (i in 1:50) {
+  for (j in 1:50) {
+    sig1[i,j] = 0.3^abs(i-j)
+  }
+}
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-3, tau_1 = 10, gam_a = 10, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 5){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
   MCMC = list()
+  x_scale = scale(x)
+  x_ctr = attr(x_scale,"scaled:center")
+  x_sd = attr(x_scale,"scaled:scale")
   
   string = "
   model {
@@ -109,11 +118,11 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-3, tau_1 = 10, gam_a = 10, gam_b = 1
   
   for (i in 1:length(alphas)) {
     
-    b_post[[i]] = as.matrix(MCMC[[i]][[1]])[,1:ncol(x)]
+    b_post[[i]] = as.matrix(MCMC[[i]][[1]])[,1:ncol(x)] / x_sd
     
     b_T_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(1+ncol(x))]
     
-    g_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)]
+    g_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)] / x_sd
     
     w_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3):(3*ncol(x)+2)]
     
@@ -131,33 +140,38 @@ coeff_adj = function(rbvs_obj){
 
 # setting1 
 
-# beta1 = c(runif(5, -4, -1), runif(5, 1, 4))
-# gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
+if(T){
+  x_all = rmvnorm(75, sigma = sig1)
+  
+  beta1 = c(runif(5, -4, -1), runif(5, 1, 4))
+  gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
+  
+  a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
+  a1_all = sapply(1:75, function(j)rbinom(1,1,a1_dum_all[j]))
+  
+  
+  y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(75, sd = .1)
+}
 
-x_all = rmvnorm(800, sigma = sig1)
+# val1 = sum(abs(cor(x_all,y1_all))>0.2)
+# val2 = sum(abs(cor(x_all,y1_all))>0.3)
+# 
+# alph_min = min(val1, val2) /50
+# alph_max = max(val1, val2) /50
 
-beta1 = c(runif(5, -4, -1), runif(5, 1, 4))
-gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
-
-a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-a1_all = sapply(1:800, function(j)rbinom(1,1,a1_dum_all[j]))
-
-
-y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(800, sd = .1)
-
-marg_cor_clust = kmeans(abs(cor(x_all,y1_all)), 2)
-
-alph_min = sum(abs(cor(x_all,y1_all))>max(marg_cor_clust$centers)) /50
-alph_max = sum(abs(cor(x_all,y1_all))>min(marg_cor_clust$centers)) /50
-
-
-for (k in 1:5) {
-  N = 25*2^k
+for (k in 5:10) {
+  N = 25 + 5*k
   
   x = x_all[1:N,]
   y1 = y1_all[1:N]
   a1 = a1_all[1:N]
   
+  val1 = sum(abs(cor(x,y1))>0.15)
+  val2 = sum(abs(cor(x,y1))>0.35)
+
+  alph_min = min(val1, val2) /50
+  alph_max = max(val1, val2) /50
+
   rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
   
   prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
@@ -189,75 +203,91 @@ for (k in 1:5) {
   assign(paste0("set1_SSCE_", k), SSCE.fit)
   assign(paste0("set1_BSSCE_", k), BSSCE.fit)
   assign(paste0("set1_BSSL_",k), BSSL.fit)
+  print(k)
+}
+
+for (k in 0:4) {
+  N = 25 + 5*k
   
+  x = x_all[1:N,]
+  y1 = y1_all[1:N]
+  a1 = a1_all[1:N]
+  
+  val1 = sum(abs(cor(x,y1))>0.15)
+  val2 = sum(abs(cor(x,y1))>0.35)
+
+  alph_min = min(val1, val2) /50
+  alph_max = max(val1, val2) /50
+  
+  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
+  
+  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
+  
+  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  beta_dss = list()
+  gamma_dss = list()
+  
+  for (i in 1:length(rbvs_obj$Causal_post)) {
+    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+  }
+  
+  assign(paste0("set1_active_", k), active)
+  assign(paste0("set1_casual_", k), causal_exp)
+  assign(paste0("set1_rbvs_obj_",k), rbvs_obj)
+  
+  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
+  
+  assign(paste0("set1_BSSL_",k), BSSL.fit)
+  print(k)
 }
-
-k=0
-N = 25*2^k
-
-x = x_all[1:N,]
-y1 = y1_all[1:N]
-a1 = a1_all[1:N]
-
-rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-
-prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-
-beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-beta_dss = list()
-gamma_dss = list()
-
-for (i in 1:length(rbvs_obj$Causal_post)) {
-  beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-  gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-}
-
-assign(paste0("set1_active_", k), active)
-assign(paste0("set1_casual_", k), causal_exp)
-assign(paste0("set1_rbvs_obj_",k), rbvs_obj)
-
-BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-
-assign(paste0("set1_BSSL_",k), BSSL.fit)
 ###############################################################################################
 
 # setting2
 
 # beta2 = c(runif(10, -4, -1), runif(5, 1, 4))
 # gamma2 = c(runif(5, -4, -1), runif(5, 1, 4))
-x_all = rmvnorm(800, sigma = sig1)
 
-beta1 = c(runif(10, -4, -1), runif(5, 1, 4))
-gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
+if(T){
+  x_all = rmvnorm(75, sigma = sig1)
+  
+  beta1 = c(runif(10, -4, -1), runif(5, 1, 4))
+  gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
+  
+  a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
+  a1_all = sapply(1:75, function(j)rbinom(1,1,a1_dum_all[j]))
+  
+  
+  y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(75, sd = .1)
+}
 
-a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-a1_all = sapply(1:800, function(j)rbinom(1,1,a1_dum_all[j]))
+# val1 = sum(abs(cor(x_all,y1_all))>0.2)
+# val2 = sum(abs(cor(x_all,y1_all))>0.3)
+# 
+# alph_min = min(val1, val2) /50
+# alph_max = max(val1, val2) /50
 
-
-y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(800, sd = .1)
-
-marg_cor_clust = kmeans(abs(cor(x_all,y1_all)), 2)
-
-alph_min = sum(abs(cor(x_all,y1_all))>max(marg_cor_clust$centers)) /50
-alph_max = sum(abs(cor(x_all,y1_all))>min(marg_cor_clust$centers)) /50
-
-
-
-for (k in 1:5) {
-  N = 25*2^k
+for (k in 5:10) {
+  N = 25 + 5*k
   
   x = x_all[1:N,]
   y1 = y1_all[1:N]
   a1 = a1_all[1:N]
   
-  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
+  val1 = sum(abs(cor(x,y1))>0.15)
+  val2 = sum(abs(cor(x,y1))>0.35)
+
+  alph_min = min(val1, val2) /50
+  alph_max = max(val1, val2) /50
+  
+  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 1)
   
   prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
   
@@ -288,103 +318,120 @@ for (k in 1:5) {
   assign(paste0("set2_SSCE_", k), SSCE.fit)
   assign(paste0("set2_BSSCE_", k), BSSCE.fit)
   assign(paste0("set2_BSSL_",k), BSSL.fit)
-  
+  print(k)
 }
 
 k=0
-N = 25*2^k
 
-x = x_all[1:N,]
-y1 = y1_all[1:N]
-a1 = a1_all[1:N]
+for (k in 0:4) {
+  N = 25 + 5*k
+  
+  x = x_all[1:N,]
+  y1 = y1_all[1:N]
+  a1 = a1_all[1:N]
+  
+  val1 = sum(abs(cor(x,y1))>0.15)
+  val2 = sum(abs(cor(x,y1))>0.35)
 
-rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-
-prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-
-beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-beta_dss = list()
-gamma_dss = list()
-
-for (i in 1:length(rbvs_obj$Causal_post)) {
-  beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-  gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+  alph_min = min(val1, val2) /50
+  alph_max = max(val1, val2) /50
+  
+  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
+  
+  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
+  
+  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  
+  beta_dss = list()
+  gamma_dss = list()
+  
+  for (i in 1:length(rbvs_obj$Causal_post)) {
+    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+  }
+  
+  assign(paste0("set2_active_", k), active)
+  assign(paste0("set2_casual_", k), causal_exp)
+  assign(paste0("set2_rbvs_obj_",k), rbvs_obj)
+  
+  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
+  
+  assign(paste0("set2_BSSL_",k), BSSL.fit)
+  print(k)
 }
 
-assign(paste0("set2_active_", k), active)
-assign(paste0("set2_casual_", k), causal_exp)
-assign(paste0("set2_rbvs_obj_",k), rbvs_obj)
-
-BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-
-assign(paste0("set2_BSSL_",k), BSSL.fit)
 ######################################################################################
 
 # tables
 
-xtable(rbind(cbind(range(set1_casual_0),range(set1_casual_1),range(set1_casual_2),range(set1_casual_3),range(set1_casual_4),range(set1_casual_5)),
-             cbind(NA, set1_SSCE_1$mean.trt.effect, set1_SSCE_2$mean.trt.effect, set1_SSCE_3$mean.trt.effect, set1_SSCE_4$mean.trt.effect, set1_SSCE_5$mean.trt.effect),
-             cbind(NA, set1_BSSCE_1$mean.trt.effect, set1_BSSCE_2$mean.trt.effect, set1_BSSCE_3$mean.trt.effect, set1_BSSCE_4$mean.trt.effect, set1_BSSCE_5$mean.trt.effect),
-             cbind(set1_BSSL_0$means[52], set1_BSSL_1$means[52], set1_BSSL_2$means[52], set1_BSSL_3$means[52], set1_BSSL_4$means[52], set1_BSSL_5$means[52])), digits = rep(3,7))
+set1_sum_beta_trt = c()
+for (k in 0:4) {
+  set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), NA, NA, get(paste0("set1_BSSL_", k))$means[52]))
+}
 
-xtable(rbind(cbind(range(set2_casual_0),range(set2_casual_1),range(set2_casual_2),range(set2_casual_3),range(set2_casual_4),range(set2_casual_5)),
-             cbind(NA, set2_SSCE_1$mean.trt.effect, set2_SSCE_2$mean.trt.effect, set2_SSCE_3$mean.trt.effect, set2_SSCE_4$mean.trt.effect, set2_SSCE_5$mean.trt.effect),
-             cbind(NA, set2_BSSCE_1$mean.trt.effect, set2_BSSCE_2$mean.trt.effect, set2_BSSCE_3$mean.trt.effect, set2_BSSCE_4$mean.trt.effect, set2_BSSCE_5$mean.trt.effect),
-             cbind(set2_BSSL_0$means[52], set2_BSSL_1$means[52], set2_BSSL_2$means[52], set2_BSSL_3$means[52], set2_BSSL_4$means[52], set2_BSSL_5$means[52]))
-       ,digits = rep(3,7))
+for (k in 5:10) {
+  set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), get(paste0("set1_SSCE_", k))$mean.trt.effect, get(paste0("set1_BSSCE_", k))$mean.trt.effect, get(paste0("set1_BSSL_", k))$means[52]))
+}
 
+set2_sum_beta_trt = c()
+for (k in 0:4) {
+  set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), NA, NA, get(paste0("set2_BSSL_", k))$means[52]))
+}
 
-xtable(rbind(c(sum(which(colMeans(set1_active_0)==1) > 10) + sum(which(colMeans(set1_active_0)==0) <= 10) + 0.5*sum(colMeans(set1_active_0) < 1 & colMeans(set1_active_0) >0),
-               sum(which(colMeans(set1_active_1)==1) > 10) + sum(which(colMeans(set1_active_1)==0) <= 10) + 0.5*sum(colMeans(set1_active_1) < 1 & colMeans(set1_active_1) >0),
-               sum(which(colMeans(set1_active_2)==1) > 10) + sum(which(colMeans(set1_active_2)==0) <= 10) + 0.5*sum(colMeans(set1_active_2) < 1 & colMeans(set1_active_2) >0),
-               sum(which(colMeans(set1_active_3)==1) > 10) + sum(which(colMeans(set1_active_3)==0) <= 10) + 0.5*sum(colMeans(set1_active_3) < 1 & colMeans(set1_active_3) >0),
-               sum(which(colMeans(set1_active_4)==1) > 10) + sum(which(colMeans(set1_active_4)==0) <= 10) + 0.5*sum(colMeans(set1_active_4) < 1 & colMeans(set1_active_4) >0),
-               sum(which(colMeans(set1_active_5)==1) > 10) + sum(which(colMeans(set1_active_5)==0) <= 10) + 0.5*sum(colMeans(set1_active_5) < 1 & colMeans(set1_active_5) >0)),
-             c(NA,sum(which(set1_SSCE_1$IP>=0.5) >10)+ sum(which(set1_SSCE_1$IP<0.5) <=10),
-               sum(which(set1_SSCE_2$IP>=0.5) >10)+ sum(which(set1_SSCE_2$IP<0.5) <=10),
-               sum(which(set1_SSCE_3$IP>=0.5) >10)+ sum(which(set1_SSCE_3$IP<0.5) <=10),
-               sum(which(set1_SSCE_4$IP>=0.5) >10)+ sum(which(set1_SSCE_4$IP<0.5) <=10),
-               sum(which(set1_SSCE_5$IP>=0.5) >10)+ sum(which(set1_SSCE_5$IP<0.5) <=10)),
-             c(NA,sum(which(set1_BSSCE_1$IP>=0.5) >10)+ sum(which(set1_BSSCE_1$IP<0.5) <=10),
-               sum(which(set1_BSSCE_2$IP>=0.5) >10)+ sum(which(set1_BSSCE_2$IP<0.5) <=10),
-               sum(which(set1_BSSCE_3$IP>=0.5) >10)+ sum(which(set1_BSSCE_3$IP<0.5) <=10),
-               sum(which(set1_BSSCE_4$IP>=0.5) >10)+ sum(which(set1_BSSCE_4$IP<0.5) <=10),
-               sum(which(set1_BSSCE_5$IP>=0.5) >10)+ sum(which(set1_BSSCE_5$IP<0.5) <=10)),
-             c(sum(which(set1_BSSL_0$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_0[1:50]$IP<0.5) <=10),
-               sum(which(set1_BSSL_1$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_1[1:50]$IP<0.5) <=10),
-               sum(which(set1_BSSL_2$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_2$IP[1:50]<0.5) <=10),
-               sum(which(set1_BSSL_3$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_3$IP[1:50]<0.5) <=10),
-               sum(which(set1_BSSL_4$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_4$IP[1:50]<0.5) <=10),
-               sum(which(set1_BSSL_5$IP[1:50]>=0.5) >10)+ sum(which(set1_BSSL_5$IP[1:50]<0.5) <=10))
-))
+for (k in 5:10) {
+  set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), get(paste0("set2_SSCE_", k))$mean.trt.effect, get(paste0("set2_BSSCE_", k))$mean.trt.effect, get(paste0("set2_BSSL_", k))$means[52]))
+}
 
-xtable(rbind(c(sum(which(colMeans(set2_active_0)==1) > 15) + sum(which(colMeans(set2_active_0)==0) <= 15) + 0.5*sum(colMeans(set2_active_0) < 1 & colMeans(set2_active_0) >0),
-               sum(which(colMeans(set2_active_1)==1) > 15) + sum(which(colMeans(set2_active_1)==0) <= 15) + 0.5*sum(colMeans(set2_active_1) < 1 & colMeans(set2_active_1) >0),
-               sum(which(colMeans(set2_active_2)==1) > 15) + sum(which(colMeans(set2_active_2)==0) <= 15) + 0.5*sum(colMeans(set2_active_2) < 1 & colMeans(set2_active_2) >0),
-               sum(which(colMeans(set2_active_3)==1) > 15) + sum(which(colMeans(set2_active_3)==0) <= 15) + 0.5*sum(colMeans(set2_active_3) < 1 & colMeans(set2_active_3) >0),
-               sum(which(colMeans(set2_active_4)==1) > 15) + sum(which(colMeans(set2_active_4)==0) <= 15) + 0.5*sum(colMeans(set2_active_4) < 1 & colMeans(set2_active_4) >0),
-               sum(which(colMeans(set2_active_5)==1) > 15) + sum(which(colMeans(set2_active_5)==0) <= 15) + 0.5*sum(colMeans(set2_active_5) < 1 & colMeans(set2_active_5) >0)),
-             c(NA,sum(which(set2_SSCE_1$IP>=0.5) >15)+ sum(which(set2_SSCE_1$IP<0.5) <=15),
-               sum(which(set2_SSCE_2$IP>=0.5) >15)+ sum(which(set2_SSCE_2$IP<0.5) <=15),
-               sum(which(set2_SSCE_3$IP>=0.5) >15)+ sum(which(set2_SSCE_3$IP<0.5) <=15),
-               sum(which(set2_SSCE_4$IP>=0.5) >15)+ sum(which(set2_SSCE_4$IP<0.5) <=15),
-               sum(which(set2_SSCE_5$IP>=0.5) >15)+ sum(which(set2_SSCE_5$IP<0.5) <=15)),
-             c(NA,sum(which(set2_BSSCE_1$IP>=0.5) >15)+ sum(which(set2_BSSCE_1$IP<0.5) <=15),
-               sum(which(set2_BSSCE_2$IP>=0.5) >15)+ sum(which(set2_BSSCE_2$IP<0.5) <=15),
-               sum(which(set2_BSSCE_3$IP>=0.5) >15)+ sum(which(set2_BSSCE_3$IP<0.5) <=15),
-               sum(which(set2_BSSCE_4$IP>=0.5) >15)+ sum(which(set2_BSSCE_4$IP<0.5) <=15),
-               sum(which(set2_BSSCE_5$IP>=0.5) >15)+ sum(which(set2_BSSCE_5$IP<0.5) <=15)),
-             c(sum(which(set2_BSSL_0$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_0[1:50]$IP<0.5) <=15),
-               sum(which(set2_BSSL_1$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_1[1:50]$IP<0.5) <=15),
-               sum(which(set2_BSSL_2$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_2$IP[1:50]<0.5) <=15),
-               sum(which(set2_BSSL_3$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_3$IP[1:50]<0.5) <=15),
-               sum(which(set2_BSSL_4$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_4$IP[1:50]<0.5) <=15),
-               sum(which(set2_BSSL_5$IP[1:50]>=0.5) >15)+ sum(which(set2_BSSL_5$IP[1:50]<0.5) <=15))
-))
+set1_sum_loss = c()
+
+for (k in 0:4) {
+  set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10), 
+                                             sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
+                                             sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
+                                             NA, NA,
+                                             NA, NA,
+                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]>=0.5) >10),
+                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]<0.5) <=10)))
+}
+
+for (k in 5:10) {
+  set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10), 
+                                             sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
+                                             sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
+                                             sum(which(get(paste0("set1_SSCE_",k))$IP>=0.5) >10), 
+                                             sum(which(get(paste0("set1_SSCE_",k))$IP<0.5) <=10),
+                                             sum(which(get(paste0("set1_BSSCE_",k))$IP>=0.5) >10), 
+                                             sum(which(get(paste0("set1_BSSCE_",k))$IP<0.5) <=10),
+                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]>=0.5) >10),
+                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]<0.5) <=10)))
+}
+
+set2_sum_loss = c()
+
+for (k in 0:4) {
+  set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15), 
+                                             sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
+                                             sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
+                                             NA, NA,
+                                             NA, NA,
+                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]>=0.5) >15),
+                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]<0.5) <=15)))
+}
+
+for (k in 5:10) {
+  set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15), 
+                                             sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
+                                             sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
+                                             sum(which(get(paste0("set2_SSCE_",k))$IP>=0.5) >15), 
+                                             sum(which(get(paste0("set2_SSCE_",k))$IP<0.5) <=15),
+                                             sum(which(get(paste0("set2_BSSCE_",k))$IP>=0.5) >15), 
+                                             sum(which(get(paste0("set2_BSSCE_",k))$IP<0.5) <=15),
+                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]>=0.5) >15),
+                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]<0.5) <=15)))
+}
