@@ -1,37 +1,20 @@
 % !TeX spellcheck = en_GB
 
-\documentclass{amsart}
-\usepackage[foot]{amsaddr} % put addresses on first page
-\usepackage[british]{babel}
-\usepackage{geometry}
+\documentclass[preprint,12pt]{elsarticle}
 \usepackage{graphicx,psfrag,epsf}
-\usepackage{enumerate}
-\usepackage{enumitem}
 \usepackage{amsfonts}
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\allowdisplaybreaks
 \usepackage{longtable}
 \usepackage{bigints}
-%\usepackage{siunitx}
-\usepackage{amsthm}
 \usepackage{soul}
 \usepackage{tikz}
 \usepackage{color}
-\usepackage{easyReview} % for \comment, \alert, etc.
-
-\newcommand{\addition}[1]{#1}
 
 \usepackage{hyperref}
 \usepackage[capitalise]{cleveref}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-\newtheorem{lemma}[theorem]{Lemma}
-%
-
-\usepackage[numbers]{natbib}
-\usepackage{url} % not crucial - just used below for the URL 
+\usepackage{url}
 \usepackage{doi}
 \usepackage{multicol}
 \usepackage{multirow}
@@ -44,20 +27,34 @@
 \newcommand{\lexp}{\underline{\text{E}}}
 \newcommand{\uexp}{\overline{\text{E}}}
 
-
-\keywords{high dimensional data; variable selection; Bayesian analysis; imprecise probability}
+\usepackage{lineno}
 
 \begin{document}
 
+\begin{frontmatter}
+
+%% Title, authors and addresses
 \title{Robust Bayesian Analysis of Causal Inference Problems}
-\author{Tathagata Basu$^1$}
-\email{tathagatabasumaths@gmail.com}
-\author{Matthias C.~M.~Troffaes$^2$}
-\email{matthias.troffaes@durham.ac.uk}
-\address{$^1$Civil and Environmental Engineering, University of Strathclyde}
-\address{$^2$Department of Mathematical Sciences, Durham University}
+\author[1]{Tathagata Basu\corref{cor1}}
+\ead{tathagatabasumaths@gmail.com}
+\cortext[cor1]{Corresponding author}
+\author[2]{Matthias C.~M.~Troffaes}
+\ead{matthias.troffaes@durham.ac.uk}
+\affiliation[1]{organization={Civil and Environmental Engineering, University of Strathclyde},
+            addressline={}, 
+            city={},
+            postcode={}, 
+            state={},
+            country={}}
+\affiliation[2]{organization={Department of Mathematical Sciences, Durham University},
+            addressline={South Road}, 
+            city={Durham},
+            postcode={DH13LE}, 
+            state={},
+            country={United Kingdom}}
 
 \begin{abstract}
+%%% MT to TB: will try reduce abstract length slightly        
 Causal inference using observational data is important in
 many fields, including epidemiology, social science, economics, and many more.
 The goal of causal inference is to find the treatment effect on the subjects
@@ -87,7 +84,16 @@ attaining a smaller set of confounders. Finally, we illustrate
 our method using a synthetic dataset.
 \end{abstract}
 
-\maketitle
+\begin{keyword}
+  high dimensional data\sep variable selection\sep Bayesian analysis\sep imprecise probability
+\end{keyword}
+
+\begin{highlights}
+\item *** TODO ***
+\item *** TODO ***
+\end{highlights}
+
+\end{frontmatter}
 
 \section{Introduction}\label{sec:intro}
 
@@ -838,6 +844,7 @@ and we intend to apply it on a real dataset in future work.
 
 We sincerely thank Jochen Einbeck for his contributions to an earlier version of this paper.
 
-\bibliographystyle{agsm}
+\bibliographystyle{elsarticle-num} 
 \bibliography{basu_causal}
+
 \end{document}
