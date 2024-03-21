@@ -243,7 +243,7 @@ the underlying true outcome model is linear with respect to the treatment,
   &=\mathbb{E}(Y_i\mid T_i =1) - \mathbb{E}(Y_i\mid T_i=0)\\
   &=\beta_T+\mathbb{E}(X_i\beta+\epsilon_i\mid T_i =1) - \mathbb{E}(X_i\beta+\epsilon_i\mid T_i=0)\\
   %%% MT to BT:
-  \intertext{*** I get why $\epsilon_i$ has expectation zero (assumed independent from $T_i$); but why do the $X_i\beta$ terms vanish, since $X_i$ and $T_i$ are not assumed independent? maybe this can only assumed to hold for $i=n+1$ i.e. for the `next' person, not for the person in the data\dots ***}
+  \intertext{*** I get why $\epsilon_i$ has expectation zero (assumed independent from $T_i$); but why do the $X_i\beta$ terms vanish, since $X_i$ and $T_i$ are not assumed independent? maybe this can only assumed to hold for $i=n+1$ i.e. for the `next' person, not for the person in the data\dots another even better solution is just to condition on $X_{n+1}$ since this is known, then the entire problem goes away ***}
   &=\beta_{T}.
 \end{align}
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
