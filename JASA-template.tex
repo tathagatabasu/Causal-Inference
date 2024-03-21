@@ -110,18 +110,18 @@ the propensity scores for all individuals. Subsequently, several other
 methods have been proposed based on propensity score matching;
 see \cite{winship99,stuart10} for a brief review.
 
-The Bayesian approach in causal effect estimation is a popular
-strategy in the field and one of the earlier works on this can be
-found in \cite{rubin1978}. Lately, with the rise of high dimensional 
-data, Bayesian methodologies have become
-more appealing. Crainiceanu \text{et al.~}\cite{Crainiceanu2008} proposed a bi-level 
+One of the earlier Bayesian approaches to causal inference
+can be found in \cite{rubin1978}. More recently,
+with the rise of high dimensional data,
+Bayesian methodologies have grown in popularity.
+Crainiceanu \text{et al.~}\cite{Crainiceanu2008} proposed a bi-level 
 Bayesian model averaging based method for estimating the causal 
 effect. Wang \text{et al.~}\cite{wang2015} suggested BAC (or, Bayesian adjustment for
-confounding) where they use an informative prior obtained from
-the treatment model and apply them on the outcome model for
-estimating causal effect. Several other methods were also
-proposed to tackle confounders from the point of view of Bayesian
-variable selection, see for instance \cite{Zigler2014,Hahn2018} among others.
+confounding), where an informative prior obtained from
+the treatment model is applied on the outcome model for
+estimating the causal effect. Several other methods were
+proposed to tackle confounders from a Bayesian perspective,
+see for instance \cite{Zigler2014,Hahn2018} among others.
 
 In this paper we take inspiration from the approach of Koch \text{et al.~}\cite{koch2020}, who proposed a bi-level spike and slab prior for causal effect 
 estimation. They considered a data-driven adaptive approach to
