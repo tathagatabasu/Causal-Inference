@@ -117,7 +117,9 @@ Bayesian methodologies have grown in popularity.
 Crainiceanu \text{et al.~}\cite{Crainiceanu2008} proposed a bi-level 
 Bayesian model averaging based method for estimating the causal 
 effect. Wang \text{et al.~}\cite{wang2015} suggested BAC (or, Bayesian adjustment for
-confounding), where an informative prior obtained from
+confounding),
+%%% MT to TB: check next phrase
+where an informative prior obtained from
 the treatment model is applied on the outcome model for
 estimating the causal effect. Several other methods were
 proposed to tackle confounders from a Bayesian perspective,
@@ -126,15 +128,19 @@ see for instance \cite{Zigler2014,Hahn2018} among others.
 In this paper we take inspiration from the approach of Koch \text{et al.~}\cite{koch2020}, who proposed a bi-level spike and slab prior for causal effect 
 estimation. They considered a data-driven adaptive approach to
 propose their prior which reduces the variance of the causal estimate. 
-In our approach, we perform a 
-sensitivity analysis based approach where instead of using a single prior, 
+Our approach is based on
+sensitivity analysis, where instead of using a single prior, 
 we consider a set of priors \cite{BERGER1990303}. This is particularly 
 interesting as in many cases, causal effect estimation can be performed 
-through a meta analysis and hence robust Bayesian analysis \cite{raices_cruz22} 
-can be beneficial under severe uncertainty. Moreover, for some problems 
+through a meta analysis where robust Bayesian analysis 
+can be beneficial under severe uncertainty \cite{raices_cruz22}.
+Moreover, for some problems 
 we have to rely on very limited data to perform our Bayesian analysis and 
-inference may not be reliable in presence of heteroscedasticity within
-the data. Instead, we use expert opinion and elicit a set of priors 
+inference with a single prior may not be reliable.
+%%% MT to TB: I don't quite understand the heteroscedasticity argument;
+%%% I added "inference with a single prior" above instead
+% in presence of heteroscedasticity within the data.
+Instead, we use expert opinion and elicit a set of priors 
 based on empirical evidence. 
 This also allows us to construct the problem of confounder identification 
 in a framework where abstention has a relatively positive gain i.e.~
