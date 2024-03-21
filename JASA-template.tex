@@ -246,6 +246,18 @@ the underlying true outcome model is linear with respect to the treatment,
   \intertext{*** I get why $\epsilon_i$ has expectation zero (assumed independent from $T_i$); but why do the $X_i\beta$ terms vanish, since $X_i$ and $T_i$ are not assumed independent? maybe this can only assumed to hold for $i=n+1$ i.e. for the `next' person, not for the person in the data\dots another even better solution is just to condition on $X_{n+1}$ since this is known, then the entire problem goes away ***}
   &=\beta_{T}.
 \end{align}
+*** MT to BT: derivation v2; this shows the causal effect does not depend on the value of $X_{n+1}$: ***
+\begin{align}
+  \delta(x_{n+1})
+  &=\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)\\
+  &=\beta_T+x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \\
+  &\quad - x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)\\
+  %%% MT to BT:
+  \intertext{and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
+  &=\beta_{T}.
+\end{align}
+Note that, for this model, the causal effect $\delta(x_{n+1})$ does not depend on the value $x_{n+1}$ of $X_{n+1}$.
+
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
 we also need to consider the
