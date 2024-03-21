@@ -237,10 +237,10 @@ the underlying true outcome model is linear with respect to the treatment,
 \begin{equation}
 	\delta_i = \mathbb{E}(Y_i\mid T_i =1) - \mathbb{E}(Y_i\mid T_i=0) = \beta_{T}.
 \end{equation}
-To estimate $\beta_T$,
+To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
 we also need to consider the
-association between the treatment indicators and the predictors.
+association between the treatment indicators $T$ and the predictors $X$.
 In literature, authors often suggest a probit link function to 
 construct the regression model.
 In this way, we can
