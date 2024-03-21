@@ -171,11 +171,12 @@ we discuss our findings and conclude this paper in \cref{sec:conc}.
 
 \section{Causal Estimation}\label{sec:causal}
 
-Let an observational study give us the outcomes $Y=(Y_1, \dots, Y_n)$ along with 
-corresponding treatment indicators $T=(T_1, \dots, T_n)$. Then the
+Let an observational study on $n$ individuals give us the outcomes $Y\coloneqq(Y_1, \dots, Y_n)$ along with 
+corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$. Then the
 treatment 
 effect in the population is given by the expectation of the difference
 in outcomes between the treatment and controls:
+%%% MT to TB: I don't understand this equation; since Y and T are vectors, is \delta simply \delta_1,\dots,\delta_n? I think something else is meant? or remove this equation?
 \begin{align}
 	\delta = \mathbb{E}(Y\mid T =1) - \mathbb{E}(Y\mid T=0).
 \end{align}
