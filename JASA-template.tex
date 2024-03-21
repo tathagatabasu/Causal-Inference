@@ -342,12 +342,14 @@ computation.
 
 Let $\pi_j$ denote the prior probability that the $j$-th
 predictor is associated with the outcome or the 
-treatment. That is, 
+treatment. That is, conceptually,
 \begin{equation}
 	\pi_j \coloneqq P\left((\beta_j,\gamma_j)\not=(0,0)\right).
 \end{equation}
-Then we can define the following hierarchical model for spike and 
-slab group LASSO so that,
+Practically, we model this by defining the following hierarchical model
+%%% MT to TB do you mean "from" instead of "for"? for now removed as confusing
+% for spike and  slab group LASSO
+so that,
 for $1\le j\le p$,
 \begin{align}
 	(\beta_j,\gamma_j)^T \mid \pi_{j}, \sigma^2 &\sim 
