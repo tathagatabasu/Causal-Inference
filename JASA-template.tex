@@ -195,12 +195,15 @@ In theory, both $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$ exis
 However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
 What we can observe is the average causal effect of the treatment,
 by calculating the averaged
-outcome of all the subjects that received the treatment and
-all the subjects that remained as control:
+outcome of all the subjects that received the treatment
+minus that of all the subjects that remained as control:
 \begin{align}
   \hat{\delta} \coloneqq 
-  \frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1)-\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}.
+  %\frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1)-\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}
+  %%% MT to TB check if this is correct, it seems a bit simpler to write like this
+  \frac{\sum_{i=1}^n Y_iT_i-\sum_{i=1}^n Y_i(1-T_i)}{n}.
 \end{align}
+%%% MT to TB: is it assumed both groups have the same size, namely n/2? or not?
 However, this relies on an important assumption that the treatment effect
 on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \cite{winship99}.
 
