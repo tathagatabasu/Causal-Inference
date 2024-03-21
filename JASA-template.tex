@@ -191,15 +191,15 @@ the treatment and when
 %$i$-th subject 
 it remains as a control. 
 
-In theory, both of these quantities exist.
-However, we cannot observe $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$
-the average causal effect of the treatment $T$ by calculating the averaged
+In theory, both $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$ exist.
+However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
+What we can observe is the average causal effect of the treatment,
+by calculating the averaged
 outcome of all the subjects that received the treatment and
 all the subjects that remained as control:
 \begin{align}
-	\hat{\delta} \coloneqq 
-	\frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1) - 
-		\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}.
+  \hat{\delta} \coloneqq 
+  \frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1)-\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}.
 \end{align}
 However, this relies on an important assumption that the treatment effect
 on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \cite{winship99}.
