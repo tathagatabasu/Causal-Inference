@@ -679,7 +679,7 @@ we may want to have a different value of $a$ for these sets of observations
 %%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
 instead of a fixed value of $a=10$ for all of our analyses.
 We can also see that the lower bound tends to improve
-with increasing number of observations which validates the assumption that as we accumulate
+with increasing number of observations: as we accumulate
 more information, the interval becomes smaller and converges towards
 the true value.
 
@@ -722,24 +722,30 @@ RBCE (low) & 2.79 & 3.70 & 3.77 & 3.56 & 3.69 & 3.70 & 3.81 & 3.78 & 3.81 & 3.82
     \label{fig:comp:trt}
 \end{figure}
 
-For the variable identification, we use the notion of
-different losses as described earlier. We consider
-$\ell_1=\ell_2 = 1$ and $\ell_3= 0.2$. This is a
-simplified way of choosing the loss function, we can choose more 
-sophisticated loss functions based on \cite{ZAFFALON20121282}. We use this associated loss
-to obtain the total loss, which we present in \cref{tab:misspec}.
-In the table we denote the misspecification by counting the number of
+%%% MT to TB: I changed "identification" to "selection" (assuming that is meant?)
+For variable selection, we use a loss function as described earlier.
+Here, we consider
+$\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
+%%% MT to TB: I've briefly recap what these losses mean; please check if correct
+i.e. we associate a loss of $1$ with false positive and false negative selections,
+and a loss of $0.2$ with indeterminate selections.
+Note that we could also choose more 
+sophisticated loss functions based on \cite{ZAFFALON20121282}.
+%%% MT to TB: I added "we sum these losses together across all preds"; check
+We sum these losses together across all predictors
+to obtain the total loss, presented in \cref{tab:misspec}.
+The table counts the number of
 false positives (FP) and false negatives (FN). For RBCE, we have an
-additional column `ID' which denotes the number of variables which remain as
-indeterminate.
+additional column (ID)
+which counts the number of indeterminate predictors.
 From the table it can be seen that for the first scenario, our method
 abstains from identifying some variables for 
 $n <50$. Especially for $n=25$, our method identifies 26 and 23 variables as indeterminate
 for the first setting and second setting respectively. However,
 later on our method gives more precise results in terms of variable
 selection. We also notice that BSSL tends to perform poorly
-in terms of variable selection for $n=25$, this can be seen
-from the treatment effect estimation as well.
+in terms of variable selection for $n=25$. This can be seen
+from the causal effect estimation as well.
 Moreover, we observe that for the second setting both SSCE
 and BSSCE underperform in identifying the active variables, which can 
 be explained from \cref{tab:causal} as well. 
