@@ -802,11 +802,20 @@ models.}\label{tab:misspec}
 
 \section{Conclusion}\label{sec:conc}
 
-Causal effect estimation is an important tool in statistical learning and needs to
-be performed with utmost care as in many cases we may have severe consequence of poor estimation.
-In this paper, we tackle this issue by proposing a robust Bayesian analysis of causal 
+Causal effect estimation is an important tool in statistical learning.
+Especially in risk-sensitive situations, such as medicine, it needs to
+be performed with utmost care as in many cases poor estimation can have severe adverse consequences.
+In this paper, we tackle this issue by proposing a robust Bayesian analysis of the causal 
 effect estimation problem for high dimensional data. Our 
-framework is focused on the effect of prior elicitation on confounder selection
+framework is focused on the effect of prior elicitation on
+%%% MT to TB: I don't understand "confounder selection" - do you mean
+%%% "predictor selection" or "variable selection"? (also see later,
+%%% "confounder selection" is repeated a few times; I'm not sure
+%%% "confounder" is the correct term here, some variables may be
+%%% confounding but some may not; if it is appropriate then earlier in
+%%% the paper we should talk a bit more to explain why these variables
+%%% are all confounders and be consistent with our terminology)
+confounder selection
 as well as causal effect estimation. We consider a spike and slab type
 prior for confounder selection and discuss the possible sources of uncertainty that
 need to be tackled carefully. We were particularly focused on the uncertainty associated
