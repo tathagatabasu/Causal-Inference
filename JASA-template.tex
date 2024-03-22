@@ -608,6 +608,8 @@ the treatment indicator:
     \quad\text{and}\quad
     Y_i = 4T_i + X_i\beta.
 \end{equation}
+%%% MT to BT: added this sentence for clarity later when discussing tables
+Note that the simulated causal effect $\beta_T$ is equal to $4$.
 \begin{description}
     \item[Scenario 1] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
     \item[Scenario 2] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
@@ -624,10 +626,17 @@ estimation \cite{koch2020}; and BSSL for Bayesian spike and slab LASSO
 \cite{xu2015}. Note that since SSCE and BSSCE are formulated for problems
 where $p\le n$, we do not have any results for $n<50$ for these cases.
 
-\paragraph{Elicitation} For the
-elicitation of $\mathcal{P}$, we use marginal correlation between 
-$Y$ and $X$ to determine the bounds on number of active variables. We 
-set the thresholds to be $0.15$ and $0.35$ for the correlations. We compute the
+\paragraph{Elicitation}
+For the
+elicitation of $\mathcal{P}$, we use the marginal correlation between 
+$Y$ and $X$ to determine bounds on the number of active variables.
+%%% MT to BT: I think we need to clarify what is going on here... What
+%%% were the marginal correlations? How are these values 0.15 and 0.35
+%%% informed from the marginal correlations? Also, why are marginal
+%%% correlations the best way to do this? Ideally, one would set this
+%%% without reference to the data... (since it is prior elicitation)
+We set the thresholds to be $0.15$ and $0.35$ for the correlations.
+We compute the
 number of variables with marginal correlation greater than 0.15
 (say $p_1$) and number of variables with  marginal 
 correlation greater than 0.35 (say $p_2$). 
@@ -646,7 +655,7 @@ posterior estimates. For the other methods we use the in-built settings
 to initiate the analyses.
 
 \paragraph{Results}
-We provide our result for causal estimate in \cref{tab:causal}. 
+\Cref{tab:causal} shows the results of estimating the causal effect $\beta_T$. 
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect and we show
 that in two different rows where the first row gives the lower bound
