@@ -606,6 +606,7 @@ the treatment indicator:
 \begin{equation}
     T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
     \quad\text{and}\quad
+%%% MT to TB: did you forget to mention the error term in the next equation?
     Y_i = 4T_i + X_i\beta.
 \end{equation}
 %%% MT to BT: added this sentence for clarity later when discussing tables
@@ -647,7 +648,10 @@ variables so that $\mathcal{P}=[p_2/p , p_1/p]$.
 To implement our method, we use \texttt{rjags} and for the other three
 methods we use the code provided in the appendix of \cite{koch2020}.
 For our method, we set $\tau_0=10^{-6}$ and $\tau_1=1$ to construct the
-spike and slab prior. For the noise term, we set $a=10$ and $b=1$.  To perform 
+spike and slab prior.
+%%% MT to TB: where does a=10 come from? can we say something about that?
+For the noise term, we set $a=10$ and $b=1$.
+To perform 
 our Bayesian analysis with \texttt{rjags}, we first consider an adaptive 
 stage with 2000 iterations followed by discarding of 2000 burn in samples 
 to refine the posteriors. We consider 5000 MCMC samples to compute the
@@ -667,9 +671,12 @@ case for other methods and sometimes those methods produce extreme
 values. This can be observed in \cref{fig:comp:trt} as well. Here, the true 
 value is represented by the straight line for $\beta_T = 4$. 
 
-From the figure, we can notice that our method tends
-to underestimate the causal effect. This suggests that
+In these simulations, our method tends
+to underestimate the causal effect.
+%%% MT to TB: why is the problem with a? can you explain a bit more?
+This suggests that
 we may want to have a different value of $a$ for these sets of observations
+%%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
 instead of a fixed value of $a=10$ for all of our analyses.
 We can also see that the lower bound tends to improve
 with increasing number of observations which validates the assumption that as we accumulate
