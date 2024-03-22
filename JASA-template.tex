@@ -599,10 +599,10 @@ where
 
 For the simulation studies, we consider 2 different settings. In each
 case, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
-for $1\le i\le n$ where $[\Sigma]_{ij} = 0.3^{|i-j|}$. This way, we 
+for $1\le i\le n$ where $\Sigma_{ij} = 0.3^{|i-j|}$. In this way, we 
 generate 50 predictors for our model with mild correlations among them.
-We then use the following generation schemes to generate the outcome and
-treatment indicator: 
+We then use the following distributions to generate the outcome and
+the treatment indicator: 
 \begin{equation}
     T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
     \quad\text{and}\quad
@@ -614,8 +614,7 @@ treatment indicator:
 \end{description}
 For both
 the cases, we consider different numbers of observations $n$ where
-$n=25+ 5k$ for $k=0,1,2,\cdots,10$. %depends on finishing
-%$n=25\times 2^k$ for $k=0,1,2,\cdots,5$. 
+$n=25+ 5k$ for $k=0,1,2,\dots,10$.
 
 We present our analyses in \cref{tab:causal} and \cref{tab:misspec}.
 For the sake of clarity we use the following accronyms: RBCE for 
