@@ -55,11 +55,11 @@
             country={United Kingdom}}
 
 \begin{abstract}
-The goal of causal inference is to find the causal effect on subjects
+Causal inference aims to find the causal effect on subjects
 by identifying causal links between
-%%% MT to TB: changed "the variables and the outcome" to "a typically large number of predictor (or, explanatory) variables and the outcome of a treatment"
+%%% MT to TB: changed "the variables and the outcome" to "a number of predictor (or, explanatory) variables and the outcome of a treatment"
 %%% please check if you're happy with this
-a typically large number of predictor (or, explanatory) variables and the outcome of a treatment.
+a number of predictor (or, explanatory) variables and the outcome of a treatment.
 % the variables and the outcome.
 However, estimation of such causal links is extremely 
 difficult because the causal effects may vary from subject 
@@ -115,14 +115,16 @@ Causal inference concerns estimating the causal
 %%% MT to TB: Why do we say "independent variables"? These need not be independent. I've changed this to "predictor variables", I hope that's ok.
 effect of predictor variables on an outcome variable,
 %%% MT to TB: I added this, please check
-as well as identifying which predictors truly affect the outcome.
+as well as identifying which predictors are causally linked with the outcome.
 Ideally,
 randomised trials are the most efficient way to perform this task.
 However, this is not always practical due to, for instance, ethical 
 concerns, design cost, population size, to name a few. This
 leaves us with observational studies
 where data is collected though surveys or record keeping. But this
-can be problematic in the presence of confounders, which are variables associated with both the treatment and the outcome.
+can be problematic in the presence of confounders,
+%%% MT to TB: the definition on the next line sounds wrong (at least in the usual sense of "confounder"); a confounder in causal inference is a variable which causes both a predictor and the outcome, giving the false impression that this predictor causes the outcome
+which are variables associated with both the treatment and the outcome.
 In such cases, we must be extra cautious as we risk
 unwanted bias in the causal effect estimator \citep{rosenbaum83}.
 Several authors have tackled the presence of
