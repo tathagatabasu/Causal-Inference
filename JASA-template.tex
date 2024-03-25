@@ -129,6 +129,7 @@ But this
 can be problematic in the presence of confounding.
 %%% MT to TB: the definition on the next line sounds wrong (at least in the usual sense of "confounder"); I've added a definition and clarification as well as a figure; please check
 % Confounders are variables associated with both the treatment and the outcome.
+%%% MT to TB: added text starts here
 \begin{figure}
 \begin{center}
 \begin{tikzpicture}[node distance=2cm, auto]
@@ -145,6 +146,7 @@ can be problematic in the presence of confounding.
 \end{figure}
 A confounder is any variable which is causally linked with both a predictor and the outcome, giving the false impression that that predictor causes the outcome (see \cref{fig:confounding}).
 Confounding happens commonly in observational treatment studies because many predictors are often causally linked with the treatment decision (which is also a predictor), whilst simultaneously affecting the outcome of the treatment. Any such predictors act as a confounders between treatment decision (as one of the predictor variables) and treatment outcome.
+%%% MT to TB: added text ends here
 In such cases, we must be extra cautious as we risk
 unwanted bias in the causal effect estimator \citep{rosenbaum83},
 %%% MT to TB: I added next line for clarity
@@ -183,20 +185,30 @@ interesting as in many cases, causal effect estimation can be performed
 through a meta analysis where robust Bayesian analysis 
 can be beneficial under severe uncertainty \citep{raices_cruz22}.
 Moreover, for some problems 
-we have to rely on very limited data to perform our Bayesian analysis and 
-inference with a single prior may not be reliable.
+we have to rely on very limited data to perform our Bayesian analysis.
+In this case,
+inference with a single prior
+%%% MT to TB: I strenghtened this
+% may not be reliable.
+is unreliable.
 %%% MT to TB: I don't quite understand the heteroscedasticity argument;
 %%% I added "inference with a single prior" above instead
 % in presence of heteroscedasticity within the data.
 Instead, we use expert opinion to elicit a set of priors 
 based on empirical evidence. 
-This allows us to construct the problem of confounder identification 
+This allows us to construct the problem of 
+%%% MT to TB: changed "confounder identification" to "predictor selection"
+% confounder identification 
+predictor selection
 in a framework where abstention has a relatively positive gain i.e.~
 when the cost of further tests/data collection is cheaper than
 mistreating a subject.
 
 Our framework considers a set of continuous spike and slab priors 
-\citep{ishwaran2005} for confounder identification.
+\citep{ishwaran2005} for
+%%% MT to TB: changed "confounder identification" to "predictor selection"
+% confounder identification.
+predictor selection.
 %%% MT to TB: check if you are happy with this next sentence
 We thereby construct a Bayesian group LASSO \citep{xu2015} type problem.
 To perform sensitivity analysis,
@@ -222,36 +234,38 @@ we discuss our findings and conclude this paper in \cref{sec:conc}.
 \subsection{Regression Model}
 
 Let an observational study on $n$ individuals give us
-the outcomes $Y\coloneqq(Y_1, \dots, Y_n)$ along with 
-corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$.
+\emph{treatment outcomes} $Y\coloneqq(Y_1, \dots, Y_n)$ with 
+corresponding \emph{treatment decisions} $T\coloneqq(T_1, \dots, T_n)$.
+%%% MT to TB: added this for clarity
+Here, we use an indicator to represent the treatment decision. That is, $T_i$ is $1$ if the $i$th patient was treated, and $0$ otherwise. Similarly,
+$Y_i$ is the treatment outcome of the $i$th patient, represented as some real-valued quantity.
+
 Regression methods are widely used in causal effect estimation. The
 main idea behind these regression methods is to remove the
 correlation between the treatment indicator and the error term
 \citep{winship99,HECKMAN1985}.
-
-%%% MT to TB: not sure where this text needs to go, omitted for now...
-
-% In theory, both $\mathbb{E}(Y_i\mid T_i=1)$ and $\mathbb{E}(Y_i\mid T_i=0)$ exist.
-% However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
-
-% We rely on the important assumption that the treatment effect
-% on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \citep{winship99}.
-
-To do so, we rely on $p$ different observed quantities
-or predictors denoted by $X\coloneqq$ $[X_1^T, \dots, X_n^T]^T$
+To do so, we rely on $p$ observed quantities, called
+\emph{predictors}, denoted by $X\coloneqq$ $[X_1^T, \dots, X_n^T]^T$
 where each $X_i\in\mathbb{R}^p$.
 Each $X_i$ is treated as a $p$-dimensional row vector,
 so $X$ is a $n\times p$ matrix.
 Now, let
 $\beta \coloneqq (\beta_1$, \dots, $\beta_p)^T$ denote the vector of regression
 coefficients
-related to the predictors, and $\beta_T$ denote a regression coefficient related to the treatment.
+related to the predictors, and let $\beta_T$ denote a regression coefficient related to the
+%%% MT to TB: treatment -> treatment decision
+treatment decision.
 Then we can define a linear model for the outcome
 so that
 \begin{equation}
 	Y_i =  T_i \beta_{T} + X_i\beta + \epsilon_i
 \end{equation}
-where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$.
+where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$,
+%%% MT to TB: added independence statement as used later
+independent of $T_i$ and $X_i$.
+%%% MT to TB: added for clarity
+Note that both $T_i$ and $X_i$ are predictors for $Y_i$ in the above model.
+However, when we talk about predictors in this paper, we usually mean just the components of $X_i$.
 
 %%% MT to TB: check if you're happy with this paragraph
 To decide whether or not to treat a new individual with given predictors,
@@ -282,7 +296,9 @@ A common choice in the literature is to use a probit link function.
 In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 
-$\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we define
+$\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we
+%%% MT to TB: define -> assume
+assume
 \begin{align}
 	P(T_i=1\mid X_i) = \Phi(X_i\gamma)
 \end{align}
@@ -346,11 +362,11 @@ where $\nu \coloneqq (\beta_T, \beta^T, \gamma^T)^T$ and
 
 The likelihood given by \cref{eq:like:group} gives us
 a foundation for a Bayesian group LASSO 
-\citep{xu2015} type model. This way, we can look into the posterior selection
+\citep{xu2015} type model. In this way, we can look into the posterior selection
 probability of each predictor. There are several
 ways to construct spike and slab priors for
 variable selection. Here, we consider a continuous type
-\citep{ishwaran2005} prior for faster posterior
+prior \citep{ishwaran2005} for faster posterior
 computation.
 
 
@@ -402,7 +418,7 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
 	\begin{center}
 		\includegraphics[width = 0.95\linewidth]{spike_slab_bi.pdf}
 	\end{center}
-	\caption{Spike (left) and slab (right) components of a bi-variate distribution for $\tau_0 = 0.001$, $\tau_1$ = 5 and $\sigma=1$.}
+	\caption{Spike (left) and slab (right) components of a bivariate distribution for $\tau_0 = 0.001$, $\tau_1$ = 5 and $\sigma=1$.}
 	\label{fig:ssbl}
 \end{figure}
 
@@ -412,7 +428,7 @@ To ensure that the prior is able to represent the data, we consider $b=1$ and
 fix $a$ so that it represents the prior mean of the precision.
 %%% MT to TB: check if you are happy with this
 Alternatively, when $b=1$, we know that the interval
-$[0, 3a]$ contains the true value of the precision parameter with probability $0.95$.
+$[0, 3a]$ contains the true value of the precision parameter with probability close to $0.95$.
 So, we can also use a prior judgement on the 95\% quantile to set $a$.
 We use a beta prior to
 model our uncertainty about
@@ -585,7 +601,7 @@ Moreover, with our variable selection we only determine whether the variable
 is included in at least one of the models. But, we cannot determine a specific 
 association. Therefore, to adjust the sparsity of the estimates and understand
 the specific association with the treatment/outcome/both, we apply the 
-``decoupled shrinkage and selection'' method proposed by \citep{hahn2015}. 
+``decoupled shrinkage and selection'' (DSS) method proposed by \citep{hahn2015}. 
 For that, we solve the following adaptive LASSO-type \citep{Zou2006}
 problems
 
@@ -745,7 +761,7 @@ the true value.
 % Mon Mar 25 09:52:08 2024
 \begin{table}[ht]
 \centering
-\small
+\tiny
 \caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
 \begin{tabular}{c|ccccc|ccccc}
   \hline
@@ -931,13 +947,21 @@ the first two settings, we notice that our method is in good agreement with
 BSSL for the third setting. However, for the fourth setting, our method
 underestimate the treatment effect significantly (5\% in the worst case). This
 is somewhat in sync with the second setting and a possible reason behind this
-could be the fact that in both the cases, the number of active $\beta_j$ is
-higher than $\gamma_j$
+could be the fact that in both the cases, the number of active $\beta_j$'s is
+higher than $\gamma_j$'s. This therefore, tends to reduce the value of treatment
+effect. A possible way to work around this issue can be using the `DSS' estimates
+of the regression coefficient and adjust the value of $\beta_T$. 
+
+Besides this interesting result. We notice that all of the four methods performs
+perfectly in variable selection giving no misspecified variables. Therefore,
+we ommitt the table of variable selection for third and fourth scenarios.
+
+
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
 % Mon Mar 25 10:08:22 2024
 \begin{table}[ht]
 \centering
-\small
+\tiny
 \caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
 \begin{tabular}{c|ccccc|ccccc}
   \hline
