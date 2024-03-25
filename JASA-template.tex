@@ -10,6 +10,8 @@
 \usepackage{bigints}
 \usepackage{soul}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\tikzset{>={Stealth[length=3mm]}} % better arrow heads
 \usepackage{color}
 
 \usepackage{hyperref}
@@ -42,11 +44,11 @@
 \author[2]{Matthias C.~M.~Troffaes}
 \ead{matthias.troffaes@durham.ac.uk}
 \affiliation[1]{organization={Civil and Environmental Engineering, University of Strathclyde},
-            addressline={}, 
-            city={},
-            postcode={}, 
+            addressline={16 Richmond St }, 
+            city={Glasgow},
+            postcode={G1 1XQ}, 
             state={},
-            country={}}
+            country={United Kingdom}}
 \affiliation[2]{organization={Department of Mathematical Sciences, Durham University},
             addressline={South Road}, 
             city={Durham},
@@ -121,12 +123,32 @@ randomised trials are the most efficient way to perform this task.
 However, this is not always practical due to, for instance, ethical 
 concerns, design cost, population size, to name a few. This
 leaves us with observational studies
-where data is collected though surveys or record keeping. But this
-can be problematic in the presence of confounders,
-%%% MT to TB: the definition on the next line sounds wrong (at least in the usual sense of "confounder"); a confounder in causal inference is a variable which causes both a predictor and the outcome, giving the false impression that this predictor causes the outcome
-which are variables associated with both the treatment and the outcome.
+where data is collected though surveys or record keeping.
+
+But this
+can be problematic in the presence of confounding.
+%%% MT to TB: the definition on the next line sounds wrong (at least in the usual sense of "confounder"); I've added a definition and clarification as well as a figure; please check
+% Confounders are variables associated with both the treatment and the outcome.
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  \node (confounder) at (0,0) [circle,draw,align=center] {biomarker \\(confounder)};
+  \node (predictor) at (4,2) [circle,draw,align=center] {treatment \\ decision \\ (predictor)};
+  \node (outcome) at (4,-2) [circle,draw,align=center] {treatment \\ outcome};
+  \draw[->] (confounder) to (predictor);
+  \draw[->] (confounder) to (outcome);
+  \draw[->,dashed] (predictor) to (outcome);
+\end{tikzpicture}
+\end{center}
+\caption{A biomarker influencing both the treatment decision and the treatment outcome, thereby acting as confounder. Solid arrows indicate causation, whilst the dashed arrow indicates correlation without causation.}
+\label{fig:confounding}
+\end{figure}
+A confounder is any variable which is causally linked with both a predictor and the outcome, giving the false impression that that predictor causes the outcome (see \cref{fig:confounding}).
+Confounding happens commonly in observational treatment studies because many predictors are often causally linked with the treatment decision (which is also a predictor), whilst simultaneously affecting the outcome of the treatment. Any such predictors act as a confounders between treatment decision (as one of the predictor variables) and treatment outcome.
 In such cases, we must be extra cautious as we risk
-unwanted bias in the causal effect estimator \citep{rosenbaum83}.
+unwanted bias in the causal effect estimator \citep{rosenbaum83},
+%%% MT to TB: I added next line for clarity
+if we ignore such correlations.
 Several authors have tackled the presence of
 confounder variables. 
 \Citet{Robins1986ANA} used a graphical
@@ -624,7 +646,7 @@ the treatment indicator:
     Y_i = 4T_i + X_i\beta + \epsilon_i.
 \end{equation}
 %%% MT to TB: check if this is correct; I hope I got this correctly from the code
-where $\epsilon_i\sim\mathcal{N}(0,0.01)$ (i.e.\ a standard deviation of $0.1$).
+where $\epsilon_i\sim\mathcal{N}(0,0.1^2)$.
 %%% MT to TB: added this sentence for clarity later when discussing tables
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
 
@@ -648,7 +670,7 @@ cases, we consider different numbers of predictors $p$ where
 $p=25+ 5k$ for $k=1,2,\dots,35$ and 100 ($n$)
 predictors. 
 
-We present our analyses in \cref{tab:causal,tab:misspec}.
+We present our analyses in \cref{tab:causal1,tab:misspec1,tab:misspec2}.
 For the sake of clarity we use the following accronyms: RBCE for 
 robust Bayesian causal estimation (our method); SSCE for spike and
 slab causal estimation \citep{koch2020}; BSSCE for bi-level spike and slab causal
@@ -690,17 +712,19 @@ posterior estimates. For the other methods we use the in-built settings
 to initiate the analyses.
 
 \paragraph{Results}
-\Cref{tab:causal} shows the results of estimating the causal effect $\beta_T$
+\Cref{tab:causal1} shows the results of estimating the causal effect $\beta_T$
+for the first and second scenarios.
 For reference, recall the true value is $\beta_T=4$. 
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect:
-the first row gives the lower bound
-and the second row gives the upper bound. We notice that our method is 
+the first(sixth) column gives the lower bound
+and the second(seventh) column gives the upper bound. We notice that our method is 
 somewhat in agreement with the other methods but is more consistent
-in terms of estimating the causal effect. However, this is not the
-case for other methods and sometimes those methods produce extreme 
-values. This can be observed in \cref{fig:comp:trt} as well. Here, the true 
-value is represented by the straight line for $\beta_T = 4$. 
+in terms of estimating the causal effect in the first setting. However, this is not the
+case for the analysis with second dataset. We notice that our method tends to under
+estimate the causal effect. However, sometimes, other methods produce extreme 
+values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. Here, the true 
+value is represented by the black straight line for $\beta_T = 4$. 
 
 In these simulations, our method tends
 to underestimate the causal effect.
@@ -708,7 +732,7 @@ to underestimate the causal effect.
 This suggests that
 we may want to have a different value of $a$ for these sets of observations
 %%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
-%TB to MT: I was thinking of a differernt value to get a flatter prior
+%TB to MT: I was thinking of a differernt value to get a flatter prior but that felt like manipulation so kept it fixed for each sample size or predicrtor size
 instead of a fixed value of $a=10$ for all of our analyses.
 We can also see that the lower bound tends to improve
 with increasing number of observations: as we accumulate
@@ -767,6 +791,7 @@ the true value.
   200 & 3.99 & 4.00 & 4.04 & 4.05 & 4.04 & 3.95 & 3.96 & 3.99 & 3.99 & 3.99 \\ 
    \hline
 \end{tabular}
+\label{tab:causal1}
 \end{table}
 \begin{figure}
     \centering
@@ -775,63 +800,7 @@ the true value.
     \label{fig:comp:trt}
 \end{figure}
 
-% latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Mon Mar 25 10:08:22 2024
-\begin{table}[ht]
-\centering
-\small
-\caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
-\begin{tabular}{c|ccccc|ccccc}
-  \hline
- Case&  &  & 1 &  &  &  &  & 2 &  &  \\ 
-  \hline
- & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL \\ 
-  \hline
-\hline
-30 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.89 & 3.91 & 3.99 & 3.99 & 3.99 \\ 
-  35 & 3.97 & 3.99 & 4.00 & 4.02 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 4.00 \\ 
-  40 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 4.00 & 3.99 \\ 
-  45 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  50 & 3.97 & 3.99 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  55 & 3.98 & 4.00 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  60 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.86 & 3.89 & 3.99 & 3.99 & 4.00 \\ 
-  65 & 3.98 & 4.01 & 3.99 & 4.02 & 4.00 & 3.85 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  70 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.85 & 3.88 & 3.99 & 3.99 & 4.00 \\ 
-  75 & 3.98 & 4.00 & 4.00 & 4.00 & 4.00 & 3.84 & 3.89 & 3.99 & 4.00 & 3.99 \\ 
-  80 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.84 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  85 & 3.99 & 4.01 & 4.00 & 4.01 & 4.00 & 3.82 & 3.88 & 4.00 & 3.99 & 3.99 \\ 
-  90 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.82 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  95 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.81 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  100 & 3.99 & 4.00 & 4.00 & 4.01 & 4.00 & 3.83 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  105 & 3.99 & 4.00 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  110 & 3.99 & 4.00 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  115 & 3.98 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  120 & 3.99 & 4.00 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  125 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  130 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.87 &  &  & 3.99 \\ 
-  135 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  140 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
-  145 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.88 &  &  & 3.99 \\ 
-  150 & 3.99 & 4.01 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  155 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  160 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  165 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
-  170 & 3.99 & 4.02 &  &  & 4.00 & 3.80 & 3.87 &  &  & 3.99 \\ 
-  175 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
-  180 & 3.98 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
-  185 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.88 &  &  & 3.99 \\ 
-  190 & 3.98 & 4.01 &  &  & 3.99 & 3.79 & 3.86 &  &  & 3.99 \\ 
-  195 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.86 &  &  & 3.99 \\ 
-  200 & 3.98 & 4.02 &  &  & 4.00 & 3.78 & 3.86 &  &  & 3.99 \\ 
-   \hline
-\end{tabular}
-\end{table}\begin{figure}
-    \centering
-    \includegraphics[width = 0.9\linewidth]{treat_pred.pdf}
-    \caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
-    \label{fig:comp:trt:pred}
-\end{figure}
-
+We also provide tables for the performance of variable selection in \cref{tab:misspec1,tab:misspec2}.
 For variable selection, we use a loss function as described earlier.
 Here, we consider
 $\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
@@ -840,27 +809,23 @@ and a loss of $0.2$ with indeterminate selections.
 Note that we could also choose more 
 sophisticated loss functions based on \citep{ZAFFALON20121282}.
 We sum these losses together across all predictors
-to obtain the total loss, presented in \cref{tab:misspec}.
+to obtain the total loss, presented in \cref{tab:misspec1,tab:misspec2}.
 The table counts the number of
 false positives (FP) and false negatives (FN). For RBCE, we have an
 additional column (ID)
 which counts the number of indeterminate predictors.
 From the table it can be seen that for the first scenario, our method
 abstains from identifying some variables for 
-$n <50$. Especially for $n=25$, our method identifies 26 and 23 variables as indeterminate
+$n \le 50$. Especially for $n=25$, our method identifies 43 and 21 variables as indeterminate
 for the first setting and second setting respectively. However,
 later on our method gives more precise results in terms of variable
 selection. We also notice that BSSL tends to perform poorly
-in terms of variable selection for $n=25$. This can be seen
-from the causal effect estimation as well.
-Moreover, we observe that for the second setting both SSCE
-and BSSCE underperform in identifying the active variables, which can 
-be explained from \cref{tab:causal} as well. 
-
+in terms of variable selection in the second case giving away 13 FPs in both the cases. This can be seen in the bottom figure of \cref{fig:comp:trt}
+as well.
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Wed May 24 00:50:53 2023
 \begin{table}[ht]
-\caption{Loss based on misspecification of active variables for first scenario.}\label{tab:misspec}
+\caption{Loss based on misspecification of active variables for first scenario.}\label{tab:misspec1}
 \centering
 \small
 \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
@@ -912,6 +877,7 @@ be explained from \cref{tab:causal} as well.
 \begin{table}
 \small
 \caption{Loss based on misspecification of active variables for second scenario}
+\label{tab:misspec2}
 \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
   \hline
   &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c||}{SSCE}
@@ -958,6 +924,76 @@ be explained from \cref{tab:causal} as well.
    \hline
 \end{tabular}
 \end{table}
+
+We show the result of our analyses with different number of predictors and
+fixed number of sample in \cref{fig:comp:trt:pred,tab:causal2}. Similar to
+the first two settings, we notice that our method is in good agreement with
+BSSL for the third setting. However, for the fourth setting, our method
+underestimate the treatment effect significantly (5\% in the worst case). This
+is somewhat in sync with the second setting and a possible reason behind this
+could be the fact that in both the cases, the number of active $\beta_j$ is
+higher than $\gamma_j$
+% latex table generated in R 4.3.2 by xtable 1.8-4 package
+% Mon Mar 25 10:08:22 2024
+\begin{table}[ht]
+\centering
+\small
+\caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+\begin{tabular}{c|ccccc|ccccc}
+  \hline
+ Case&  &  & 1 &  &  &  &  & 2 &  &  \\ 
+  \hline
+ & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL \\ 
+  \hline
+\hline
+30 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.89 & 3.91 & 3.99 & 3.99 & 3.99 \\ 
+  35 & 3.97 & 3.99 & 4.00 & 4.02 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 4.00 \\ 
+  40 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 4.00 & 3.99 \\ 
+  45 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  50 & 3.97 & 3.99 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  55 & 3.98 & 4.00 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  60 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.86 & 3.89 & 3.99 & 3.99 & 4.00 \\ 
+  65 & 3.98 & 4.01 & 3.99 & 4.02 & 4.00 & 3.85 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
+  70 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.85 & 3.88 & 3.99 & 3.99 & 4.00 \\ 
+  75 & 3.98 & 4.00 & 4.00 & 4.00 & 4.00 & 3.84 & 3.89 & 3.99 & 4.00 & 3.99 \\ 
+  80 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.84 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
+  85 & 3.99 & 4.01 & 4.00 & 4.01 & 4.00 & 3.82 & 3.88 & 4.00 & 3.99 & 3.99 \\ 
+  90 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.82 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  95 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.81 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  100 & 3.99 & 4.00 & 4.00 & 4.01 & 4.00 & 3.83 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  105 & 3.99 & 4.00 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
+  110 & 3.99 & 4.00 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  115 & 3.98 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  120 & 3.99 & 4.00 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  125 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  130 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.87 &  &  & 3.99 \\ 
+  135 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  140 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
+  145 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.88 &  &  & 3.99 \\ 
+  150 & 3.99 & 4.01 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
+  155 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  160 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  165 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
+  170 & 3.99 & 4.02 &  &  & 4.00 & 3.80 & 3.87 &  &  & 3.99 \\ 
+  175 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
+  180 & 3.98 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
+  185 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.88 &  &  & 3.99 \\ 
+  190 & 3.98 & 4.01 &  &  & 3.99 & 3.79 & 3.86 &  &  & 3.99 \\ 
+  195 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.86 &  &  & 3.99 \\ 
+  200 & 3.98 & 4.02 &  &  & 4.00 & 3.78 & 3.86 &  &  & 3.99 \\ 
+   \hline
+\end{tabular}
+\label{tab:causal2}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.9\linewidth]{treat_pred.pdf}
+    \caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+    \label{fig:comp:trt:pred}
+\end{figure}
+
+
 
 \section{Conclusion}\label{sec:conc}
 
