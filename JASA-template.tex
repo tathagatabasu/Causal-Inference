@@ -95,12 +95,6 @@ our method using a synthetic dataset.
 
 \end{frontmatter}
 
-%%% MT to TB: do we say "treatment effect" or "causal effect"? later
-%%% in the text both are used; we should pick something and be
-%%% consistent to avoid confusion (if indeed they are the same...)
-
-%TB to MT: changed to causal effect now
-
 \section{Introduction}\label{sec:intro}
 
 Causal inference concerns estimating the causal
@@ -601,35 +595,36 @@ where
 For the simulation studies, we consider 4 different settings. In each
 case, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
 for $1\le i\le n$ where $\Sigma_{ij} = 0.3^{|i-j|}$. In this way, we 
-generate predictors for our model with mild correlations among (within?) them.
+generate predictors for our model with mild correlations between them.
 We then use the following distributions to generate the outcome and
 the treatment indicator: 
 \begin{equation}
     T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
     \quad\text{and}\quad
-%%% MT to TB: did you forget to mention the error term in the next equation? 
-%%% TB to MT: Thanks Matthias, yes I forgot to put that. 
     Y_i = 4T_i + X_i\beta + \epsilon_i.
 \end{equation}
-%%% MT to BT: added this sentence for clarity later when discussing tables
+%%% MT to TB: check if this is correct; I hope I got this correctly from the code
+where $\epsilon_i\sim\mathcal{N}(0,0.01)$ (i.e.\ a standard deviation of $0.1$).
+%%% MT to TB: added this sentence for clarity later when discussing tables
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
+
+The first two cases that we consider are:
 \begin{description}
     \item[Scenario 1] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
     \item[Scenario 2] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both
-the cases, we consider different numbers of observations $n$ where
+cases, we consider different numbers of observations $n$ where
 $n=25+ 5k$ for $k=0,1,2,\dots,35$ and 50 ($p$)
 predictors. This way, we check the efficiency of our method with varying level of information.
 
-For the next two cases, we check our method for varying number of predictors (and hence sparsity level, ie the percentage of active variables present in the model)
-
+For the next two cases, we check our method for varying number of predictors (and hence sparsity level, i.e.\ the percentage of active variables present in the model):
 \begin{description}
     \item[Scenario 3] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
     \item[Scenario 4] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both
-the cases, we consider different numbers of predictors $p$ where
+cases, we consider different numbers of predictors $p$ where
 $p=25+ 5k$ for $k=1,2,\dots,35$ and 100 ($n$)
 predictors. 
 
@@ -746,19 +741,13 @@ RBCE (low) & 2.79 & 3.70 & 3.77 & 3.56 & 3.69 & 3.70 & 3.81 & 3.78 & 3.81 & 3.82
     \label{fig:comp:trt:pred}
 \end{figure}
 
-%%% MT to TB: I changed "identification" to "selection" (assuming that is meant?)
-% TB to MT: yes, thanks
 For variable selection, we use a loss function as described earlier.
 Here, we consider
 $\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
-%%% MT to TB: I've briefly recap what these losses mean; please check if correct
-% TB to MT: yes, thanks
 i.e. we associate a loss of $1$ with false positive and false negative selections,
 and a loss of $0.2$ with indeterminate selections.
 Note that we could also choose more 
 sophisticated loss functions based on \cite{ZAFFALON20121282}.
-%%% MT to TB: I added "we sum these losses together across all preds"; check
-% TB to MT: yes, thanks
 We sum these losses together across all predictors
 to obtain the total loss, presented in \cref{tab:misspec}.
 The table counts the number of
