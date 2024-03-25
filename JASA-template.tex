@@ -57,7 +57,7 @@
 \begin{abstract}
 The goal of causal inference is to find the causal effect on subjects
 by identifying causal links between
-%%% MT to TB: changed "the variables and the outcome" to "a typically large number of predictor variables and the outcome of a treatment"
+%%% MT to TB: changed "the variables and the outcome" to "a typically large number of predictor (or, explanatory) variables and the outcome of a treatment"
 %%% please check if you're happy with this
 a typically large number of predictor (or, explanatory) variables and the outcome of a treatment.
 % the variables and the outcome.
@@ -78,7 +78,7 @@ We
 use a set of spike and slab priors 
 through prior elicitation to obtain robust estimates for
 both the treatment and outcome model. We are specifically interested 
-in the sensitivity of the causal effect in the high dimensional causal inference
+in the sensitivity of the causal effect in high dimensional causal inference
 %%% MT to TB: I've replaced "confounder variables" with "predictor variables that are causally linked"; check if ok (see also comments later; let us discuss on teams)
 as well as identifying predictor variables that are causally linked. However, indicator
 based variable selection can be deceptive, especially
@@ -86,7 +86,11 @@ when the predictor is strongly associated with either the treatment or
 the outcome, as this increases the posterior expectation of the selection
 indicators. To avoid that, we apply a post-hoc selection scheme
 which successfully removes negligible non-zero effects from the model,
-attaining a smaller set of confounders. Finally, we illustrate
+attaining a smaller set of 
+%%% MT to TB: using "predictors" again for consistency (and reduce confusion?)
+predictors.
+%confounders.
+Finally, we illustrate
 our method using a synthetic dataset.
 \end{abstract}
 
@@ -120,40 +124,40 @@ leaves us with observational studies
 where data is collected though surveys or record keeping. But this
 can be problematic in the presence of confounders, which are variables associated with both the treatment and the outcome.
 In such cases, we must be extra cautious as we risk
-unwanted bias in the causal effect estimator \cite{rosenbaum83}.
+unwanted bias in the causal effect estimator \citep{rosenbaum83}.
 Several authors have tackled the presence of
 confounder variables. 
-Robins \cite{Robins1986ANA} used a graphical
+\Citet{Robins1986ANA} used a graphical
 approach to identify the causal parameters.
-Rosenbaum and Robin \cite{rosenbaum1985} suggested a link model to estimate
+\Citet{rosenbaum1985} suggested a link model to estimate
 the propensity scores for all individuals. Subsequently, several other
 methods have been proposed based on propensity score matching;
-see \cite{winship99,stuart10} for a brief review.
+see \citep{winship99,stuart10} for a brief review.
 
 One of the earlier Bayesian approaches to causal inference
-can be found in \cite{rubin1978}. More recently,
+can be found in \citep{rubin1978}. More recently,
 with the rise of high dimensional data,
 Bayesian methodologies have grown in popularity.
-Crainiceanu \text{et al.~}\cite{Crainiceanu2008} proposed a bi-level 
+\Citet{Crainiceanu2008} proposed a bi-level 
 Bayesian model averaging based method for estimating the causal 
-effect. Wang \text{et al.~}\cite{wang2015} suggested BAC (or, Bayesian adjustment for
+effect. \Citet{wang2015} suggested BAC (or, Bayesian adjustment for
 confounding),
 %%% MT to TB: check next phrase
 where an informative prior obtained from
 the treatment model is applied on the outcome model for
 estimating the causal effect. Several other methods were
 proposed to tackle confounders from a Bayesian perspective,
-see for instance \cite{Zigler2014,Hahn2018} among others.
+see for instance \citep{Zigler2014,Hahn2018} among others.
 
-In this paper we take inspiration from the approach of Koch \text{et al.~}\cite{koch2020}, who proposed a bi-level spike and slab prior for causal effect 
+In this paper we take inspiration from the approach of \citet{koch2020}, who proposed a bi-level spike and slab prior for causal effect 
 estimation. They considered a data-driven adaptive approach to
 propose their prior which reduces the variance of the causal estimate. 
 Our approach is based on
 sensitivity analysis, where instead of using a single prior, 
-we consider a set of priors \cite{BERGER1990303}. This is particularly 
+we consider a set of priors \citep{BERGER1990303}. This is particularly 
 interesting as in many cases, causal effect estimation can be performed 
 through a meta analysis where robust Bayesian analysis 
-can be beneficial under severe uncertainty \cite{raices_cruz22}.
+can be beneficial under severe uncertainty \citep{raices_cruz22}.
 Moreover, for some problems 
 we have to rely on very limited data to perform our Bayesian analysis and 
 inference with a single prior may not be reliable.
@@ -168,14 +172,14 @@ when the cost of further tests/data collection is cheaper than
 mistreating a subject.
 
 Our framework considers a set of continuous spike and slab priors 
-\cite{ishwaran2005} for confounder identification.
+\citep{ishwaran2005} for confounder identification.
 %%% MT to TB: check if you are happy with this next sentence
-We thereby construct a Bayesian group LASSO \cite{xu2015} type problem.
+We thereby construct a Bayesian group LASSO \citep{xu2015} type problem.
 To perform sensitivity analysis,
 we consider a set of beta priors on the covariate selection 
 probability of the spike and slab priors. We use the posteriors of this
 covariate selection probability for identifying the confounders. Finally, 
-we consider a post-hoc coefficient adjustment method \cite{hahn2015}
+we consider a post-hoc coefficient adjustment method \citep{hahn2015}
 to recover sparse estimates associated with either the outcome or the
 treatment model. 
 
@@ -199,7 +203,7 @@ corresponding treatment indicators $T\coloneqq(T_1, \dots, T_n)$.
 Regression methods are widely used in causal effect estimation. The
 main idea behind these regression methods is to remove the
 correlation between the treatment indicator and the error term
-\cite{winship99,HECKMAN1985}.
+\citep{winship99,HECKMAN1985}.
 
 %%% MT to TB: not sure where this text needs to go, omitted for now...
 
@@ -207,7 +211,7 @@ correlation between the treatment indicator and the error term
 % However, we cannot observe them simultaneously, since we cannot `treat' and `not treat' the same individual at the same time.
 
 % We rely on the important assumption that the treatment effect
-% on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \cite{winship99}.
+% on the $i$-th subject given that they received the treatment is the same as the (counterfactual) treatment effect when they remain as control \citep{winship99}.
 
 To do so, we rely on $p$ different observed quantities
 or predictors denoted by $X\coloneqq$ $[X_1^T, \dots, X_n^T]^T$
@@ -260,7 +264,7 @@ $\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we define
 \end{align}
 where $\Phi$ denotes the cumulative distribution function
 of a standard normal distribution. To incorporate this probit
-link function, we model the $T_i$ as follows \cite{albert93}:
+link function, we model the $T_i$ as follows \citep{albert93}:
 \begin{align}
     T_i^* &= X_i\gamma +u_i \\
     T_i   &= \mathbb{I}(T_i^*>0)
@@ -318,11 +322,11 @@ where $\nu \coloneqq (\beta_T, \beta^T, \gamma^T)^T$ and
 
 The likelihood given by \cref{eq:like:group} gives us
 a foundation for a Bayesian group LASSO 
-\cite{xu2015} type model. This way, we can look into the posterior selection
+\citep{xu2015} type model. This way, we can look into the posterior selection
 probability of each predictor. There are several
 ways to construct spike and slab priors for
 variable selection. Here, we consider a continuous type
-\cite{ishwaran2005} prior for faster posterior
+\citep{ishwaran2005} prior for faster posterior
 computation.
 
 
@@ -557,8 +561,8 @@ Moreover, with our variable selection we only determine whether the variable
 is included in at least one of the models. But, we cannot determine a specific 
 association. Therefore, to adjust the sparsity of the estimates and understand
 the specific association with the treatment/outcome/both, we apply the 
-``decoupled shrinkage and selection'' method proposed by \cite{hahn2015}. 
-For that, we solve the following adaptive LASSO-type \cite{Zou2006}
+``decoupled shrinkage and selection'' method proposed by \citep{hahn2015}. 
+For that, we solve the following adaptive LASSO-type \citep{Zou2006}
 problems
 
 \begin{align}
@@ -645,9 +649,9 @@ predictors.
 We present our analyses in \cref{tab:causal,tab:misspec}.
 For the sake of clarity we use the following accronyms: RBCE for 
 robust Bayesian causal estimation (our method); SSCE for spike and
-slab causal estimation \cite{koch2020}; BSSCE for bi-level spike and slab causal
-estimation \cite{koch2020}; and BSSL for Bayesian spike and slab LASSO
-\cite{xu2015}. Note that since SSCE and BSSCE are formulated for problems
+slab causal estimation \citep{koch2020}; BSSCE for bi-level spike and slab causal
+estimation \citep{koch2020}; and BSSL for Bayesian spike and slab LASSO
+\citep{xu2015}. Note that since SSCE and BSSCE are formulated for problems
 where $p\le n$, we do not have any results for $n<50$ for these cases.
 
 \paragraph{Elicitation}
@@ -671,7 +675,7 @@ variables so that $\mathcal{P}=[p_2/p , p_1/p]$.
 
 \paragraph{Initialisation} 
 To implement our method, we use \texttt{rjags} and for the other three
-methods we use the code provided in the appendix of \cite{koch2020}.
+methods we use the code provided in the appendix of \citep{koch2020}.
 For our method, we set $\tau_0=10^{-6}$ and $\tau_1=1$ to construct the
 spike and slab prior.
 %%% MT to TB: where does a=10 come from? can we say something about that?
@@ -782,33 +786,33 @@ the true value.
  & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL & RBCE-u & RBCE-u & SSCE & BSSCE & BSSL \\ 
   \hline
 \hline
-30.00 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.89 & 3.91 & 3.99 & 3.99 & 3.99 \\ 
-  35.00 & 3.97 & 3.99 & 4.00 & 4.02 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 4.00 \\ 
-  40.00 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 4.00 & 3.99 \\ 
-  45.00 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  50.00 & 3.97 & 3.99 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  55.00 & 3.98 & 4.00 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  60.00 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.86 & 3.89 & 3.99 & 3.99 & 4.00 \\ 
-  65.00 & 3.98 & 4.01 & 3.99 & 4.02 & 4.00 & 3.85 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  70.00 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.85 & 3.88 & 3.99 & 3.99 & 4.00 \\ 
-  75.00 & 3.98 & 4.00 & 4.00 & 4.00 & 4.00 & 3.84 & 3.89 & 3.99 & 4.00 & 3.99 \\ 
-  80.00 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.84 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  85.00 & 3.99 & 4.01 & 4.00 & 4.01 & 4.00 & 3.82 & 3.88 & 4.00 & 3.99 & 3.99 \\ 
-  90.00 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.82 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  95.00 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.81 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  100.00 & 3.99 & 4.00 & 4.00 & 4.01 & 4.00 & 3.83 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  105.00 & 3.99 & 4.00 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  110.00 & 3.99 & 4.00 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  115.00 & 3.98 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  120.00 & 3.99 & 4.00 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  125.00 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  130.00 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.87 &  &  & 3.99 \\ 
-  135.00 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  140.00 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
-  145.00 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.88 &  &  & 3.99 \\ 
-  150.00 & 3.99 & 4.01 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  155.00 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  160.00 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+30 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.89 & 3.91 & 3.99 & 3.99 & 3.99 \\ 
+  35 & 3.97 & 3.99 & 4.00 & 4.02 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 4.00 \\ 
+  40 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 4.00 & 3.99 \\ 
+  45 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  50 & 3.97 & 3.99 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  55 & 3.98 & 4.00 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
+  60 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.86 & 3.89 & 3.99 & 3.99 & 4.00 \\ 
+  65 & 3.98 & 4.01 & 3.99 & 4.02 & 4.00 & 3.85 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
+  70 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.85 & 3.88 & 3.99 & 3.99 & 4.00 \\ 
+  75 & 3.98 & 4.00 & 4.00 & 4.00 & 4.00 & 3.84 & 3.89 & 3.99 & 4.00 & 3.99 \\ 
+  80 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.84 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
+  85 & 3.99 & 4.01 & 4.00 & 4.01 & 4.00 & 3.82 & 3.88 & 4.00 & 3.99 & 3.99 \\ 
+  90 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.82 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  95 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.81 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  100 & 3.99 & 4.00 & 4.00 & 4.01 & 4.00 & 3.83 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
+  105 & 3.99 & 4.00 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
+  110 & 3.99 & 4.00 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  115 & 3.98 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  120 & 3.99 & 4.00 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  125 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
+  130 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.87 &  &  & 3.99 \\ 
+  135 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  140 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
+  145 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.88 &  &  & 3.99 \\ 
+  150 & 3.99 & 4.01 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
+  155 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
+  160 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
   165 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
   170 & 3.99 & 4.02 &  &  & 4.00 & 3.80 & 3.87 &  &  & 3.99 \\ 
   175 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
@@ -832,7 +836,7 @@ $\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
 i.e. we associate a loss of $1$ with false positive and false negative selections,
 and a loss of $0.2$ with indeterminate selections.
 Note that we could also choose more 
-sophisticated loss functions based on \cite{ZAFFALON20121282}.
+sophisticated loss functions based on \citep{ZAFFALON20121282}.
 We sum these losses together across all predictors
 to obtain the total loss, presented in \cref{tab:misspec}.
 The table counts the number of
@@ -997,7 +1001,7 @@ and we intend to apply it on a real dataset in future work.
 
 We sincerely thank Jochen Einbeck for his contributions to an earlier version of this paper.
 
-\bibliographystyle{elsarticle-num} 
+\bibliographystyle{elsarticle-num-names} 
 \bibliography{basu_causal}
 
 \end{document}
