@@ -57,10 +57,10 @@
 \begin{abstract}
 Causal inference using observational data is important in
 many fields, including epidemiology, social science, economics, and many more.
-The goal of causal inference is to find the treatment effect on the subjects
+The goal of causal inference is to find the causal effect on the subjects
 by identifying causal links between the variables and the outcome.
 However, estimation of such causal links is extremely 
-difficult because the treatment effects may vary from subject 
+difficult because the causal effects may vary from subject 
 to subject. Unfortunately, modelling the underlying heterogeneity explicitly makes the 
 problem practically unsolvable. Additionally, for high dimensional problems,
 we often need to find a subset of 
@@ -73,7 +73,7 @@ explanatory variables.
 Our robust Bayesian model uses a set of spike and slab priors 
 through prior elicitation to obtain robust estimates for
 both the treatment and outcome model. We are specifically interested 
-in the sensitivity of the treatment effect in the high dimensional causal inference
+in the sensitivity of the causal effect in the high dimensional causal inference
 as well as identifying confounder variables. However, indicator
 based confounder selection can be deceptive, especially
 when the predictor is strongly associated with either the treatment or 
@@ -99,6 +99,8 @@ our method using a synthetic dataset.
 %%% in the text both are used; we should pick something and be
 %%% consistent to avoid confusion (if indeed they are the same...)
 
+%TB to MT: changed to causal effect now
+
 \section{Introduction}\label{sec:intro}
 
 Causal inference concerns estimating the causal
@@ -110,7 +112,7 @@ leaves us with observational studies
 where data is collected though surveys or record keeping. But this
 can be problematic in the presence of confounders, which are variables associated with both the treatment and the outcome.
 In such cases, we must be extra cautious as we risk
-unwanted bias in the treatment effect estimator \cite{rosenbaum83}.
+unwanted bias in the causal effect estimator \cite{rosenbaum83}.
 Several authors have tackled the presence of
 confounder variables. 
 Robins \cite{Robins1986ANA} used a graphical
@@ -218,7 +220,7 @@ where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$.
 %%% MT to TB: check if you're happy with this paragraph
 To decide whether or not to treat a new individual with given predictors,
 we are mainly interested in the effect of the treatment on the outcome.
-More precisely, the treatment effect of a new individual, indexed as $n+1$,
+More precisely, the causal effect of a new individual, indexed as $n+1$,
 whose outcome $Y_{n+1}$ is not yet observed, and with observed predictors $X_{n+1}=x_{n+1}$, is defined by:
 \begin{align}
   \delta(x_{n+1})
@@ -232,9 +234,9 @@ For our model, due to linearity of expectation, we have that
   \intertext{and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
   &=\beta_{T}.
 \end{align}
-Note that, for this model, the treatment effect $\delta(x_{n+1})$
+Note that, for this model, the causal effect $\delta(x_{n+1})$
 does not depend on the observed value $x_{n+1}$ of $X_{n+1}$.
-So, to find the treatment effect, we simply need to estimate $\beta_T$.
+So, to find the causal effect, we simply need to estimate $\beta_T$.
 
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
@@ -541,7 +543,7 @@ Now, for each fixed value of $q$, let $\hat{\beta}_{S(q)}$ be the posterior mean
 of the regression coefficients of the outcome model with respect to
 the predictors that belong to $S(q)$. Similarly,
 let $\hat{\gamma}_{S(q)}$ be the posterior means of the regression
-coefficients for the treatment effects. Since we use continuous 
+coefficients for the causal effects. Since we use continuous 
 spike and slab priors, these regression coefficients are not sparse.
 Moreover, with our variable selection we only determine whether the variable 
 is included in at least one of the models. But, we cannot determine a specific 
@@ -596,17 +598,18 @@ where
 
 \section{Simulation Studies}\label{sec:sim}
 
-For the simulation studies, we consider 2 different settings. In each
+For the simulation studies, we consider 4 different settings. In each
 case, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
 for $1\le i\le n$ where $\Sigma_{ij} = 0.3^{|i-j|}$. In this way, we 
-generate 50 predictors for our model with mild correlations among them.
+generate predictors for our model with mild correlations among (within?) them.
 We then use the following distributions to generate the outcome and
 the treatment indicator: 
 \begin{equation}
     T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
     \quad\text{and}\quad
-%%% MT to TB: did you forget to mention the error term in the next equation?
-    Y_i = 4T_i + X_i\beta.
+%%% MT to TB: did you forget to mention the error term in the next equation? 
+%%% TB to MT: Thanks Matthias, yes I forgot to put that. 
+    Y_i = 4T_i + X_i\beta + \epsilon_i.
 \end{equation}
 %%% MT to BT: added this sentence for clarity later when discussing tables
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
@@ -616,7 +619,19 @@ Note that the simulated causal effect $\beta_T$ is equal to $4$.
 \end{description}
 For both
 the cases, we consider different numbers of observations $n$ where
-$n=25+ 5k$ for $k=0,1,2,\dots,10$.
+$n=25+ 5k$ for $k=0,1,2,\dots,35$ and 50 ($p$)
+predictors. This way, we check the efficiency of our method with varying level of information.
+
+For the next two cases, we check our method for varying number of predictors (and hence sparsity level, ie the percentage of active variables present in the model)
+
+\begin{description}
+    \item[Scenario 3] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item[Scenario 4] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+\end{description}
+For both
+the cases, we consider different numbers of predictors $p$ where
+$p=25+ 5k$ for $k=1,2,\dots,35$ and 100 ($n$)
+predictors. 
 
 We present our analyses in \cref{tab:causal,tab:misspec}.
 For the sake of clarity we use the following accronyms: RBCE for 
@@ -635,6 +650,8 @@ $Y$ and $X$ to determine bounds on the number of active variables.
 %%% informed from the marginal correlations? Also, why are marginal
 %%% correlations the best way to do this? Ideally, one would set this
 %%% without reference to the data... (since it is prior elicitation)
+%%% TB to MT: To be honest it was just two random numbers I came up with, without any proper reason so that the this doesn't become an overfit
+
 We set the thresholds to be $0.15$ and $0.35$ for the correlations.
 We compute the
 number of variables with marginal correlation greater than 0.15
@@ -665,7 +682,7 @@ our method gives an interval estimate for the causal effect:
 the first row gives the lower bound
 and the second row gives the upper bound. We notice that our method is 
 somewhat in agreement with the other methods but is more consistent
-in terms of estimating the treatment effect. However, this is not the
+in terms of estimating the causal effect. However, this is not the
 case for other methods and sometimes those methods produce extreme 
 values. This can be observed in \cref{fig:comp:trt} as well. Here, the true 
 value is represented by the straight line for $\beta_T = 4$. 
@@ -676,6 +693,7 @@ to underestimate the causal effect.
 This suggests that
 we may want to have a different value of $a$ for these sets of observations
 %%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
+%TB to MT: I was thinking of a differernt value to get a flatter prior
 instead of a fixed value of $a=10$ for all of our analyses.
 We can also see that the lower bound tends to improve
 with increasing number of observations: as we accumulate
@@ -716,21 +734,31 @@ RBCE (low) & 2.79 & 3.70 & 3.77 & 3.56 & 3.69 & 3.70 & 3.81 & 3.78 & 3.81 & 3.82
 
 \begin{figure}
     \centering
-    \includegraphics[width = 0.9\linewidth]{RBCE_comp.pdf}
-    \caption{Comparison of different methods in estimating the treatment effect.}
+    \includegraphics[width = 0.9\linewidth]{treat_obs.pdf}
+    \caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
     \label{fig:comp:trt}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.9\linewidth]{treat_pred.pdf}
+    \caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+    \label{fig:comp:trt:pred}
+\end{figure}
+
 %%% MT to TB: I changed "identification" to "selection" (assuming that is meant?)
+% TB to MT: yes, thanks
 For variable selection, we use a loss function as described earlier.
 Here, we consider
 $\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
 %%% MT to TB: I've briefly recap what these losses mean; please check if correct
+% TB to MT: yes, thanks
 i.e. we associate a loss of $1$ with false positive and false negative selections,
 and a loss of $0.2$ with indeterminate selections.
 Note that we could also choose more 
 sophisticated loss functions based on \cite{ZAFFALON20121282}.
 %%% MT to TB: I added "we sum these losses together across all preds"; check
+% TB to MT: yes, thanks
 We sum these losses together across all predictors
 to obtain the total loss, presented in \cref{tab:misspec}.
 The table counts the number of
@@ -763,20 +791,47 @@ models.}\label{tab:misspec}
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot & FP & FN & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   0 &  26 & 5.2 & -- & -- & -- & -- & -- & -- &  12 &   2 & 14\\ 
-  30 &   0 &   1 &   1 & 1.2 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0\\ 
-  35 &   0 &   0 &   1 & 0.2 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0\\ 
-  40 &   0 &   1 &   0 & 1.0 &-- & -- & -- & -- & -- & -- &   0 &   0 & 0\\ 
-  45 &   0 &   0 &   1 & 0.2 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0\\ 
-  50 &   0 &   0 &   0 & 0.0 &  0 &   0  & 0 &   0 &   0  & 0 &   0 &   0  & 0\\ 
-  55 &   0 &   0 &   0 & 0.0 &   0 &   0 &   0  & 0 &   0  & 0 &   0 &   0  & 0\\ 
-  60 &   0 &   0 &   0 & 0.0 &   0 &   0 &   0 &   0  & 0  & 0 &   0 &   0  & 0\\ 
-  65 &   0 &   0 &   0 & 0.0 &   0 &   0 &   0 &   0 &   0  & 0  & 0 &   0  & 0\\ 
-  70 &   0 &   0 &   0 & 0.0 &   0 &   0 &   0 &   0 &   0  & 0  & 0 &   0  & 0\\ 
-  75 &   0 &   0 &   0 & 0.0 &   0 &   0 &   0 &   0 &   0  & 0  & 0 &   0  & 0\\ 
+1 &   0 &   0 &  43 &  &  &  &  &   0 &   0 \\ 
+  2 &   0 &   0 &   5 &  &  &  &  &   0 &   0 \\ 
+  3 &   0 &   0 &   2 &  &  &  &  &   0 &   0 \\ 
+  4 &   0 &   0 &   0 &  &  &  &  &   0 &   0 \\ 
+  5 &   0 &   0 &   0 &  &  &  &  &   0 &   0 \\ 
+  6 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  7 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  8 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  9 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  10 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  11 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  12 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  13 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  14 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  15 &   0 &   0 &   0 &   1 &   0 &   0 &   0 &   0 &   0 \\ 
+  16 &   0 &   0 &   0 &   1 &   0 &   0 &   0 &   0 &   0 \\ 
+  17 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  18 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  19 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  20 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  21 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  22 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  23 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  24 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  25 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  26 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  27 &   0 &   0 &   0 &   1 &   0 &   0 &   0 &   0 &   0 \\ 
+  28 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  29 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  30 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  31 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  32 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  33 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  34 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  35 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  36 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
    \hline
 \end{tabular}
-\subcaption*{Second scenario: $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$}
+\end{table}
+\begin{table}
+\caption{Second scenario: $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$}
 \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
   \hline
   &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c||}{SSCE}
@@ -784,17 +839,42 @@ models.}\label{tab:misspec}
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot & FP & FN & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   2 &  23 & 6.6 & -- & -- & -- & -- & -- & -- &   9 &   4 & 13\\ 
-  30 &   0 &   2 &   9 & 3.8 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0 \\ 
-  35 &   0 &   0 &  18 & 3.6 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0 \\ 
-  40 &   0 &   0 &   5 & 1.0 &-- & -- & -- & -- & -- & -- &   0 &   0 & 0 \\ 
-  45 &   0 &   0 &   3 & 0.6 & -- & -- & -- & -- & -- & -- &   0 &   0 & 0 \\ 
-  50 &   0 &   0 &   1 & 0.2 &  0 &   7 & 7 &   0 &  14 & 14 &   0 &   0 & 0 \\ 
-  55 &   0 &   0 &   1 & 0.2 &  0 &   0 & 0 &  0 &  12 & 12 &  0 &   0 & 0 \\ 
-  60 &   0 &   0 &   1 & 0.2 &  1 &   0 & 1 &  0 &   0 &  0 & 0 &  0 &   0 \\ 
-  65 &   0 &   0 &   0 & 0.0 &  0 &  12 & 12 &  0 &   0 &  0 & 0 &  0 &   0 \\ 
-  70 &   0 &   0 &   0 & 0.0 &  0 &   0 &  0 &  0 &   0 &  0 & 0 &  0 &   0 \\ 
-  75 &   0 &   0 &   0 & 0.0 &  0 &   0 &  0 &  0 &   0 &  0 & 0 &  0 &   0 \\ 
+1 &   0 &   1 &  21 &  &  &  &  &   0 &   0 \\ 
+  2 &   0 &   0 &  44 &  &  &  &  &   0 &  13 \\ 
+  3 &   0 &   0 &  11 &  &  &  &  &   0 &  13 \\ 
+  4 &   0 &   0 &   4 &  &  &  &  &   0 &   0 \\ 
+  5 &   0 &   0 &   3 &  &  &  &  &   0 &   0 \\ 
+  6 &   0 &   0 &   2 &   0 &   0 &   0 &  15 &   0 &   0 \\ 
+  7 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  8 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  9 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  10 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  11 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  12 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  13 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  14 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  15 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  16 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  17 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  18 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  19 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  20 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  21 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  22 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  23 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  24 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  25 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  26 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  27 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  28 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  29 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  30 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  31 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  32 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  33 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  34 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  35 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
+  36 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 &   0 \\ 
    \hline
 \end{tabular}
 \end{table}
