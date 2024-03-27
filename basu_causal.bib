@@ -341,3 +341,20 @@ abstract = {Predictions made by imprecise-probability models are often indetermi
   url = 	 {https://proceedings.mlr.press/v147/schwaferts21a.html},
   abstract = 	 {Statistical analyses with composite hypotheses are omnipresent in empirical sciences, and a decision-theoretic account is required in order to formally consider their practical relevance. A Bayesian hypothesis-based decision-theoretic analysis requires the specification of a prior distribution, the hypotheses, and a loss function, and determines the optimal decision by minimizing the expected posterior loss of each hypothesis. However, specifying such a decision problem unambiguously is rather difficult as, typically, the relevant information is available only partially. In order to include such incomplete information into the analysis and to facilitate the use of decision-theoretic approaches in applied sciences, this paper extends the framework of hypothesis-based Bayesian decision making with composite hypotheses into the framework of imprecise probabilities, such that imprecise specifications for the prior distribution, for the composite hypotheses, and for the loss function are allowed. Imprecisely specified composite hypotheses are sets of parameter sets that are able to incorporate blurring borders between hypotheses into the analysis. The imprecisely specified prior distribution gets updated via generalized Bayes rule, such that imprecise probabilities of the (imprecise) hypotheses can be calculated. These lead – together with the (imprecise) loss function – to a set-valued expected posterior loss for finding the optimal decision. Beneficially, the result will also indicate whether or not the available information is sufficient to guide the decision unambiguously, without pretending a level of precision that is not available.}
 }
+
+
+@InProceedings{zaffalon20a,
+  title = 	 {Structural Causal Models Are (Solvable by) Credal Networks},
+  author =       {Zaffalon, Marco and Antonucci, Alessandro and Caba\~nas, Rafael},
+  booktitle = 	 {Proceedings of the 10th International Conference on Probabilistic Graphical Models},
+  pages = 	 {581--592},
+  year = 	 {2020},
+  editor = 	 {Jaeger, Manfred and Nielsen, Thomas Dyhre},
+  volume = 	 {138},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {23--25 Sep},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v138/zaffalon20a/zaffalon20a.pdf},
+  url = 	 {https://proceedings.mlr.press/v138/zaffalon20a.html},
+  abstract = 	 {A structural causal model is made of endogenous (manifest) and exogenous (latent) variables. We show that endogenous observations induce linear constraints on the probabilities of the exogenous variables. This allows to exactly map a causal model into a credal network. Causal inferences, such as interventions and counterfactuals, can consequently be obtained by standard algorithms for the updating of credal nets. These natively return sharp values in the identifiable case, while intervals corresponding to the exact bounds are produced for unidentifiable queries. A characterization of the causal models that allow the map above to be compactly derived is given, along with a discussion about the scalability for general models. This contribution should be regarded as a systematic approach to represent structural causal models by credal networks and hence to systematically compute causal inferences. A number of demonstrative examples is presented to clarify our methodology. Extensive experiments show that approximate algorithms for credal networks can immediately be used to do causal inference in real-size problems.}
+}

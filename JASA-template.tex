@@ -74,14 +74,11 @@ as the consequence of mistreatment can be harmful.
 So, in this paper, we develop a model for causal inference using
 robust Bayesian analysis, to allow for abstention when selecting
 predictor variables.
-%%% MT to TB: shortening
-% Our robust Bayesian model
 We
 use a set of spike and slab priors 
 through prior elicitation to obtain robust estimates for
 both the treatment and outcome model. We are specifically interested 
 in the sensitivity of the causal effect in high dimensional causal inference
-%%% MT to TB: I've replaced "confounder variables" with "predictor variables that are causally linked"; check if ok (see also comments later; let us discuss on teams)
 as well as identifying predictor variables that are causally linked. However, indicator
 based variable selection can be deceptive, especially
 when the predictor is strongly associated with either the treatment or 
@@ -89,9 +86,7 @@ the outcome, as this increases the posterior expectation of the selection
 indicators. To avoid that, we apply a post-hoc selection scheme
 which successfully removes negligible non-zero effects from the model,
 attaining a smaller set of 
-%%% MT to TB: using "predictors" again for consistency (and reduce confusion?)
 predictors.
-%confounders.
 Finally, we illustrate
 our method using a synthetic dataset.
 \end{abstract}
@@ -109,14 +104,10 @@ our method using a synthetic dataset.
 
 \section{Introduction}\label{sec:intro}
 
-%%% MT to TB: I moved this sentence from abstract to intro (to make abstract a bit shorter)
 Causal inference using observational data is important in
 many fields, including epidemiology, social science, economics, and many more.
 Causal inference concerns estimating the causal
-%%% MT to TB: I changed "dependent variable" to "outcome variable" (I think it's clearer for a general audience, and we talk a lot about the outcome later)
-%%% MT to TB: Why do we say "independent variables"? These need not be independent. I've changed this to "predictor variables", I hope that's ok.
 effect of predictor variables on an outcome variable,
-%%% MT to TB: I added this, please check
 as well as identifying which predictors are causally linked with the outcome.
 Ideally,
 randomised trials are the most efficient way to perform this task.
@@ -127,9 +118,6 @@ where data is collected though surveys or record keeping.
 
 But this
 can be problematic in the presence of confounding.
-%%% MT to TB: the definition on the next line sounds wrong (at least in the usual sense of "confounder"); I've added a definition and clarification as well as a figure; please check
-% Confounders are variables associated with both the treatment and the outcome.
-%%% MT to TB: added text starts here
 \begin{figure}
 \begin{center}
 \begin{tikzpicture}[node distance=2cm, auto]
@@ -146,10 +134,8 @@ can be problematic in the presence of confounding.
 \end{figure}
 A confounder is any variable which is causally linked with both a predictor and the outcome, giving the false impression that that predictor causes the outcome (see \cref{fig:confounding}).
 Confounding happens commonly in observational treatment studies because many predictors are often causally linked with the treatment decision (which is also a predictor), whilst simultaneously affecting the outcome of the treatment. Any such predictors act as a confounders between treatment decision (as one of the predictor variables) and treatment outcome.
-%%% MT to TB: added text ends here
 In such cases, we must be extra cautious as we risk
 unwanted bias in the causal effect estimator \citep{rosenbaum83},
-%%% MT to TB: I added next line for clarity
 if we ignore such correlations.
 Several authors have tackled the presence of
 confounder variables. 
@@ -168,7 +154,6 @@ Bayesian methodologies have grown in popularity.
 Bayesian model averaging based method for estimating the causal 
 effect. \Citet{wang2015} suggested BAC (or, Bayesian adjustment for
 confounding),
-%%% MT to TB: check next phrase
 where an informative prior obtained from
 the treatment model is applied on the outcome model for
 estimating the causal effect. Several other methods were
@@ -180,25 +165,22 @@ estimation. They considered a data-driven adaptive approach to
 propose their prior which reduces the variance of the causal estimate. 
 Our approach is based on
 sensitivity analysis, where instead of using a single prior, 
-we consider a set of priors \citep{BERGER1990303}. This is particularly 
-interesting as in many cases, causal effect estimation can be performed 
+we consider a set of priors \citep{BERGER1990303}. %TB to MT: added zaffalon paper
+Some works have been done in this approach of
+prior sensitivity analysis. \citet{zaffalon20a} 
+used credal networks in structured causal models
+for causal inference; \citet{raices_cruz22} suggested
+that causal effect estimation can be performed 
 through a meta analysis where robust Bayesian analysis 
-can be beneficial under severe uncertainty \citep{raices_cruz22}.
-Moreover, for some problems 
-we have to rely on very limited data to perform our Bayesian analysis.
-In this case,
+can be beneficial under severe uncertainty. 
+This motivates us to extend prior sensitivity analysis for 
+regression models. This is particularly beneficial, as for high dimensional regression problems 
+we have to rely on very limited data to perform our Bayesian analysis and 
 inference with a single prior
-%%% MT to TB: I strenghtened this
-% may not be reliable.
 is unreliable.
-%%% MT to TB: I don't quite understand the heteroscedasticity argument;
-%%% I added "inference with a single prior" above instead
-% in presence of heteroscedasticity within the data.
-Instead, we use expert opinion to elicit a set of priors 
+To perform a prior sensitivity analysis, we use expert opinion to elicit a set of priors 
 based on empirical evidence. 
 This allows us to construct the problem of 
-%%% MT to TB: changed "confounder identification" to "predictor selection"
-% confounder identification 
 predictor selection
 in a framework where abstention has a relatively positive gain i.e.~
 when the cost of further tests/data collection is cheaper than
@@ -206,10 +188,7 @@ mistreating a subject.
 
 Our framework considers a set of continuous spike and slab priors 
 \citep{ishwaran2005} for
-%%% MT to TB: changed "confounder identification" to "predictor selection"
-% confounder identification.
 predictor selection.
-%%% MT to TB: check if you are happy with this next sentence
 We thereby construct a Bayesian group LASSO \citep{xu2015} type problem.
 To perform sensitivity analysis,
 we consider a set of beta priors on the covariate selection 
@@ -236,7 +215,6 @@ we discuss our findings and conclude this paper in \cref{sec:conc}.
 Let an observational study on $n$ individuals give us
 \emph{treatment outcomes} $Y\coloneqq(Y_1, \dots, Y_n)$ with 
 corresponding \emph{treatment decisions} $T\coloneqq(T_1, \dots, T_n)$.
-%%% MT to TB: added this for clarity
 Here, we use an indicator to represent the treatment decision. That is, $T_i$ is $1$ if the $i$th patient was treated, and $0$ otherwise. Similarly,
 $Y_i$ is the treatment outcome of the $i$th patient, represented as some real-valued quantity.
 
@@ -253,7 +231,6 @@ Now, let
 $\beta \coloneqq (\beta_1$, \dots, $\beta_p)^T$ denote the vector of regression
 coefficients
 related to the predictors, and let $\beta_T$ denote a regression coefficient related to the
-%%% MT to TB: treatment -> treatment decision
 treatment decision.
 Then we can define a linear model for the outcome
 so that
@@ -261,13 +238,10 @@ so that
 	Y_i =  T_i \beta_{T} + X_i\beta + \epsilon_i
 \end{equation}
 where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$,
-%%% MT to TB: added independence statement as used later
 independent of $T_i$ and $X_i$.
-%%% MT to TB: added for clarity
 Note that both $T_i$ and $X_i$ are predictors for $Y_i$ in the above model.
 However, when we talk about predictors in this paper, we usually mean just the components of $X_i$.
 
-%%% MT to TB: check if you're happy with this paragraph
 To decide whether or not to treat a new individual with given predictors,
 we are mainly interested in the effect of the treatment on the outcome.
 More precisely, the causal effect of a new individual, indexed as $n+1$,
@@ -297,7 +271,6 @@ In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 
 $\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we
-%%% MT to TB: define -> assume
 assume
 \begin{align}
 	P(T_i=1\mid X_i) = \Phi(X_i\gamma)
@@ -315,7 +288,6 @@ link function, we model the $T_i$ as follows \citep{albert93}:
     \end{cases}
 \end{align}
 where $u_i\sim\mathcal{N}(0,1)$.
-%%% MT to TB: not entirely trivial so I added a quick derivation
 With this model, indeed
 \begin{align}
   P(T_i=1\mid X_i)
@@ -379,8 +351,6 @@ treatment. That is, conceptually,
 	\pi_j \coloneqq P\left((\beta_j,\gamma_j)\not=(0,0)\right).
 \end{equation}
 Practically, we model this by defining the following hierarchical model
-%%% MT to TB do you mean "from" instead of "for"? for now removed as confusing
-% for spike and  slab group LASSO
 so that,
 for $1\le j\le p$,
 \begin{align}
@@ -403,7 +373,6 @@ for $1\le j\le p$,
 	\end{bmatrix}\right)\\
 	\beta_T\mid \sigma^2 &\sim \normal\left(0, \sigma^2\right)\\
         \frac{1}{\sigma^2}&\sim \text{Gamma}(a, b)\\
-        %%% MT to TB: text referred to q_j so I changed q -> q_j here
 	\pi_{j} &\sim\text{Beta}\left(sq_j, s(1-q_j)\right).
 \end{align}
 In the hierarchical model, we fix sufficiently small $\tau_0$
@@ -426,7 +395,6 @@ For the precision term $1/\sigma^2$, a natural choice of prior is the gamma dist
 as it allows the control of both the location and the scale of the precision.
 To ensure that the prior is able to represent the data, we consider $b=1$ and 
 fix $a$ so that it represents the prior mean of the precision.
-%%% MT to TB: check if you are happy with this
 Alternatively, when $b=1$, we know that the interval
 $[0, 3a]$ contains the true value of the precision parameter with probability close to $0.95$.
 So, we can also use a prior judgement on the 95\% quantile to set $a$.
@@ -503,37 +471,33 @@ Therefore, we are particularly interested in constructing a robust Bayesian fram
 for variable selection. In this way, when we are preparing guidelines for treatment, we 
 can have the option to ask for more data before reaching any conclusion. To achieve this,
 we consider a utility based framework with three possible 
-%%% MT to TB: not sure what is meant, subsequent text does not consider "determining a variable"; replace with "scenarios"?
-% ways of determining a variable. 
 scenarios.
 
-In general, an unsuccessful treatment of a subject can have severe consequences 
-which cannot be associated with a suitable loss function. Instead, we
+%TB to MT: did some modification in the following text
+In particular through predictor selection, we also want 
+to check if a certain bio-marker should be considered
+for treatment decision. That is, in a very intuitive 
+situation, we can observe blood pressure with some
+other bio-markers and want to decide whether our
+treatment guideline should also consider the blood
+pressure of the subject before treating them. This is
+useful as an unnecessary treatment of a subject can have severe consequences because of the medicinal
+side effects. In general, this cannot be associated 
+with a suitable loss function. Instead, we
 assume that we can always revert any initial mistreatment by further treatments, 
 and we can associate a loss function with the cost of further treatments.
 So, we will associate two constant loss values $\ell_1$ and $\ell_2$ 
-with false positives and false negatives respectively. 
+with false positives (falsely selected predictor) and 
+false negatives (falsely rejected predictor) respectively. 
 Clearly, false positives will lead to unwanted side effects and
 false negatives will lead to mistreatment of the patient. Finally, we associate
-a loss value $\ell_3$ for abstention which can be interpreted as the cost of further tests.
+a loss value $\ell_3$ for abstention from selecting
+a variable which can be interpreted as the cost of further tests to determine whether that bio-marker
+is important for constructing the treatment guideline.
 Ideally, in most cases, $\ell_3\ll \ell_1,\ell_2$. However, in certain scenarios,
 this might not be the case, especially when the condition of a subject deteriorates rapidly
 over time.
-\iffalse
-\begin{table}[h]
-    \caption{Losses with respect to different types of variable selection}
-    \label{tab:loss:vs}
-    \centering
-    \begin{tabular}{l||c|c|c}
-       &  False Positive & False Negative & Abstention \\
-       \hline
-       \hline
-       Value  &  $\ell_1$ & $\ell_2$ & $\ell_3$
-    \end{tabular}
-\end{table}
-\fi
 
-%%% MT to TB: text above talks about abstaining from treatment; this is quite different from abstaining from selecting a variable
 Now, based on this notion of abstaining from selecting a variable, we can perform
 a sensitivity analysis over a set of priors on the prior selection probability.
 That is, we can consider a set of possible values for $q$ such that
@@ -550,6 +514,7 @@ For the co-variate selection, we look into the posterior expectation of $\pi_j$.
 We consider the $j$-th predictor to be removed from both the
 treatment and outcome model, if
 %%% MT to TB: should we add a subscript q to \mathbb{E} to emphasize the dependence?
+% TB to MT: I thought of it. But we are optimising over the set of $q$. So was thinking if should put it
 \begin{align}\label{eq:vs:remove}
 	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}(\pi_j\mid W) < 1/2.
 \end{align}
@@ -561,7 +526,6 @@ Otherwise, we consider the variable to be indeterminate,  in which case we absta
 it in any of the models but instead just report a lack of information.
 
 In general, this framework is
-%%% MT to TB: self-sufficient sounds a bit strange here, do you mean "sufficient"? [changed]
 sufficient
 for variable selection. However, for
 model fitting and prediction, we need to evaluate the values 
@@ -661,9 +625,7 @@ the treatment indicator:
     \quad\text{and}\quad
     Y_i = 4T_i + X_i\beta + \epsilon_i.
 \end{equation}
-%%% MT to TB: check if this is correct; I hope I got this correctly from the code
 where $\epsilon_i\sim\mathcal{N}(0,0.1^2)$.
-%%% MT to TB: added this sentence for clarity later when discussing tables
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
 
 The first two cases that we consider are:
@@ -696,6 +658,7 @@ where $p\le n$, we do not have any results for $n<50$ for these cases.
 
 \paragraph{Elicitation}
 %%% MT to TB: I've edited this paragraph, see if you're happy with this
+% TB to MYT: Thanks a lot. Couldn't be better, at least not by me. :D
 One way to elicit $\mathcal{P}$
 is through a prior expected bound on the number of active predictors.
 Although we may do so directly,
@@ -1032,14 +995,14 @@ framework is focused on the effect of prior elicitation on
 %%% confounding but some may not; if it is appropriate then earlier in
 %%% the paper we should talk a bit more to explain why these variables
 %%% are all confounders and be consistent with our terminology)
-confounder selection
+predictor selection
 as well as causal effect estimation. We consider a spike and slab type
-prior for confounder selection and discuss the possible sources of uncertainty that
+prior for predictor selection and discuss the possible sources of uncertainty that
 need to be tackled carefully. We were particularly focused on the uncertainty associated
 with prior selection probabilities for which we consider a set of beta priors to perform
 sensitivity analysis. We showed that the sensitivity analysis on the prior selection probability
-gives us a robust confounder selection scheme. In this way, we can abstain from selecting
-a confounder when the available data is not sufficient. We also propose a generalised
+gives us a robust predictor selection scheme. In this way, we can abstain from selecting
+a predictor when the available data is not sufficient. We also propose a generalised
 utility based framework, where we associate a loss for abstaining which can be interpreted 
 as the cost of further data collection. Finally, we illustrate our method with synthetic dataset
 and compare with other state of the art Bayesian methods. 
@@ -1049,12 +1012,26 @@ Currently, the paper proposes a robust Bayesian approach for causal effect estim
 we rely on sampling strategies to obtain the posterior bounds as well as performing 
 variable selection. In future, it will be interesting to derive inner approximation bounds
 for the posterior estimates to reduce the computational cost. Moreover, for the sake of
-illustration, we rely on simple loss functions and elicitation strategy. In future, we would
-like to investigate different elicitation strategies for the method and explore alternative 
-loss functions for formulating a decision theoretic framework. Last but not the least,
-we noticed that our method
+illustration, we rely on simple loss functions
+%TB to MT: edited the conclusion
+associated with the predictor selection. However,
+this paradigm can be used for a generalised
+decision theoretic framework as well where based on
+the predictor selection we can formulate the 
+problem as a decision support for treating a subject.
+
+We also notice with our simulation studies that our
+method tends to underestimate the causal effect
+when some predictors are only associated with the
+outcome model. This suggests that we might want
+to use a correction formula for the causal effect.
+Moreover, in future, we would
+like to investigate different elicitation strategies for different prior parameters and their importance in causal effect estimation. 
+
+
+In general, we noticed that our method
 is in good agreement with other methods with an added level of robustness.
-This confirms that our method has good potential for real-life problems,
+This shows that our method has good potential for real-life problems,
 and we intend to apply it on a real dataset in future work.
 
 \section*{Acknowledgements}
