@@ -474,23 +474,23 @@ we consider a utility based framework with three possible
 scenarios.
 
 %TB to MT: did some modification in the following text
-In particular through predictor selection, we also want 
+In particular, through predictor selection, we also want 
 to check if a certain bio-marker should be considered
-for treatment decision. That is, in a very intuitive 
-situation, we can observe blood pressure with some
+for the treatment decision. For example, say we can observe blood pressure with some
 other bio-markers and want to decide whether our
 treatment guideline should also consider the blood
 pressure of the subject before treating them. This is
 useful as an unnecessary treatment of a subject can have severe consequences because of the medicinal
-side effects. In general, this cannot be associated 
+side effects. In general, it is hard to associate such consequences 
 with a suitable loss function. Instead, we
 assume that we can always revert any initial mistreatment by further treatments, 
 and we can associate a loss function with the cost of further treatments.
 So, we will associate two constant loss values $\ell_1$ and $\ell_2$ 
 with false positives (falsely selected predictor) and 
 false negatives (falsely rejected predictor) respectively. 
-Clearly, false positives will lead to unwanted side effects and
-false negatives will lead to mistreatment of the patient. Finally, we associate
+%%% MT to TB: not considering a predictor may or may not lead to mistreatment, it just means you'll have less information, not that the treatment is bad... I've chanted "will" to "may"
+Clearly, false positives may lead to unwanted side effects and
+false negatives may lead to mistreatment of the patient. Finally, we associate
 a loss value $\ell_3$ for abstention from selecting
 a variable which can be interpreted as the cost of further tests to determine whether that bio-marker
 is important for constructing the treatment guideline.
@@ -498,7 +498,7 @@ Ideally, in most cases, $\ell_3\ll \ell_1,\ell_2$. However, in certain scenarios
 this might not be the case, especially when the condition of a subject deteriorates rapidly
 over time.
 
-Now, based on this notion of abstaining from selecting a variable, we can perform
+Now, based on this notion of abstaining from selecting a predictor, we can perform
 a sensitivity analysis over a set of priors on the prior selection probability.
 That is, we can consider a set of possible values for $q$ such that
 $q\in\mathcal{P}$, where $\mathcal{P} \subseteq \left(0, 1\right)^{p}$.
@@ -628,20 +628,26 @@ the treatment indicator:
 where $\epsilon_i\sim\mathcal{N}(0,0.1^2)$.
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
 
-The first two cases that we consider are:
+These four cases can be split in two categories. In one category we consider the
+case where we have increasing number of observations. In the first category we have two
+sub cases, in the first case we consider all active variables to be confounders
+and in the second case we consider some active variables which are only related to
+the outcome model. 
 \begin{description}
-    \item[Scenario 1] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
-    \item[Scenario 2] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+    \item[Scenario 1a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item[Scenario 1b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both
-cases, we consider different numbers of observations $n$ where
+scenarios, we consider different numbers of observations $n$ where
 $n=25+ 5k$ for $k=0,1,2,\dots,35$ and $p=50$
 predictors. This way, we check the efficiency of our method with varying level of information.
 
-For the next two cases, we check our method for varying number of predictors (and hence sparsity level, i.e.\ the percentage of active variables present in the model):
+For the second category, we check our method for varying number of predictors 
+(and hence sparsity level, i.e.\ the percentage of active variables present in the model).
+Similar to the first category we also have two sub cases:
 \begin{description}
-    \item[Scenario 3] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
-    \item[Scenario 4] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+    \item[Scenario 2a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item[Scenario 2b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both
 cases, we consider different numbers of predictors $p$ where
@@ -707,14 +713,14 @@ In these simulations, our method tends
 to underestimate the causal effect.
 %%% MT to TB: why is the problem with a? can you explain a bit more?
 This suggests that
-we may want to have a different value of $a$ for these sets of observations
+we may want to have a different value of $a$ for these different simulated datasets
 %%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
 %TB to MT: I was thinking of a differernt value to get a flatter prior but that felt like manipulation so kept it fixed for each sample size or predicrtor size
 instead of a fixed value of $a=10$ for all of our analyses.
 We can also see that the lower bound tends to improve
-with increasing number of observations: as we accumulate
+with increased number of observations: as we accumulate
 more information, the interval becomes smaller and converges towards
-the true value.
+a single value.
 
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Tue May 23 18:29:20 2023
@@ -904,16 +910,16 @@ as well.
 
 We show the result of our analyses with different number of predictors and
 fixed number of sample in \cref{fig:comp:trt:pred,tab:causal2}. Similar to
-the first two settings, we notice that our method is in good agreement with
+the first two settings, we notice that our method is somewhat in agreement with
 BSSL for the third setting. However, for the fourth setting, our method
-underestimate the treatment effect significantly (5\% in the worst case). This
-is somewhat in sync with the second setting and a possible reason behind this
+underestimates the treatment effect significantly (5\% in the worst case). This
+is somewhat in sync with the second setting, and a possible reason behind this
 could be the fact that in both the cases, the number of active $\beta_j$'s is
 higher than $\gamma_j$'s. This therefore, tends to reduce the value of treatment
 effect. A possible way to work around this issue can be using the `DSS' estimates
 of the regression coefficient and adjust the value of $\beta_T$. 
 
-Besides this interesting result. We notice that all of the four methods performs
+Besides this interesting result, we notice that all of the four methods perform
 perfectly in variable selection giving no misspecified variables. Therefore,
 we omit the table of variable selection for third and fourth scenarios.
 
@@ -1018,7 +1024,7 @@ associated with the predictor selection. However,
 this paradigm can be used for a generalised
 decision theoretic framework as well where based on
 the predictor selection we can formulate the 
-problem as a decision support for treating a subject.
+problem as a decision support problem for treating a subject.
 
 We also notice with our simulation studies that our
 method tends to underestimate the causal effect
