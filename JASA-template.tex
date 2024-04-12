@@ -562,12 +562,20 @@ let $\hat{\gamma}_{S(q)}$ be the posterior means of the regression
 coefficients for the causal effects. Since we use continuous 
 spike and slab priors, these regression coefficients are not sparse.
 Moreover, with our variable selection we only determine whether the variable 
-is included in at least one of the models. But, we cannot determine a specific 
-association. Therefore, to adjust the sparsity of the estimates and understand
-the specific association with the treatment/outcome/both, we apply the 
+is included in at least one of the models.
+%%% MT to BT: I edited this paragraph for clarity; check
+%But, we cannot determine a specific 
+%association. Therefore, to adjust the sparsity of the estimates and understand
+%the specific association with the treatment/outcome/both, 
+To determine which predictors
+influence the outcome ($\beta_j\neq 0$),
+the treatment ($\gamma_j\neq 0$), or both,
+and to understand the degree of assocation
+(i.e.\ the magnitude of $\beta_j$ and/or $\gamma_j$),
+we apply the 
 ``decoupled shrinkage and selection'' (DSS) method proposed by \citep{hahn2015}. 
 For that, we solve the following adaptive LASSO-type \citep{Zou2006}
-problems
+problems:
 
 \begin{align}
 	\hat{\beta}^D_{S(q)} &= 
