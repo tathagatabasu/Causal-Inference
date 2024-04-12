@@ -516,11 +516,11 @@ treatment and outcome model, if
 %%% MT to TB: should we add a subscript q to \mathbb{E} to emphasize the dependence?
 % TB to MT: I thought of it. But we are optimising over the set of $q$. So was thinking if should put it
 \begin{align}\label{eq:vs:remove}
-	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}(\pi_j\mid W) < 1/2.
+	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}_q(\pi_j\mid W) < 1/2.
 \end{align}
 Similarly, we consider the $j$-th predictor to be present in at least one of the models, if
 \begin{align}\label{eq:vs:sel}
-	\lexp (\pi_j\mid W)\coloneqq \inf_{q\in \mathcal{P}} \mathbb{E}(\pi_j\mid W) \ge 1/2.
+	\lexp (\pi_j\mid W)\coloneqq \inf_{q\in \mathcal{P}} \mathbb{E}_q(\pi_j\mid W) \ge 1/2.
 \end{align}
 Otherwise, we consider the variable to be indeterminate,  in which case we abstain from putting
 it in any of the models but instead just report a lack of information.
@@ -535,7 +535,7 @@ For any fixed $q$, we define the set $S(q)$ as the set of all variables which ar
 in the treatment model or in the outcome model:
 \begin{equation}
 	S(q)\coloneqq
-	\left\{j\colon \mathbb{E}(\pi_j\mid W) \ge 1/2\right\}.
+	\left\{j\colon \mathbb{E}_q(\pi_j\mid W) \ge 1/2\right\}.
 \end{equation}
 For sensitivity analysis,
 the intersection of $S(q)$ over all $q$ gives us the set of
@@ -555,12 +555,19 @@ $\{1,\dots,p\}\setminus\mathcal{S}^*$ represents the set of variables that are s
 $\mathcal{S}^*\setminus\mathcal{S}_*$ represents the set of variables about which we are undecided.
 In this way, through sensitivity analysis, our approach incorporates robustness.
 
-Now, for each fixed value of $q$, let $\hat{\beta}_{S(q)}$ be the posterior means 
-of the regression coefficients of the outcome model with respect to
-the predictors that belong to $S(q)$. Similarly,
-let $\hat{\gamma}_{S(q)}$ be the posterior means of the regression
-coefficients for the causal effects. Since we use continuous 
-spike and slab priors, these regression coefficients are not sparse.
+We can derive bounds on the posterior means of the paramters as follows:
+\begin{align}
+\label{eq:beta:lower}
+\underline{\beta}_j&\coloneqq\lexp (\beta_j\mid W)= \inf_{q\in \mathcal{P}} \mathbb{E}_q(\beta_j\mid W) \\
+\label{eq:beta:upper}
+\overline{\beta}_j&\coloneqq\uexp (\beta_j\mid W)=\sup_{q\in \mathcal{P}} \mathbb{E}_q(\beta_j\mid W)
+\end{align}
+with similar expressions for 
+$\underline{\beta}_T$, $\overline{\beta}_T$,
+$\underline{\gamma}_j$ and $\overline{\gamma}_j$.
+If we take the posterior expectation interval $[0,0]=\{0\}$ on a regression coefficient to represent absence of a variable, then our bounds on the regression coefficients are generally not sparse, because we use continuous 
+spike and slab priors.
+
 Moreover, with our variable selection we only determine whether the variable 
 is included in at least one of the models.
 %%% MT to BT: I edited this paragraph for clarity; check
@@ -576,7 +583,6 @@ we apply the
 ``decoupled shrinkage and selection'' (DSS) method proposed by \citep{hahn2015}. 
 For that, we solve the following adaptive LASSO-type \citep{Zou2006}
 problems:
-
 \begin{align}
 	\hat{\beta}^D_{S(q)} &= 
 	\arg\min_{\beta_{S(q)}} \frac{1}{n}\|X_{S(q)}\hat{\beta}_{S(q)}
@@ -590,7 +596,14 @@ and
 	- X_{S(q)} \gamma_{S(q)}\|_2^2 + \lambda\sum_{j\in S(q)} 
 	\frac{|\gamma_{j,S(q)}|}{|\hat{\gamma}_{j,S(q)}|}
 \end{align}
-where $q\in \mathcal{P}$.
+where $q\in \mathcal{P}$,
+where $\hat{\beta}_{S(q)}$ 
+and $\hat{\gamma}_{S(q)}$ are the posterior means 
+of the regression coefficients with respect to
+the predictors that belong to $S(q)$.
+
+To compute the posterior bounds (as in \cref{eq:vs:remove,eq:vs:sel,eq:beta:lower,eq:beta:upper}), unfortunately, we usually have to resort to brute force optimisation, due to the lack of tractable expressions for the posterior expectations. 
+This is obviously a major drawback of this approach.
 
 \iffalse
 The DSS method explained
@@ -1025,7 +1038,8 @@ and compare with other state of the art Bayesian methods.
 Currently, the paper proposes a robust Bayesian approach for causal effect estimation where
 we rely on sampling strategies to obtain the posterior bounds as well as performing 
 variable selection. In future, it will be interesting to derive inner approximation bounds
-for the posterior estimates to reduce the computational cost. Moreover, for the sake of
+for the posterior estimates to reduce the computational cost,
+or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}. Moreover, for the sake of
 illustration, we rely on simple loss functions
 %TB to MT: edited the conclusion
 associated with the predictor selection. However,
