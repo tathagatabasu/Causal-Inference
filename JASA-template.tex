@@ -601,6 +601,7 @@ where $\hat{\beta}_{S(q)}$
 and $\hat{\gamma}_{S(q)}$ are the posterior means 
 of the regression coefficients with respect to
 the predictors that belong to $S(q)$.
+By varying $q$, this gives us a set of point estimates for the model parameters $\beta$ and $\gamma$.
 
 To compute the posterior bounds (as in \cref{eq:vs:remove,eq:vs:sel,eq:beta:lower,eq:beta:upper}), unfortunately, we usually have to resort to brute force optimisation, due to the lack of tractable expressions for the posterior expectations. 
 This is obviously a major drawback of this approach.
@@ -632,6 +633,15 @@ where
     S^C(q)\coloneqq \left\{1,2,\cdots, p\right\} \neg S(q).
 \end{equation}
 \fi
+
+\subsection{Refit}
+
+In our setting, the DSS method only gives us a set of point estimates for the final selection of variables: some coefficients may be always selected, some never, and some will be indeterminate. For the final inference model, the modeller will need to make a judgement about which of the indeterminate coefficients $\beta_j$ and $\gamma_j$ to include in the final model or not. Once done so, the model can be refitted to account for the effect of variable selection on the estimation of the model parameters.
+
+To do so, we can again use our Bayesian model without $\pi_j$ (i.e. there is no selection), and with
+\begin{align}
+\beta_j\sim\mathcal{N}(0,\tau_1\sigma^2)
+\end{align}
 
 \section{Simulation Studies}\label{sec:sim}
 

@@ -109,13 +109,13 @@ Similarly, for the $i$-th subject, \alert{individual treatment effect} is:
 \begin{align}
 	\delta_i \coloneqq \mathbb{E}(Y_i\mid T_i=1) - \mathbb{E}(Y_i\mid T_i=0).
 \end{align}
+\end{frame}
 \iffalse
 That is, the difference between the outcomes when $i$-th subject receives
 the \alert{treatment} and when $i$-th subject remain as a \alert{control}. 
-\fi
-\end{frame}
+%\end{frame}
 
-\begin{frame}{Estimation}
+%\begin{frame}{Estimation}
 In theory, both $\alert{\mathbb{E}(Y_i\mid T_i=1)}$ and 
 $\alert{\mathbb{E}(Y_i\mid T_i=0)}$ exist.
 However, we can not observe them simultaneously for the $i$-th individual. 
@@ -128,7 +128,7 @@ Instead, we estimate the average causal effect of the treatment $T$ by
 	\frac{\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=1) - 
 		\sum_{i=1}^n Y_i\cdot\mathbb{I}(T_i=0)}{n}.
 \end{align}
-\end{frame}
+\fi
 
 
 \begin{frame}{}
@@ -166,15 +166,14 @@ In the presence of \alert{confounders}, we also need to consider the
 
 \begin{figure}[h]
 	\centering
-	\begin{tikzpicture}[params/.style={circle, draw=green!60, fill=green!5, very thick, minimum size=7mm}, scale = 0.9]
-	\node (1) at (0,0) {Treatment ($T$)};
-	\node (2) [right = of 1] {Outcome ($Y$)};
-	\node (4) [below = of 1] {Predictors ($X$)};
-	
-	\path (1) edge[->]  (2);
-	\path (1) edge[<-]  (4);
-	\path (2) edge[<-] (4);
-	\end{tikzpicture}
+	\begin{tikzpicture}[node distance=2cm, auto, scale = 0.7]
+  \node (confounder) at (0,0) [circle,draw,align=center] {biomarker \\(confounder)};
+  \node (predictor) at (4,2) [circle,draw,align=center] {treatment \\ decision \\ (predictor)};
+  \node (outcome) at (4,-2) [circle,draw,align=center] {treatment \\ outcome};
+  \draw[->] (confounder) to (predictor);
+  \draw[->] (confounder) to (outcome);
+  \draw[->,dashed] (predictor) to (outcome);
+\end{tikzpicture}
 	\caption{Confounding in causal models.}
 	\label{fig:confounding}
 \end{figure}
@@ -370,7 +369,7 @@ For the \alert{prior selection probability} ($\pi_j$)
 Elicitation of \alert{noise}
 \begin{itemize}
     \item Empirical Bayes approach and obtain an estimate for $a$
-    \item Scale the dataset and fix $a=1$
+    \item Scale the dataset and fix $a=10$
 \end{itemize}
 
 Elicitation of \alert{selection probability}
@@ -458,8 +457,8 @@ Similarly, we can compute
 \fi
 
 \section{Illustration}
-\begin{frame}{Simulation Setting}
- We consider 2 different settings: For each case $X_i\sim\mathcal{N}(0, \Sigma)$
+\begin{frame}{Simulation Settings 1}
+For each case $X_i\sim\mathcal{N}(0, \Sigma)$
  such that $\left[\Sigma\right]_{ij} = 0.3 ^{|i-j|}$. Then
 \begin{equation}
     T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
@@ -473,7 +472,26 @@ Similarly, we can compute
 \end{itemize}
 
 For both the cases, we vary the numbers of observations $n$ where
-$n=25 + 5k$ for $k=0,1,2,\cdots,10$.
+$n=25 + 5k$ for $k=0,1,2,\cdots,35$ and $p = 50$.
+
+\end{frame}
+
+\begin{frame}{Simulation Settings 2}
+For each case $X_i\sim\mathcal{N}(0, \Sigma)$
+ such that $\left[\Sigma\right]_{ij} = 0.3 ^{|i-j|}$. Then
+\begin{equation}
+    T_i \sim \text{Bernoulli}\left(1/(1+\exp(-X_i\gamma))\right)
+    \quad\text{and}\quad
+    Y_i = 4T_i + X_i\beta.
+\end{equation}
+
+\begin{itemize}
+    \item Case 1: $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item Case 2: $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+\end{itemize}
+
+For both the cases, we vary the numbers of predictors $p$ where
+$p=25 + 5k$ for $k=1,2,\cdots,35$ and $n=100$.
 
 \end{frame}
 
@@ -495,43 +513,24 @@ We use RBCE to denote our method ie.~`Robust Bayesian Causal Inference'
 \begin{frame}{Results}{Causal Estimate (First Scenario)}
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Wed May 24 00:50:53 2023
-\begin{table}[ht]
-%\caption{First scenario: $|\gamma_j|, |\beta_j|>0$ for $j\le 10$}\label{tab:misspec}
-\centering
-\begin{tabular}{|l|:rrr:rrrrrrrr|}
-  \hline
- & 25 & 30 & 35 & 40 & 45 & 50 & 55 & 60 & 65 & 70 & 75 \\ 
-  \hline
-RBCE-L & \alert{3.22} & \alert{3.54} & \alert{3.30} & 3.66 & 3.77 & 3.80 & 3.85 & 3.89 & 3.90 & 3.91 & 3.89 \\ 
-  RBCE-U & \alert{4.03} & \alert{3.96} & \alert{3.50} & 3.77 & 3.82 & 3.83 & 3.90 & 3.93 & 3.92 & 3.92 & 3.91 \\ 
-  SSCE & -- & -- & -- & -- & -- & 4.24 & 4.11 & 3.99 & 4.00 & 4.00 & 3.99 \\ 
-  BSSCE & -- & -- & -- & -- & -- & 4.02 & 4.01 & 4.01 & 4.01 & 4.01 & 4.01 \\ 
-  BSSL & -0.23 & 4.07 & 6.80 & 4.05 & 4.00 & 4.00 & 4.01 & 3.98 & 3.99 & 3.99 & 3.99 \\ 
-   \hline
-\end{tabular}
-\end{table}
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.5\linewidth]{treat_obs.pdf}
+    %\caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
+    \label{fig:comp:trt}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}{Results}{Causal Estimate (Second Scenario)}
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Tue May 23 18:29:20 2023
-\begin{table}[ht]
-%\caption{Second scenario: $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$}
-\label{tab:causal}
-\centering
-\begin{tabular}{|l|:rrr:rrrrrrrr|}
-  \hline
- & 25 & 30 & 35 & 40 & 45 & 50 & 55 & 60 & 65 & 70 & 75 \\ 
-  \hline
-RBCE-L & \alert{2.79} & \alert{3.70} & \alert{3.77} & 3.56 & 3.69 & 3.70 & 3.81 & 3.78 & 3.81 & 3.82 & 3.85 \\ 
-  RBCE-U & \alert{3.65} & \alert{4.01} & \alert{3.96} & 3.82 & 3.90 & 3.86 & 3.92 & 3.89 & 3.91 & 3.88 & 3.91 \\ 
-  SSCE & -- & -- & -- & -- & -- & 4.80 & 4.05 & 4.06 & 6.02 & 4.04 & 4.04 \\ 
-  BSSCE & -- & -- & -- & -- & -- & 10.34 & 8.12 & 4.17 & 4.04 & 4.06 & 4.05 \\ 
-  BSSL & -6.68 & 3.62 & 4.06 & 4.07 & 4.06 & 4.02 & 4.05 & 4.07 & 4.03 & 4.05 & 4.04 \\ 
-   \hline
-\end{tabular}
-\end{table}
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.5\linewidth]{treat_pred.pdf}
+    %\caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+    \label{fig:comp:trt:pred}
+\end{figure}
 \end{frame}
 
 \iffalse
@@ -546,7 +545,7 @@ RBCE-L & \alert{2.79} & \alert{3.70} & \alert{3.77} & 3.56 & 3.69 & 3.70 & 3.81 
 \end{frame}
 
 \fi
-\begin{frame}{Results}{Variable Selction (First Scenario)}
+\begin{frame}{Results}{Variable Selction (First Scenario, case 1)}
 
 Let \alert{$\ell_3 = 0.2 \ll \ell_1,\ell_2 = 1$ ($\equiv U_{80}$)}
 
@@ -558,9 +557,9 @@ Let \alert{$\ell_3 = 0.2 \ll \ell_1,\ell_2 = 1$ ($\equiv U_{80}$)}
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   0 &  26 & 5.2 &  12 &   2 & 14\\ 
-  30 &   0 &   1 &   1 & 1.2 &  0 &   0 & 0\\ 
-  35 &   0 &   0 &   1 & 0.2 &  0 &   0 & 0\\ 
+25 &   0 &   0 &  43 & 8.6 &   0 &   0&   0  \\ 
+  30 &   0 &   0 &   5 & 1 &   0 &   0 &   0 \\ 
+  35 &   0 &   0 &   2 & .4 &   0 &   0 &   0 \\ 
   \hline
 \end{tabular}
 %\caption{Covariate selection for the first three sample sizes}
@@ -576,9 +575,9 @@ Let \alert{$\ell_3 = 0.35, \ell_1,\ell_2 = 1$ ($\equiv U_{65}$)}
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   0 &  26 & 9.10 &  12 &   2 & 14\\ 
-  30 &   0 &   1 &   1 & 1.35 &  0 &   0 & 0\\ 
-  35 &   0 &   0 &   1 & 0.35 &  0 &   0 & 0\\ 
+25 &   0 &   0 &  43 & 15.5 &   0 &   0&   0  \\ 
+  30 &   0 &   0 &   5 & 1.75 &   0 &   0 &   0 \\ 
+  35 &   0 &   0 &   2 & .7 &   0 &   0 &   0 \\ 
   \hline
 \end{tabular}
 %\caption{Covariate selection for the first three sample sizes}
@@ -586,44 +585,43 @@ Let \alert{$\ell_3 = 0.35, \ell_1,\ell_2 = 1$ ($\equiv U_{65}$)}
 
 \end{frame}
 
-\begin{frame}{Results}{Variable Selction (Second Scenario)}
+\begin{frame}{Results}{Variable Selction (First Scenario, case 2)}
 
 Let \alert{$\ell_3 = 0.2 \ll \ell_1,\ell_2 = 1$ ($\equiv U_{80}$)}
 
 \begin{table}[h]
+    \centering
     \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
   \hline
   &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c|}{BSSL}\\
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   2 &  23 & 6.6 &  9 &   4 & 13\\ 
-  30 &   0 &   2 &   9 & 3.8 &  0 &   0 & 0 \\ 
-  35 &   0 &   0 &  18 & 3.6 &  0 &   0 & 0 \\ 
+25 &   0 &   1 &  21 & 5.2 &   0 &   0 &   0\\ 
+  30 &   0 &   0 &  44 & 8.8 &  0 &  13 &   13\\ 
+  35 &   0 &   0 &  11 & 2.2 &  0 &  13 &   13\\ 
   \hline
 \end{tabular}
-
+%\caption{Covariate selection for the first three sample sizes}
 \end{table}
-
 \pause
-
-Let \alert{$\ell_3 = 0.35 \ll \ell_1,\ell_2 = 1$ ($\equiv U_{65}$)}
+Let \alert{$\ell_3 = 0.35, \ell_1,\ell_2 = 1$ ($\equiv U_{65}$)}
 
 \begin{table}[h]
+    \centering
     \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
   \hline
   &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c|}{BSSL}\\
   \cline{2-14}
  Samples & FP & FN & ID & Tot & FP & FN & Tot \\ 
   \hline
-25 &   0 &   2 &  23 & 10.05 &  9 &   4 & 13\\ 
-  30 &   0 &   2 &   9 & 5.15 &  0 &   0 & 0 \\ 
-  35 &   0 &   0 &  18 & 6.30 &  0 &   0 & 0 \\ 
+25 &   0 &   1 &  21 & 8.35 &   0 &   0 &   0\\ 
+  30 &   0 &   0 &  44 & 15.4 &  0 &  13 &   13\\ 
+  35 &   0 &   0 &  11 & 3.85 &  0 &  13 &   13\\ 
   \hline
 \end{tabular}
-
+%\caption{Covariate selection for the first three sample sizes}
 \end{table}
-
 
 \end{frame}
 
