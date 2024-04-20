@@ -1,4 +1,4 @@
-ISVS_d = function(x_b, x_g, y, a, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
+ISVS_d = function(x_b, x_g, y, a, tau_1 = 5, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
   MCMC = list()
   
   string = "
@@ -8,17 +8,21 @@ ISVS_d = function(x_b, x_g, y, a, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt
     
     for (i in 1:N) 
     {
-      mean[i] = b_T * a[i] + inprod(x_b[i,], b)
+      mean[i] = b_T * a[i] + inprod(x_b[i,], b) + b_int
       y[i] ~ dnorm(mean[i], inv.var)
       
-      a[i] ~ dinterval(a_dumm[i], 0)
+      a[i] ~ dbern(a_prob[i])
       
-      a_dumm[i] ~ dnorm(inprod(x_g[i,], g), 1)
+      probit(a_prob[i]) = a_dumm[i]
+      
+      a_dumm[i] = inprod(x_g[i,], g) + g_int
     }
     
     # Prior on the mean
     
     b_T ~ dnorm(0,inv.var)
+    b_int ~ dnorm(0,inv.var)
+    g_int ~ dnorm(0,1)
     
     # prior on the precision
     
@@ -33,7 +37,7 @@ ISVS_d = function(x_b, x_g, y, a, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt
       
       # Prior on beta
       
-      b[j] ~ dnorm(0, inv.var)
+      b[j] ~ dnorm(0, inv.var / tau_1^2)
       
     }
     
@@ -42,7 +46,7 @@ ISVS_d = function(x_b, x_g, y, a, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt
       
       # Prior on beta
       
-      g[j] ~ dnorm(0, 1)
+      g[j] ~ dnorm(0, 1 / tau_1^2)
       
     }
     
@@ -62,9 +66,10 @@ ISVS_d = function(x_b, x_g, y, a, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt
       a = a,
       p_g = ncol(x_g),
       p_b = ncol(x_b),
-      N = nrow(x),
+      N = nrow(x_g),
       gam_a = gam_a,
-      gam_b = gam_b
+      gam_b = gam_b,
+      tau_1 = tau_1
     )
     
     model <- jags.model(data = data, file = ISVS, n.chains = 1, n.adapt = n.adapt)

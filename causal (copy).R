@@ -15,7 +15,7 @@ source("other_causal.R")
 
 set.seed(1e8)
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 100, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
   MCMC = list()
   
   string = "
@@ -28,9 +28,11 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 100, gam_b = 1
       mean[i] = b_T * a[i] + inprod(x[i,], b)
       y[i] ~ dnorm(mean[i], inv.var)
       
-      a[i] ~ dinterval(a_dumm[i], 0)
+      a[i] ~ dbern(a_prob[i])
       
-      a_dumm[i] ~ dnorm(inprod(x[i,], g), 1)
+      probit(a_prob[i]) = a_dumm[i]
+      
+      a_dumm[i] = inprod(x[i,], g)
     }
     
     # Prior on the mean
@@ -48,18 +50,21 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 100, gam_b = 1
     for (j in 1:p) 
     {
       # prior on the selection probability
-      w[j] ~ dbeta(2*alpha, 2*(1-alpha))I(0.001,0.999)
       
+      w[j] ~ dbeta(2*alpha, 2*(1-alpha))I(0.001,0.999)
       
       # Prior on beta
       
       spike[j] ~ dnorm(0, (inv.var / tau_0^2))
       slab[j] ~ dnorm(0, (inv.var / tau_1^2))
       
+      b[j] = w[j] * slab[j]  + (1 - w[j]) * spike[j]
+      
+      # Prior on gamma
+      
       spikeg[j] ~ dnorm(0, (1 / tau_0^2))
       slabg[j] ~ dnorm(0, (1 / tau_1^2))
       
-      b[j] = w[j] * slab[j]  + (1 - w[j]) * spike[j]
       g[j] = w[j] * slabg[j]  + (1 - w[j]) * spikeg[j]
     }
     
@@ -122,43 +127,56 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 100, gam_b = 1
   return(output)
 }
 
-coeff_adj = function(rbvs_obj){
+sparse_adjust = function(rbvs_obj){
   
+  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+
+  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+
+  beta_dss = list()
+  gamma_dss = list()
+
+  for (i in 1:length(rbvs_obj$Causal_post)) {
+    beta_dss[[i]] = as.vector(coef(cv.glmnet(x, x %*% beta_exp[i,], penalty.factor = 1/abs(beta_exp[i,]), intercept = F))[-1])
+    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x, x %*% gamma_exp[i,], penalty.factor = 1/abs(gamma_exp[i,]), intercept = F))[-1])
+  }
+  
+  return(list("sparse_beta" = beta_dss, "sparse_gamma" = gamma_dss))
 }
 
 ##############################################################################################
-# # For inceasing observation
-# n = 200
-# p = 50
-# 
-# sig1 = matrix(nrow=p,ncol = p)#diag(50)#
-# 
-# for (i in 1:p) {
-#   for (j in 1:p) {
-#     sig1[i,j] = 0.3^abs(i-j)
-#   }
-# }
-# 
-# # setting1 
-# 
-# if(T){
-#   x_all = rmvnorm(n, sigma = sig1)
-#   
-#   beta1 = c(runif(5, -4, -1), runif(5, 1, 4))
-#   gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
-#   
-#   a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-#   a1_all = sapply(1:n, function(j)rbinom(1,1,a1_dum_all[j]))
-#   
-#   
-#   y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(n, sd = .1)
-# }
-# 
-# # val1 = sum(abs(cor(x_all,y1_all))>0.2)
-# # val2 = sum(abs(cor(x_all,y1_all))>0.3)
-# # 
-# # alph_min = min(val1, val2) /50
-# # alph_max = max(val1, val2) /50
+# For inceasing observation
+n = 200
+p = 50
+
+sig1 = matrix(nrow=p,ncol = p)#diag(50)#
+
+for (i in 1:p) {
+  for (j in 1:p) {
+    sig1[i,j] = 0.3^abs(i-j)
+  }
+}
+
+# setting1
+
+if(T){
+  x_all = rmvnorm(n, sigma = sig1)
+
+  beta1 = c(runif(10, -4, -1), runif(5, 1, 4))
+  gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
+
+  a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
+  a1_all = sapply(1:n, function(j)rbinom(1,1,a1_dum_all[j]))
+
+
+  y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(n, sd = .1)
+}
+
+val1 = sum(abs(cor(x_all,y1_all))>0.2)
+val2 = sum(abs(cor(x_all,y1_all))>0.3)
+
+alph_min = min(val1, val2) /50
+alph_max = max(val1, val2) /50
 # 
 # for (k in 5:15) {
 #   N = 25 + 5*k
