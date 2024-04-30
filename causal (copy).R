@@ -736,78 +736,92 @@ xtable::xtable(cbind(set2_sum_loss[,1:3], (set2_sum_loss[,1]+set2_sum_loss[,2] +
 ######################################################################################
 
 # tables
-# RBVS3_list = list()
-# RBVS4_list = list()
-# 
-# for (k in 1:15) {
-#   RBVS3_list[[k]] = get(paste0("set3_rbvs_obj_", k))
-#   RBVS4_list[[k]] = get(paste0("set4_rbvs_obj_", k))
-# }
-# 
-# set3_sum_beta_trt = c()
-# for (k in 1:15) {
-#   set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), get(paste0("set3_SSCE_", k))$mean.trt.effect, get(paste0("set3_BSSCE_", k))$mean.trt.effect, get(paste0("set3_BSSL_", k))$means[(25 + 5*k +2)]))
-# }
-# 
-# # for (k in 16:35) {
-# #   set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), NA, NA, get(paste0("set3_BSSL_", k))$means[(25 + 5*k +2)]))
-# # }
-# 
-# set4_sum_beta_trt = c()
-# for (k in 1:15) {
-#   set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), get(paste0("set4_SSCE_", k))$mean.trt.effect, get(paste0("set4_BSSCE_", k))$mean.trt.effect, get(paste0("set4_BSSL_", k))$means[(25 + 5*k +2)]))
-# }
-# 
-# # for (k in 16:35) {
-# #   set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), NA, NA, get(paste0("set4_BSSL_", k))$means[(25 + 5*k +2)]))
-# # }
-# 
-# set3_sum_loss = c()
-# 
-# for (k in 1:15) {
-#   set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10), 
-#                                              sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
-#                                              sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
-#                                              sum(which(get(paste0("set3_SSCE_",k))$IP>=0.5) >10), 
-#                                              sum(which(get(paste0("set3_SSCE_",k))$IP<0.5) <=10),
-#                                              sum(which(get(paste0("set3_BSSCE_",k))$IP>=0.5) >10), 
-#                                              sum(which(get(paste0("set3_BSSCE_",k))$IP<0.5) <=10),
-#                                              sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >10),
-#                                              sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=10)))
-# }
-# 
-# # for (k in 16:35) {
-# #   set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10), 
-# #                                              sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
-# #                                              sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
-# #                                              NA, NA,
-# #                                              NA, NA,
-# #                                              sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >10),
-# #                                              sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=10)))
-# # }
-# 
-# set4_sum_loss = c()
-# 
-# for (k in 1:15) {
-#   set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15), 
-#                                              sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
-#                                              sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
-#                                              sum(which(get(paste0("set4_SSCE_",k))$IP>=0.5) >15), 
-#                                              sum(which(get(paste0("set4_SSCE_",k))$IP<0.5) <=15),
-#                                              sum(which(get(paste0("set4_BSSCE_",k))$IP>=0.5) >15), 
-#                                              sum(which(get(paste0("set4_BSSCE_",k))$IP<0.5) <=15),
-#                                              sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >15),
-#                                              sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=15)))
-# }
-# 
-# # for (k in 16:35) {
-# #   set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15), 
-# #                                              sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
-# #                                              sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
-# #                                              NA, NA,
-# #                                              NA, NA,
-# #                                              sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >15),
-# #                                              sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=15)))
-# # }
-# 
-# save.image(file = 'causal_check.Rdata')
+
+set3_sum_beta_trt = c()
+for (k in 1:15) {
+  set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), get(paste0("set3_SSCE_", k))$mean.trt.effect, get(paste0("set3_BSSCE_", k))$mean.trt.effect, get(paste0("set3_BSSL_", k))$means[(25 + 5*k +2)]))
+}
+
+for (k in 16:25) {
+  set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), NA, NA, get(paste0("set3_BSSL_", k))$means[(25 + 5*k +2)]))
+}
+
+set4_sum_beta_trt = c()
+for (k in 1:15) {
+  set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), get(paste0("set4_SSCE_", k))$mean.trt.effect, get(paste0("set4_BSSCE_", k))$mean.trt.effect, get(paste0("set4_BSSL_", k))$means[(25 + 5*k +2)]))
+}
+
+for (k in 16:25) {
+  set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), NA, NA, get(paste0("set4_BSSL_", k))$means[(25 + 5*k +2)]))
+}
+
+set3_sum_loss = c()
+
+for (k in 1:15) {
+  set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10),
+                                             sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
+                                             sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
+                                             sum(which(get(paste0("set3_SSCE_",k))$IP>=0.5) >10),
+                                             sum(which(get(paste0("set3_SSCE_",k))$IP<0.5) <=10),
+                                             sum(which(get(paste0("set3_BSSCE_",k))$IP>=0.5) >10),
+                                             sum(which(get(paste0("set3_BSSCE_",k))$IP<0.5) <=10),
+                                             sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >10),
+                                             sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=10)))
+}
+
+for (k in 16:25) {
+  set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10),
+                                             sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
+                                             sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
+                                             NA, NA,
+                                             NA, NA,
+                                             sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >10),
+                                             sum(which(get(paste0("set3_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=10)))
+}
+
+set4_sum_loss = c()
+
+for (k in 1:15) {
+  set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15),
+                                             sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
+                                             sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
+                                             sum(which(get(paste0("set4_SSCE_",k))$IP>=0.5) >15),
+                                             sum(which(get(paste0("set4_SSCE_",k))$IP<0.5) <=15),
+                                             sum(which(get(paste0("set4_BSSCE_",k))$IP>=0.5) >15),
+                                             sum(which(get(paste0("set4_BSSCE_",k))$IP<0.5) <=15),
+                                             sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >15),
+                                             sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=15)))
+}
+
+for (k in 16:25) {
+  set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15),
+                                             sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
+                                             sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
+                                             NA, NA,
+                                             NA, NA,
+                                             sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]>=0.5) >15),
+                                             sum(which(get(paste0("set4_BSSL_", k))$IP[1:(25 + 5*k)]<0.5) <=15)))
+}
+
+par(mfrow = c(2,1), mar = c(4.5,4,1,1))
+plot(seq(30,150, by = 5), set3_sum_beta_trt[1,], type = "l", col = "red", lty = 2, ylab = "Treatment effect", xlab = "Predictors", ylim = c(3.8, 4.1))
+lines(seq(30,150, by = 5), set3_sum_beta_trt[2,], type = "l", col = "red", lty = 2)
+lines(seq(30,150, by = 5), set3_sum_beta_trt[3,], type = "l", col = "blue", lty = 3)
+lines(seq(30,150, by = 5), set3_sum_beta_trt[4,], type = "l", col = "green", lty = 4)
+lines(seq(30,150, by = 5), set3_sum_beta_trt[5,], type = "l", col = "brown", lty = 5)
+plot(seq(30,150, by = 5), set4_sum_beta_trt[1,], type = "l", col = "red", lty = 2, ylab = "Treatment effect", xlab = "Predictors", ylim = c(3.7, max(set4_sum_beta_trt, na.rm = T)))
+lines(seq(30,150, by = 5), set4_sum_beta_trt[2,], type = "l", col = "red", lty = 2)
+lines(seq(30,150, by = 5), set4_sum_beta_trt[3,], type = "l", col = "blue", lty = 3)
+lines(seq(30,150, by = 5), set4_sum_beta_trt[4,], type = "l", col = "green", lty = 4)
+lines(seq(30,150, by = 5), set4_sum_beta_trt[5,], type = "l", col = "brown", lty = 5)
+legend("bottomleft",
+       legend = c("RBCE", "SSCE", "BSSCE", "BSSL"),
+       col = c("red", "blue", "green", "brown"),
+       lty = c(2,3,4,5),
+       bty = "n" ,
+       bg = "transparent" )
+
+xtable::xtable(cbind(set3_sum_loss[,1:3], (set3_sum_loss[,1]+set3_sum_loss[,2] + 0.2 * set3_sum_loss[,3]), set3_sum_loss[,4:5], (set3_sum_loss[,4] + set3_sum_loss[,5]), set3_sum_loss[,6:7], (set3_sum_loss[,6]+set3_sum_loss[,7]), set3_sum_loss[,8:9], (set3_sum_loss[,8]+set3_sum_loss[,9])), digits = 1)
+xtable::xtable(cbind(set4_sum_loss[,1:3], (set4_sum_loss[,1]+set4_sum_loss[,2] + 0.2 * set4_sum_loss[,3]), set4_sum_loss[,4:5], (set4_sum_loss[,4] + set4_sum_loss[,5]), set4_sum_loss[,6:7], (set4_sum_loss[,6]+set4_sum_loss[,7]), set4_sum_loss[,8:9], (set4_sum_loss[,8]+set4_sum_loss[,9])), digits = 1)
+
+xtable::xtable(cbind(t(set3_sum_beta_trt), t(set4_sum_beta_trt)))

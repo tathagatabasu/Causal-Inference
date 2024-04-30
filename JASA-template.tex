@@ -37,7 +37,8 @@
 \begin{frontmatter}
 
 %%% MT to TB: what about "Robust Bayesian Analysis of Causal Inference in Medical Diagnosis and Treatment"
-\title{Robust Bayesian Analysis of Causal Inference Problems}
+%%% TB to MT: changed it
+\title{Robust Bayesian Analysis of Causal Inference in Medical Diagnosis and Treatment}
 \author[1]{Tathagata Basu\corref{cor1}}
 \ead{tathagatabasumaths@gmail.com}
 \cortext[cor1]{Corresponding author}
@@ -59,10 +60,7 @@
 \begin{abstract}
 Causal inference aims to find the causal effect on subjects
 by identifying causal links between
-%%% MT to TB: changed "the variables and the outcome" to "a number of predictor (or, explanatory) variables and the outcome of a treatment"
-%%% please check if you're happy with this
 a number of predictor (or, explanatory) variables and the outcome of a treatment.
-% the variables and the outcome.
 However, estimation of such causal links is extremely 
 difficult because the causal effects may vary from subject 
 to subject. Unfortunately, modelling the underlying heterogeneity explicitly makes the 
@@ -473,7 +471,6 @@ can have the option to ask for more data before reaching any conclusion. To achi
 we consider a utility based framework with three possible 
 scenarios.
 
-%TB to MT: did some modification in the following text
 In particular, through predictor selection, we also want 
 to check if a certain bio-marker should be considered
 for the treatment decision. For example, say we can observe blood pressure with some
@@ -488,7 +485,6 @@ and we can associate a loss function with the cost of further treatments.
 So, we will associate two constant loss values $\ell_1$ and $\ell_2$ 
 with false positives (falsely selected predictor) and 
 false negatives (falsely rejected predictor) respectively. 
-%%% MT to TB: not considering a predictor may or may not lead to mistreatment, it just means you'll have less information, not that the treatment is bad... I've chanted "will" to "may"
 Clearly, false positives may lead to unwanted side effects and
 false negatives may lead to mistreatment of the patient. Finally, we associate
 a loss value $\ell_3$ for abstention from selecting
@@ -513,8 +509,6 @@ total number of variables present in either of the models.
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
 We consider the $j$-th predictor to be removed from both the
 treatment and outcome model, if
-%%% MT to TB: should we add a subscript q to \mathbb{E} to emphasize the dependence?
-% TB to MT: I thought of it. But we are optimising over the set of $q$. So was thinking if should put it
 \begin{align}\label{eq:vs:remove}
 	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}_q(\pi_j\mid W) < 1/2.
 \end{align}
@@ -570,10 +564,6 @@ spike and slab priors.
 
 Moreover, with our variable selection we only determine whether the variable 
 is included in at least one of the models.
-%%% MT to BT: I edited this paragraph for clarity; check
-%But, we cannot determine a specific 
-%association. Therefore, to adjust the sparsity of the estimates and understand
-%the specific association with the treatment/outcome/both, 
 To determine which predictors
 influence the outcome ($\beta_j\neq 0$),
 the treatment ($\gamma_j\neq 0$), or both,
@@ -701,8 +691,6 @@ estimation \citep{koch2020}; and BSSL for Bayesian spike and slab LASSO
 where $p\le n$, we do not have any results for $n<50$ for these cases.
 
 \paragraph{Elicitation}
-%%% MT to TB: I've edited this paragraph, see if you're happy with this
-% TB to MYT: Thanks a lot. Couldn't be better, at least not by me. :D
 One way to elicit $\mathcal{P}$
 is through a prior expected bound on the number of active predictors.
 Although we may do so directly,
@@ -724,7 +712,7 @@ methods we use the code provided in the appendix of \citep{koch2020}.
 For our method, we set $\tau_0=10^{-6}$ and $\tau_1=1$ to construct the
 spike and slab prior.
 %%% MT to TB: where does a=10 come from? can we say something about that?
-For the noise term, we set $a=10$ and $b=1$.
+For the noise term, we set $a=50$ and $b=1$.
 To perform 
 our Bayesian analysis with \texttt{rjags}, we first consider an adaptive 
 stage with 2000 iterations followed by discarding of 2000 burn in samples 
@@ -744,17 +732,14 @@ somewhat in agreement with the other methods but is more consistent
 in terms of estimating the causal effect in the first setting. However, this is not the
 case for the analysis with second dataset. We notice that our method tends to under
 estimate the causal effect. However, sometimes, other methods produce extreme 
-values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. Here, the true 
-value is represented by the black straight line for $\beta_T = 4$. 
+values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. %Here, the true 
+%value is represented by the black straight line for $\beta_T = 4$. 
 
 In these simulations, our method tends
 to underestimate the causal effect.
-%%% MT to TB: why is the problem with a? can you explain a bit more?
 This suggests that
 we may want to have a different value of $a$ for these different simulated datasets
-%%% MT to TB: is the problem that it is "fixed"? this seems a bit misleading
-%TB to MT: I was thinking of a differernt value to get a flatter prior but that felt like manipulation so kept it fixed for each sample size or predicrtor size
-instead of a fixed value of $a=10$ for all of our analyses.
+instead of a single value of $a=50$ for all of our analyses.
 We can also see that the lower bound tends to improve
 with increased number of observations: as we accumulate
 more information, the interval becomes smaller and converges towards
@@ -827,11 +812,12 @@ additional column (ID)
 which counts the number of indeterminate predictors.
 From the table it can be seen that for the first scenario, our method
 abstains from identifying some variables for 
-$n \le 50$. Especially for $n=25$, our method identifies 43 and 21 variables as indeterminate
+$n \le 50$. Especially for $n=25$, our method identifies 39 and 35 variables as indeterminate
 for the first setting and second setting respectively. However,
 later on our method gives more precise results in terms of variable
-selection. We also notice that BSSL tends to perform poorly
-in terms of variable selection in the second case giving away 13 FPs in both the cases. This can be seen in the bottom figure of \cref{fig:comp:trt}
+selection. We also notice that the other methods tend to perform poorly
+in terms of variable selection in the second case giving away many FNs. 
+This can be seen in the bottom figure of \cref{fig:comp:trt}
 as well.
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Wed May 24 00:50:53 2023
@@ -945,41 +931,31 @@ we omit the table of variable selection for third and fourth scenarios.
  & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
   \hline
 \hline
-30 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.89 & 3.91 & 3.99 & 3.99 & 3.99 \\ 
-  35 & 3.97 & 3.99 & 4.00 & 4.02 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 4.00 \\ 
-  40 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 4.00 & 3.99 \\ 
-  45 & 3.97 & 3.99 & 4.00 & 4.01 & 4.00 & 3.88 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  50 & 3.97 & 3.99 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  55 & 3.98 & 4.00 & 4.00 & 4.01 & 3.99 & 3.87 & 3.90 & 3.99 & 3.99 & 3.99 \\ 
-  60 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.86 & 3.89 & 3.99 & 3.99 & 4.00 \\ 
-  65 & 3.98 & 4.01 & 3.99 & 4.02 & 4.00 & 3.85 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  70 & 3.98 & 4.00 & 4.00 & 4.01 & 4.00 & 3.85 & 3.88 & 3.99 & 3.99 & 4.00 \\ 
-  75 & 3.98 & 4.00 & 4.00 & 4.00 & 4.00 & 3.84 & 3.89 & 3.99 & 4.00 & 3.99 \\ 
-  80 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.84 & 3.89 & 3.99 & 3.99 & 3.99 \\ 
-  85 & 3.99 & 4.01 & 4.00 & 4.01 & 4.00 & 3.82 & 3.88 & 4.00 & 3.99 & 3.99 \\ 
-  90 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.82 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  95 & 3.99 & 4.00 & 4.00 & 4.02 & 4.00 & 3.81 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  100 & 3.99 & 4.00 & 4.00 & 4.01 & 4.00 & 3.83 & 3.88 & 3.99 & 4.00 & 3.99 \\ 
-  105 & 3.99 & 4.00 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  110 & 3.99 & 4.00 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  115 & 3.98 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  120 & 3.99 & 4.00 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  125 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.88 &  &  & 3.99 \\ 
-  130 & 3.99 & 4.01 &  &  & 4.00 & 3.82 & 3.87 &  &  & 3.99 \\ 
-  135 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  140 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
-  145 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.88 &  &  & 3.99 \\ 
-  150 & 3.99 & 4.01 &  &  & 4.00 & 3.83 & 3.88 &  &  & 3.99 \\ 
-  155 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  160 & 3.99 & 4.01 &  &  & 4.00 & 3.81 & 3.87 &  &  & 3.99 \\ 
-  165 & 3.98 & 4.01 &  &  & 4.00 & 3.81 & 3.88 &  &  & 3.99 \\ 
-  170 & 3.99 & 4.02 &  &  & 4.00 & 3.80 & 3.87 &  &  & 3.99 \\ 
-  175 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
-  180 & 3.98 & 4.01 &  &  & 4.00 & 3.79 & 3.87 &  &  & 3.99 \\ 
-  185 & 3.99 & 4.01 &  &  & 4.00 & 3.79 & 3.88 &  &  & 3.99 \\ 
-  190 & 3.98 & 4.01 &  &  & 3.99 & 3.79 & 3.86 &  &  & 3.99 \\ 
-  195 & 3.99 & 4.01 &  &  & 4.00 & 3.80 & 3.86 &  &  & 3.99 \\ 
-  200 & 3.98 & 4.02 &  &  & 4.00 & 3.78 & 3.86 &  &  & 3.99 \\ 
+30 & 3.93 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.02 & 4.02 & 4.01 \\ 
+  35 & 3.93 & 3.94 & 3.99 & 3.99 & 3.99 & 3.88 & 3.91 & 4.02 & 4.01 & 4.02 \\ 
+  40 & 3.93 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.01 & 4.03 & 4.01 \\ 
+  45 & 3.93 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
+  50 & 3.94 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.91 & 4.01 & 4.02 & 4.02 \\ 
+  55 & 3.94 & 3.95 & 3.99 & 4.00 & 3.98 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
+  60 & 3.94 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
+  65 & 3.94 & 3.94 & 3.99 & 4.00 & 3.98 & 3.89 & 3.91 & 4.02 & 4.03 & 4.02 \\ 
+  70 & 3.93 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.02 & 4.02 & 4.02 \\ 
+  75 & 3.92 & 3.94 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.01 & 4.02 & 4.02 \\ 
+  80 & 3.92 & 3.94 & 3.99 & 3.99 & 3.99 & 3.89 & 3.90 & 4.01 & 4.01 & 4.02 \\ 
+  85 & 3.92 & 3.94 & 3.99 & 4.00 & 3.98 & 3.88 & 3.90 & 4.02 & 4.02 & 4.02 \\ 
+  90 & 3.92 & 3.93 & 3.99 & 4.00 & 3.99 & 3.88 & 3.90 & 4.02 & 4.01 & 4.02 \\ 
+  95 & 3.92 & 3.94 & 3.99 & 4.00 & 3.98 & 3.87 & 3.90 & 4.02 & 4.01 & 4.02 \\ 
+  100 & 3.92 & 3.94 & 3.99 & 3.99 & 3.98 & 3.88 & 3.90 & 4.02 & 4.02 & 4.01 \\ 
+  105 & 3.92 & 3.94 &  &  & 3.98 & 3.86 & 3.90 &  &  & 4.02 \\ 
+  110 & 3.92 & 3.94 &  &  & 3.99 & 3.87 & 3.90 &  &  & 4.01 \\ 
+  115 & 3.91 & 3.94 &  &  & 3.98 & 3.87 & 3.90 &  &  & 4.02 \\ 
+  120 & 3.91 & 3.94 &  &  & 3.99 & 3.87 & 3.91 &  &  & 4.02 \\ 
+  125 & 3.91 & 3.94 &  &  & 3.99 & 3.87 & 3.89 &  &  & 4.02 \\ 
+  130 & 3.92 & 3.94 &  &  & 3.99 & 3.86 & 3.90 &  &  & 4.01 \\ 
+  135 & 3.90 & 3.93 &  &  & 3.98 & 3.86 & 3.90 &  &  & 4.01 \\ 
+  140 & 3.91 & 3.93 &  &  & 3.99 & 3.85 & 3.89 &  &  & 4.01 \\ 
+  145 & 3.90 & 3.94 &  &  & 3.98 & 3.84 & 3.89 &  &  & 4.01 \\ 
+  150 & 3.90 & 3.93 &  &  & 3.99 & 3.85 & 3.88 &  &  & 4.02 \\ 
    \hline
 \end{tabular}
 \label{tab:causal2}
