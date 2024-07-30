@@ -69,7 +69,6 @@ to me that the proposed method does not outperform the state of the
 art (SOTA, and BSSL in particular) in estimating the causal effect, as
 it is evident from Table 1 and Figure 4. The narration, then, should be
 centered around the fact that RBCE outperforms the SOTA in terms of
-1
 variable selection. The main point should be along the lines of “We beat
 everybody at the variable selection game, and we perform almost on par
 with them in estimating the causal effect”.
@@ -85,14 +84,32 @@ likelihood. They should also cite [3], which extended [4] to the imprecise
 likelihood case. These results may be useful in the future to avoid brute
 force optimizations.
 
-> We agree there is a large body of computational work on robust Bayesian
-> inference, including the papers above.
-> *** TODO MT 1. check if those citations are relevant enough ***
-> *** TODO MT 2. other citations we missed? ***
+> We thank the reviewer for these suggested references. We agree there
+> is a large body of excellent computational work on robust Bayesian
+> inference, including the papers above. We use the
+> Williams/Berger/Walley framework which is more general than the
+> models admitted by Choquet capacities, thus the formulas from
+> Wasserman & Kadane can at best used for bounding. In addition,
+> evaluating the Choquet integral requires knowledge of the lower (or
+> upper) probabilities of the cut sets, which would still require
+> brute force optimisation. Whence, there is no clear gain in
+> modelling the problem via Choquet integration in general, unless the
+> lower/upper probabilities of cut sets are readily
+> available. Additionally, we do not consider imprecise likelihoods
+> either.
+>
+> Methods that integrate directly with MCMC, such as importance
+> sampling, might be more suited to avoid brute force optimisation. A
+> reference to this is already mentioned in the conclusion in the
+> original paper, whence we have made no changes in response to this.
 
 • In the Conclusion, when discussing different possibilities to extend their
 model, the authors should cite [2], where extended probabilities are used
 to deal with missing data and the closed world assumption.
+
+> We thank the reviewer for this suggestion. Whilst missing data is an
+> important topic, we are unsure why the reviewer suggests this
+> citation, as we do not deal with missing data in this paper.
 
 > *** TODO MT check ***
 
