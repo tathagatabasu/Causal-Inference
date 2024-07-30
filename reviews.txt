@@ -120,6 +120,9 @@ that in my opinion would make the paper a better read.
 • Please use ⊤ (via command \top) to denote a transpose matrix or vector.
 This way it does not get confused with letter T used for the treatment
 decisions (and for the subscript of βT ).
+
+> Done. Thank you for this excellent suggestion!
+
 • Equation (2) is out of bounds.
 • Equations (3) and (4) should be aligned according to xn+1.
 • There is a full stop missing at the end of equation (10).
