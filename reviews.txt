@@ -1,0 +1,347 @@
+Reviewer #1: In this methodological paper, the authors present a Bayesian sensitivity analysis
+approach (`a la Berger [1]) called robust Bayesian causal estimation (RBCE) to
+tackle causal inference problems in the medical domain. They introduce a robust
+spike and slab prior method that allows to take into account the ambiguity
+associated with limited information and data. They also verify their model
+empirically on a synthetic dataset.
+The paper is clear, well written, and engaging. I especially appreciated
+Figure 3 that sheds even more clarity on the method presented by the authors.
+Furthermore, this work is well within the scope of the International Journal of
+Approximate Reasoning. In light of this, I would recommend the editor for an
+acceptance with minor revision decision. In the following two sections, I will
+give my comments about the manuscript.
+
+I have a few minor comments that I would like the authors to address before
+the paper is accepted.
+• In line 111, is it a strong assumption to assume ϵi ∼ N(0, σ2)? If not, can
+the authors add one line to explain why such a choice makes sense?
+
+> This is a standard assumption in linear modelling, and follows.
+> We changed
+> "where ϵi ∼ N(0, σ2) ..."
+> to
+> "where we make the usual assumption that ϵi ∼ N(0, σ2) ..."
+> *** TODO check ref, add to paper ***
+
+• How strong is the assumption of choosing the probit function in equation
+(6)? Can the authors please discuss?
+
+> The use of the probit function is standard in linear modelling when dealing with binary variables.
+> Following the literature,
+> usual choices for the link function are either probit or logit.
+> We added:
+> *** TODO ***
+
+• The following is the main change that I feel the paper needs. It seems
+to me that the proposed method does not outperform the state of the
+art (SOTA, and BSSL in particular) in estimating the causal effect, as
+it is evident from Table 1 and Figure 4. The narration, then, should be
+centered around the fact that RBCE outperforms the SOTA in terms of
+1
+variable selection. The main point should be along the lines of “We beat
+everybody at the variable selection game, and we perform almost on par
+with them in estimating the causal effect”.
+• Even though the authors say that underestimating the treatment effect
+is of no concern, from Table 4 we can see that RBCE intervals (almost)
+never contain the true value 4. This is one of the reasons of my comment
+above.
+• In the Introduction (and/or in the Conclusion), when discussing about
+the existing literature on sensitivity analysis, the authors should cite the
+seminal work [4]. There, the authors develop a way to compute analytically
+the upper posterior, starting from a set of priors and a precise
+likelihood. They should also cite [3], which extended [4] to the imprecise
+likelihood case. These results may be useful in the future to avoid brute
+force optimizations.
+
+> We agree there is a large body of computational work on robust Bayesian
+> inference, including the papers above.
+> *** TODO MT 1. check if those citations are relevant enough ***
+> *** TODO MT 2. other citations we missed? ***
+
+• In the Conclusion, when discussing different possibilities to extend their
+model, the authors should cite [2], where extended probabilities are used
+to deal with missing data and the closed world assumption.
+
+> *** TODO MT check ***
+
+The following are stylistic comments that the authors are free to ignore, but
+that in my opinion would make the paper a better read.
+• Please use ⊤ (via command \top) to denote a transpose matrix or vector.
+This way it does not get confused with letter T used for the treatment
+decisions (and for the subscript of βT ).
+• Equation (2) is out of bounds.
+• Equations (3) and (4) should be aligned according to xn+1.
+• There is a full stop missing at the end of equation (10).
+• Many equations are numbered, but their number is not used in the text.
+• In line 143, please add the reference to equation (15) as follows: “For the
+causal effect (15), we want [...]”
+• Please get rid of “instead” in line 274.
+• Please rephrase lines 293-294 as “[...]: column RBCE-l gives the lower
+bound, and column RBCE-u gives the upper bound”.
+• In line 343, please write “with the utmost care [...]”
+• In line 361, please write “In the future, [...]”
+
+References
+[1] James O. Berger. The robust Bayesian viewpoint. In Joseph B. Kadane,
+editor, Robustness of Bayesian Analyses. Amsterdam : North-Holland, 1984.
+[2] Michele Caprio and Sayan Mukherjee. Extended Probabilities and their
+Application to Statistical Inference. In Marcin J. Schroeder and Wolfgang
+Hofkirchner, editors, Understanding Information and Its Role as a Tool: In
+Memory of Mark Burgin — PART II: Information Realm: Information as
+a Tool for Exploring Reality. World Scientific, 2024.
+[3] Michele Caprio, Yusuf Sale, Eyke H¨ullermeier, and Insup Lee. A Novel
+Bayes’ Theorem for Upper Probabilities. In Fabio Cuzzolin and Maryam
+Sultana, editors, Epistemic Uncertainty in Artificial Intelligence, pages 1–
+12, Cham, 2024. Springer Nature Switzerland.
+[4] Larry A. Wasserman and Joseph B. Kadane. Bayes’ theorem for Choquet
+capacities. The Annals of Statistics, 18(3):1328–1339, 1990.
+
+Reviewer #2: In the paper the authors say they develop a model for causal inference using robust Bayesian analysis, to allow for abstention when selecting predictor variables. They use a set of spike and slab priors through prior elicitation to obtain robust estimates for both the treatment and outcome model.
+A simulation study is presented.
+
+Causality is introduced in a Regression model including, beside the covariates X, the treatment variable T. To take into account the presence of confounders, the probability that a subject receives the treatment T is modeled by a probit function and the related vector of regression coefficients extends the parameters of the likelihood function.
+Several ways to obtain spike and slab priors for variable selection are presented.
+
+The main proposal of the paper consists in the introduction of causality in the framework of the long-standing problem of selecting variables in a linear regression model.
+
+A sharp increase in empirical and methodological research on estimating causal effects in observational studies in econometrics has been observed. For a survey see Guido Imbens "Causality in Econometrics: Choice Vs Chance" Vol. 90, No. 6 (November, 2022), 2541-2566 and publications in https://www.gsb.stanford.edu/faculty-research/publications?combine=imbens.
+This research isn't taken into account in the development of the proposal.
+
+> *** TODO TB: check references and add, maybe with brief discussion ***
+
+Reviewer #3: Highlights should be more compact.
+
+Abstract should include the significance and importance of the work. It should also discuss more about the proposed method related to robust Bayesian analysis.
+It is crucial to provide a detailed explanation of both the originality and main objectives of this study.
+Research gaps, objectives of the proposed work should be clearly justified in the abstract, introduction, and related works.
+
+The abstract requires modification and revision.
+I recommend that the abstract be revised according to the following components:
+1. General and specific context
+2. The research question or problem under investigation
+3. The purpose of the work, including a review of the state-of-the-art and an explanation of
+the necessity for a new or improved solution
+4. Description of the proposed solution, which should include:
+- The name of the proposed solution
+- A concise overview of the basic methodology without delving into details
+- An explanation of how the proposed solution addresses the initial questions or problems
+5. Interpretation of the results and presentation of conclusions.
+
+> *** TODO TB: revise abstract, MT to check *** 
+
+The quality of the figures is essential. Could you please supply some high-resolution figures? There are some figures of low resolution in the text part.
+
+> *** TODO: refute? ***
+
+Example: In figure 2, x should be italicized and the numbers 1 and 2 that accompany x should be italicized
+
+All acronyms must be defined.
+
+Results need more explanations. Additional analysis is required at each
+experiment to show the its main purpose. A full statistical analysis of the results could be provided related to Table 1 and Figure 5.
+
+Conclusion should state scope for future work.
+
+> *** TODO: TB to try address comments ***
+
+Reviewer #4: The paper is clear, well organized and well written. The authors extend an existing method for prior sensitivity analysis to high dimensional regression problems with limited data. The extended method is based on a spike and slab type prior for predictor selection [ref 15], and combined with a post-hoc coefficient adjustment method [17]. The goal is to evaluate causal effect of a treatment on a treatment outcome for a given individual based on a set of predictors, by selecting only the predictors that are not confounders. The proposed method is evaluated on different scenarios based on synthetic dataset with a number of observations between 25 and 150, with 50 predictors.
+
+Highlights should be reviewed: the list of bullets shows the differences with the initial paper presented in ESCQARU.
+
+> *** TODO: TB (see also other reviewer) ***
+
+I also suggest to change the title by removing the word diagnosis
+
+> *** TODO: TB address why it is relevant ***
+
+The conclusion should clearly synthetize the interest of the approach compared with previous works, and also identify the limit of the approach, in particular regarding the good identification of the confounders and the impact of "high dimensional" data.
+
+> *** TODO: MT to address this one (similar comment made by reviewer #1) ***
+
+Reviewer #5: Before proceeding with my review, I feel it is important to express my reservations regard-
+ing the concept of Causal Inference. While I acknowledge that causality can be inferred
+to a certain degree of confidence, achieving absolute certainty seems elusive due to the
+potential presence of unobserved confounders and the dependence on model assumptions.
+In line with the philosophical debate between causal realism and empiricism regarding
+the nature of causality, I maintain that establishing causality inherently involves a level
+of interpretation, making it more a matter of conjecture or interpretation rather than a
+certain assured by statistical models.
+However, I recognize the value in attempting to elucidate the impact of predictor variables
+on the variable of interest, regardless of whether it is called causality or not. Therefore, in
+conducting this review, I aim to set aside my reservations regarding the terminology and
+focus instead on evaluating the methodological rigor and formal aspects of the manuscript,
+rather than delving deeply into the causal interpretation of the results.
+
+> *** TODO MT express agreement with reviewer, add comment to paper ***
+
+In this paper, the authors introduce a Bayesian approach to causal inference within the
+context of the linear regression model. The causal effect of a treatment on the outcome is
+defined as the average treatment effect for a new individual. This is the expected difference
+in the outcome, given the individual's observed predictors, under both treatment and
+control (absence of treatment) conditions. This effect does not depend on the observed
+predictors, and the objective is to obtain robust estimations of if.
+To adjust for confounders, the authors use propensity score matching by estimating the
+probability of receiving treatment given the covariates through a linear model within a
+Bayesian framework. Specifically, they use a standard hierarchical model with a mixture
+of spike and slab priors to handle variable selection and effect size estimation in the
+context of causal effect estimation.
+The authors construct a robust Bayesian framework for variable selection and perform a
+sensitivity analysis over a set of priors, based on the notion of abstention from selecting
+a predictor through expert elicitation. They apply the decoupled shrinkage and selection
+(DSS) method to determine which predictors influence the outcome, the treatment, or
+both, and to understand the magnitude of the parameters. The final inference model is
+obtained by refitting to account for the effect of variable selection on the estimation of
+the model parameters, thereby improving the accuracy of the parameter estimates.
+
+> *** TODO TB to respond to "refitting"; misunderstanding? ***
+
+General comments:
+1. The motivation and objectives are clearly stated in the introductory section. The
+manuscript addresses the importance of estimating the causal effect of a treatment
+in the presence of confounders.
+2. However, the originality of the methodology introduced in the paper and its contri-
+bution to scientific literature need to be more clearly explained. The authors should
+explicitly detail how their methodology, which involves considering a family of Beta
+priors defined by the parameter q belonging to P \subset (0; 1)^p (incidentally, how P
+is chosen? By expert elicitation?), and performing a sensitivity analysis to select
+variables in the regression model and adjust coefficients, differs from previous works
+such as [11], [12] and [16].
+
+> *** TODO TB to address this ***
+
+3. Weaknesses: The methodology introduced in this work is based on Bayesian statis-
+tics, which assumes prior distributions for the parameters. Although the authors
+perform a sensitivity analysis, the choice of prior distributions is subjective and
+can in
+uences the results. Additionally, this methodology requires computationally
+intensive algorithms. For instance, as the authors acknowledge on page 11, the
+computation of posterior bounds as described in equations (19), (20), (24), and (25)
+involves brute force methods.
+Furthermore, the authors also note that in their simulation study their methodology
+tends to underestimate the causal effect when certain predictors are only linked to
+the outcome (p. 17). This observation highlights the necessity for a correction,
+which they acknowledge but do not investigate further. Instead, they propose, as a
+future investigation, exploring a different approach to elicitating prior parameters
+than the one used in this paper.
+This is just a comment, and I do not expect the authors to make any modifications
+to their paper regarding this, as it would require a comprehensive revision of the
+entire methodology.
+
+> *** TODO MT to address this, maybe in conclusion ***
+
+Technical comments:
+1. The use of a spike and slab prior is indeed helpful in identifying which potential
+confounders are the most relevant variables (those with non-zero effects) in the
+model, and in estimating the magnitude of their effects. However, it is crucial
+to carefully choose the weights \pi_j of the mixture. The authors assume a Beta
+distribution for \pi_j , dependent on parameters qj (the prior expectation of \pi_j), and s
+(a concentration parameter).
+In my opinion, although the authors consider that q = (q1; : : : ; qp) can take any
+value in P\subset (0,1)^p to perform a sensitivity analysis, more explanation is needed
+on how to choose P and estimate s from the data, since this methodology is very
+susceptible to the chosen priors.
+
+> *** TODO this needs some thought... ***
+
+2. While a threshold of 1/2 is commonly used, it would be beneficial to consider al-
+ternative thresholds for co-variate selection in the spike and slab method (formulae(19)-(23)). For example, in the simulation studies, it may be advantageous to per-
+form an exploratory analysis with a lower threshold to identify a broader set of
+candidate variables for further investigation, ensuring that potentially relevant vari-
+ables are not excluded, even at the cost of including some less important variables.
+Conversely, in scenarios where variables are expensive to measure, a higher threshold
+provides a more conservative approach ensuring that only variables with strong evi-
+dence of relevance are included, thereby improving model interpretability. In high-
+dimensional settings with many potential confounders, a slightly higher threshold
+can reduce the risk of overfitting.
+I recommend incorporating an analysis of the impact of different thresholds on model
+performance in the sensitivity study. This will provide insights into the robustness
+of the selected variables and help determine the most appropriate threshold.
+
+> *** TODO: can do this, fair comment, could justify threshold from utility arugment? ***
+> *** TODO: or explain where 1/2 comes from and that this is the optimal value ***
+> *** TODO: TB to investigate ***
+
+3. Considering a utility based framework in which abstention from selecting a variable
+has a positively relative gain `3 (when the cost of further tests to determine whether
+that variable is important is cheaper than mistreating an individual) seems like an
+interesting idea.
+However, I do not see where the constant loss values `1; `2 and `3 from page 9 are
+used in the methodology explained in the subsequent pages. Furthermore, consid-
+ering that these losses do not depend on the predictor in question seems overly
+simplistic and could potentially weaken the approach. Could it not be possible that
+the threshold mentioned in the previous point could be chosen based on these loss
+values?
+
+> *** TODO: MT to think about this, can we use loss function to formulate selection
+> as a decision problem and then apply maximality/interval dominance/...? ***
+
+4. In relation to the writing and organization of the manuscript, I find it unclear that
+the acronym for the proposed method (RBCE) appears for the first time on page 13.
+It's not just about the acronym or the name. Overall, it is not very clear where the
+method is explained and what is novel about it. I suggest that the section where the
+method is introduced be titled with the name of the method, clearly establishing
+what it is and its acronym at that point, rather than later when it is applied in the
+simulation section.
+
+> *** TODO: TB to address ***
+
+5. Simulation: I have some concerns about the simulation studies (Section 4).
+• The notation is somewhat confusing. For example, the four different settings
+(line 238) are latter referred to as cases (line 245). The sub-cases (line 247)
+are then called scenarios (line 250 and following lines). Similarly, dataset
+(line 297) should perhaps be setting?
+• An outline or diagram summarizing the various experiments conducted would
+be appreciated, as their explanation is somewhat challenging to follow.
+• It would be appreciated if access to the data used in this section could be
+provided for the sake of reproducibility and transparency. Similarly, access
+to the R scripts used by the authors to conduct the experiments would be
+beneficial.
+• On page 9, P\subset (0,1)^p, but in the elicitation part of Section 4 (page 13),
+P = [p2=p; p1=p] \subset (0; 1), indicating an inconsistency in notation. Setting this
+aside, along with the fact that 0.15 and 0.35 are arbitrarily chosen values to
+define p1 and p2, which are then used to represent expert elicitation on the
+prior Beta, if q 2 P and qj represents the prior expectation of \pi_j , which is
+the prior probability that the j-th predictor is associated with the outcome
+or the treatment (see (14)), why in the definition of P on pag. 13 are only
+correlations with the outcome considered?
+• I do not understand the sentence starting on line 294 and ending on line 296
+\We notice that...". What is meant by is more consistent? What does the
+vague expression is somewhat in agreement mean?
+• Overall, I believe there is a deficiency in the application of statistical meth-
+ods to compare RBCE method against the other three across all four sce-
+narios. Proper statistical methods should be robust and fit-for-purpose. In
+my opinion, the Results subsection of Section 4 requires significant revision
+to effectively compare the method proposed in the paper against other state-
+of-the-art methods. Currently, the analysis presented relies solely on simple
+descriptive statistics, as seen in the tables and figures, which in addition are
+notably uninformative and contain numerous repeated values. In its current
+state, the paper cannot be published due to its lack of objectivity and scientific
+rigor. This major 
+aw should be addressed, as conclusions are drawn without
+sufficient statistical evidence.
+This comment applies to both the estimation of the causal effect (fiT = 4
+in the simulation examples) and to the performance of the variable selection
+procedure.
+
+> *** TODO: TB to think about what we can do to address this ***
+
+6. Minor comments: Since subsection 2.1 is the only one subsection in section 2,
+the designation as a subsection can be eliminated.
+Figure 3 is very helpful in clarifying the relationship between the different parame-
+ters and variables in the model.
+The R library rjags for Bayesian Graphical Models using MCMC (page 14) must
+be properly referenced.
+The captions for the tables and figures should be more informative. For example, the
+caption for Table 1 should indicate that it corresponds to the comparison between
+scenarios 1a and 1b.
+
+> *** TODO: MT to address minor comments ***
+
+Conclusion:
+Although the methodology appears useful and sufficiently robust, I have identified what
+I consider to be a significant 
+aw in the research data: the inadequate statistical analysis
+needed to draw scientifically sound conclusions. Therefore, I advise against the publication
+of the paper in its current form.
+My recommendation is for a major revision. I hope my explanations have clarified the
+revisions I believe are necessary and why they are important in my opinion.

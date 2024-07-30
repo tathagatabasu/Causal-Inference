@@ -94,8 +94,19 @@ our method using a synthetic dataset.
 \end{keyword}
 
 \begin{highlights}
-\item *** TODO ***
-\item *** TODO ***
+\item Earlier a version of this paper was presented in ECSQARU 2023 conference. 
+Since then we have changed the following contents of the paper for this extended version. 
+\item A thorough introduction with additional image to express our problem
+formulation in a better way as well as discussion of previous works.
+\item Introduction of additional equations to justify and explain the
+causal inference model under confounding.
+\item We have put additional text for better explanation of Bayesian causal
+estimation model as well as the importance of a robust Bayesian analysis. These
+are accompanied by a new subsection discussing refit model, which can be
+used for better understanding and selection of a single model from set of causal models.
+\item A larger simulation study with more number of observations. Additionally
+we have introduced a new simulation setting where we vary the number of predictors
+for better understanding of the performance of our approach.
 \end{highlights}
 
 \end{frontmatter}
@@ -221,12 +232,12 @@ main idea behind these regression methods is to remove the
 correlation between the treatment indicator and the error term
 \citep{winship99,HECKMAN1985}.
 To do so, we rely on $p$ observed quantities, called
-\emph{predictors}, denoted by $X\coloneqq$ $[X_1^T, \dots, X_n^T]^T$
+\emph{predictors}, denoted by $X\coloneqq$ $[X_1^{\top}, \dots, X_n^{\top}]^{\top}$
 where each $X_i\in\mathbb{R}^p$.
 Each $X_i$ is treated as a $p$-dimensional row vector,
 so $X$ is a $n\times p$ matrix.
 Now, let
-$\beta \coloneqq (\beta_1$, \dots, $\beta_p)^T$ denote the vector of regression
+$\beta \coloneqq (\beta_1$, \dots, $\beta_p)^{\top}$ denote the vector of regression
 coefficients
 related to the predictors, and let $\beta_T$ denote a regression coefficient related to the
 treatment decision.
@@ -245,15 +256,18 @@ we are mainly interested in the effect of the treatment on the outcome.
 More precisely, the causal effect of a new individual, indexed as $n+1$,
 whose outcome $Y_{n+1}$ is not yet observed, and with observed predictors $X_{n+1}=x_{n+1}$, is defined by:
 \begin{align}
-  \delta(x_{n+1})
+  &\delta(x_{n+1})\nonumber\\
   &\coloneqq\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)
 \end{align}
 For our model, due to linearity of expectation, we have that
 \begin{align}
   \delta(x_{n+1})
-  &=\beta_T+x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \\
-  &\quad - x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)\\
-  \intertext{and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
+  =\beta_T+&x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \nonumber\\
+  - &x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)
+  \end{align}
+  {and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
+  \begin{align}
+  \delta(x_{n+1})
   &=\beta_{T}.
 \end{align}
 Note that, for this model, the causal effect $\delta(x_{n+1})$
@@ -268,7 +282,7 @@ A common choice in the literature is to use a probit link function.
 In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 
-$\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^T$ we
+$\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^{\top}$ we
 assume
 \begin{align}
 	P(T_i=1\mid X_i) = \Phi(X_i\gamma)
@@ -290,7 +304,7 @@ With this model, indeed
 \begin{align}
   P(T_i=1\mid X_i)
   &=P(T_i^*>0)=P(u_i>-X_i\gamma)=1-P(u_i\le -X_i\gamma) \\
-  &=1-\Phi(-X_i\gamma)=\Phi(X_i\gamma)
+  &=1-\Phi(-X_i\gamma)=\Phi(X_i\gamma).
 \end{align}
 
 Now, to construct the joint likelihood function, we define an extended
@@ -318,7 +332,7 @@ Gaussian error terms, we have the following likelihood distribution
 \begin{align}
 	W\mid Z, \beta_T, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \Sigma\right)\label{eq:like:group},
 \end{align}
-where $\nu \coloneqq (\beta_T, \beta^T, \gamma^T)^T$ and
+where $\nu \coloneqq (\beta_T, \beta^{\top}, \gamma^{\top})^{\top}$ and
 \begin{align}
 	\Sigma &\coloneqq
 	\begin{bmatrix}
@@ -352,7 +366,7 @@ Practically, we model this by defining the following hierarchical model
 so that,
 for $1\le j\le p$,
 \begin{align}
-	\label{eq:spike:slab:prior:beta:gamma}(\beta_j,\gamma_j)^T \mid \pi_{j}, \sigma^2 &\sim 
+	\label{eq:spike:slab:prior:beta:gamma}(\beta_j,\gamma_j)^{\top} \mid \pi_{j}, \sigma^2 &\sim 
 	\pi_{j}\normal\left( \begin{bmatrix}
 		0 \\
 		0
@@ -369,7 +383,7 @@ for $1\le j\le p$,
 		\sigma^2 & 0 \\
 		0 & 1
 	\end{bmatrix}\right)\\
-	\beta_T\mid \sigma^2 &\sim \normal\left(0, \sigma^2\right)\\
+	\beta_T\mid \sigma^2 &\sim \normal\left(0, \sigma^2\right)\label{eq:prior:causal}\\
         \frac{1}{\sigma^2}&\sim \text{Gamma}(a, b)\\
 	\pi_{j} &\sim\text{Beta}\left(sq_j, s(1-q_j)\right).
 \end{align}
@@ -400,7 +414,7 @@ We use a beta prior to
 model our uncertainty about
 the selection probabilities $\pi_j$ where  $q_j$ represents our prior expectation of $\pi_j$ and $s$ acts as 
 a concentration parameter.
-For the causal effect, we want to use a Gaussian distribution that 
+For the causal effect (\cref{eq:prior:causal}), we want to use a Gaussian distribution that 
 matches the scale of the noise term. Therefore, we consider $\beta_T\sim \normal(0,\sigma^2)$. 
 
 In \cref{fig:regress}, we show a probabilistic graphical representation
@@ -613,8 +627,8 @@ be the causal effect after applying `DSS' and $\hat{\beta}_{T}(q)$ be the
 posterior estimate of the causal effect for any fixed $q\in\mathcal{P}$. Then
 the adjusted estimate is given by:
 \begin{equation}
-    \beta_{T}^D(q) = \left(\left(\hat{T}^D\right)^T \hat{T}^D\right)^{-1}
-    \left(\hat{T}^D\right)^T \left[\hat{\beta}_{T}(q)\hat{T} 
+    \beta_{T}^D(q) = \left(\left(\hat{T}^D\right)^{\top} \hat{T}^D\right)^{-1}
+    \left(\hat{T}^D\right)^{\top} \left[\hat{\beta}_{T}(q)\hat{T} 
     + X_{S(q)}\left(\hat{\beta}_{S(q)} - \hat{\beta}^D_{S(q)}\right) 
     +X_{S^C(q)}\hat{\beta}_{S^C(q)}\right]
 \end{equation}
@@ -667,7 +681,7 @@ the outcome model.
 \end{description}
 For both
 scenarios, we consider different numbers of observations $n$ where
-$n=25+ 5k$ for $k=0,1,2,\dots,35$ and $p=50$
+$n=25+ 5k$ for $k=0,1,2,\dots,25$ and $p=50$
 predictors. This way, we check the efficiency of our method with varying level of information.
 
 For the second category, we check our method for varying number of predictors 
@@ -679,7 +693,7 @@ Similar to the first category we also have two sub cases:
 \end{description}
 For both
 cases, we consider different numbers of predictors $p$ where
-$p=25+ 5k$ for $k=1,2,\dots,35$ and $n=100$
+$p=25+ 5k$ for $k=1,2,\dots,25$ and $n=100$
 subjects.
 
 We present our analyses in \cref{tab:causal1,tab:misspec1,tab:misspec2}.
@@ -696,7 +710,7 @@ is through a prior expected bound on the number of active predictors.
 Although we may do so directly,
 we may alternatively also use the empirically observed correlations from the data directly.
 This may give us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
-When doing so, we need a prior judgement instead on what is a reasonable correlation between active predictors and the outcome.
+When doing so, we need a prior judgement on what is a reasonable correlation between active predictors and the outcome.
 
 So, say we judge, through expert elicitation, that
 an active predictor has a correlation with the outcome
@@ -726,8 +740,8 @@ for the first and second scenarios.
 For reference, recall the true value is $\beta_T=4$. 
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect:
-the first(sixth) column gives the lower bound
-and the second(seventh) column gives the upper bound. We notice that our method is 
+column RBCE-l gives the lower bound
+and column RBCE-u gives the upper bound. We notice that our method is 
 somewhat in agreement with the other methods but is more consistent
 in terms of estimating the causal effect in the first setting. However, this is not the
 case for the analysis with second dataset. We notice that our method tends to under
@@ -736,14 +750,17 @@ values which is not the case for our method. This can be observed in \cref{fig:c
 %value is represented by the black straight line for $\beta_T = 4$. 
 
 In these simulations, our method tends
-to underestimate the causal effect.
+to underestimate the causal effect by a very short amount.
 This suggests that
-we may want to have a different value of $a$ for these different simulated datasets
-instead of a single value of $a=50$ for all of our analyses.
+we may want to seek for a different value of $a$ based on the sample size
+instead of a fixing $a=50$ for all of our analyses irrespective of the
+sample size.
 We can also see that the lower bound tends to improve
 with increased number of observations: as we accumulate
 more information, the interval becomes smaller and converges towards
-a single value.
+a single value. Note that in some cases lower and upper bound for 
+RBCE is same. However, this is only due to approximation upto the
+second decimal place.
 
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Tue May 23 18:29:20 2023
@@ -904,17 +921,22 @@ as well.
 
 We show the result of our analyses with different number of predictors and
 fixed number of sample in \cref{fig:comp:trt:pred,tab:causal2}. Similar to
-the first two settings, we notice that our method is somewhat in agreement with
-BSSL for the third setting. However, for the fourth setting, our method
-underestimates the treatment effect significantly (5\% in the worst case). This
-is somewhat in sync with the second setting, and a possible reason behind this
-could be the fact that in both the cases, the number of active $\beta_j$'s is
-higher than $\gamma_j$'s. This therefore, tends to reduce the value of treatment
-effect. A possible way to work around this issue can be using the `DSS' estimates
-of the regression coefficient and adjust the value of $\beta_T$. 
+our analyses with increasing number of observations, we notice that our method 
+is overall in agreement with
+other methods. However, our method slightly
+underestimates the treatment effect (5\% in the worst case). 
+This result is also similar to our
+analyses with increasing number of observations in \cref{tab:causal1}.
+Specifically, this can be understood from the result when $n=100$ and 
+$p=50$ in \cref{tab:causal1,tab:causal2}. In general this is not of great
+concern. But we can improve this estimation by using the refit method
+as described before. 
 
-Besides this interesting result, we notice that all of the four methods perform
-perfectly in variable selection giving no misspecified variables. Therefore,
+Besides this, we notice that all of the four methods perform
+perfectly in variable selection giving no misspecified variables this
+can also be understood from \cref{fig:comp:trt:pred} because
+in case of misspecified variables we get a very different value
+of the treatment effect. Therefore,
 we omit the table of variable selection for third and fourth scenarios.
 
 
@@ -974,7 +996,7 @@ we omit the table of variable selection for third and fourth scenarios.
 
 Causal effect estimation is an important tool in statistical learning.
 Especially in risk-sensitive situations, such as medicine, it needs to
-be performed with utmost care as in many cases poor estimation can have severe adverse consequences.
+be performed with the utmost care as in many cases poor estimation can have severe adverse consequences.
 In this paper, we tackle this issue by proposing a robust Bayesian analysis of the causal 
 effect estimation problem for high dimensional data. Our 
 framework is focused on the effect of prior elicitation on
@@ -1000,7 +1022,7 @@ and compare with other state of the art Bayesian methods.
 
 Currently, the paper proposes a robust Bayesian approach for causal effect estimation where
 we rely on sampling strategies to obtain the posterior bounds as well as performing 
-variable selection. In future, it will be interesting to derive inner approximation bounds
+variable selection. In the future, it will be interesting to derive inner approximation bounds
 for the posterior estimates to reduce the computational cost,
 or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}. Moreover, for the sake of
 illustration, we rely on simple loss functions
