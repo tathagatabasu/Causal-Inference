@@ -160,6 +160,9 @@ causal effect (15), we want [...]”
 > Fixed.
 
 • Please get rid of “instead” in line 274.
+
+> Fixed.
+
 • Please rephrase lines 293-294 as “[...]: column RBCE-l gives the lower
 bound, and column RBCE-u gives the upper bound”.
 • In line 343, please write “with the utmost care [...]”
