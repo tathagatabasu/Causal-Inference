@@ -165,8 +165,16 @@ causal effect (15), we want [...]”
 
 • Please rephrase lines 293-294 as “[...]: column RBCE-l gives the lower
 bound, and column RBCE-u gives the upper bound”.
+
+> Fixed.
+
 • In line 343, please write “with the utmost care [...]”
+
+> Fixed.
+
 • In line 361, please write “In the future, [...]”
+
+> Fixed.
 
 References
 [1] James O. Berger. The robust Bayesian viewpoint. In Joseph B. Kadane,

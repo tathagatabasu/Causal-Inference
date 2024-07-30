@@ -758,8 +758,8 @@ for the first and second scenarios.
 For reference, recall the true value is $\beta_T=4$. 
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect:
-column RBCE-l gives the lower bound
-and column RBCE-u gives the upper bound. We notice that our method is 
+\added{column RBCE-l gives the lower bound
+and column RBCE-u gives the upper bound}. We notice that our method is 
 somewhat in agreement with the other methods but is more consistent
 in terms of estimating the causal effect in the first setting. However, this is not the
 case for the analysis with second dataset. We notice that our method tends to under
@@ -1014,7 +1014,7 @@ we omit the table of variable selection for third and fourth scenarios.
 
 Causal effect estimation is an important tool in statistical learning.
 Especially in risk-sensitive situations, such as medicine, it needs to
-be performed with the utmost care as in many cases poor estimation can have severe adverse consequences.
+be performed \added{with the utmost care} as in many cases poor estimation can have severe adverse consequences.
 In this paper, we tackle this issue by proposing a robust Bayesian analysis of the causal 
 effect estimation problem for high dimensional data. Our 
 framework is focused on the effect of prior elicitation on
@@ -1040,7 +1040,7 @@ and compare with other state of the art Bayesian methods.
 
 Currently, the paper proposes a robust Bayesian approach for causal effect estimation where
 we rely on sampling strategies to obtain the posterior bounds as well as performing 
-variable selection. In the future, it will be interesting to derive inner approximation bounds
+variable selection. \added{In the future,} it will be interesting to derive inner approximation bounds
 for the posterior estimates to reduce the computational cost,
 or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}. Moreover, for the sake of
 illustration, we rely on simple loss functions
