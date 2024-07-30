@@ -274,6 +274,10 @@ For our model, due to linearity of expectation, we have that
 Note that, for this model, the causal effect $\delta(x_{n+1})$
 does not depend on the observed value $x_{n+1}$ of $X_{n+1}$.
 So, to find the causal effect, we simply need to estimate $\beta_T$.
+Note that, if interaction terms between $X$ and $T$ were present in
+the model (for example a term of the form, say, $\eta XT$ for some
+parameter vector $\eta$), that would result in a dependence of the
+causal effect on $x_{n+1}$.
 
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,

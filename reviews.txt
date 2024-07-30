@@ -34,6 +34,19 @@ the authors add one line to explain why such a choice makes sense?
 > "Following the usual approach in the literature (see for instance [4,8]),
 > we model the outcome using a linear model ..."
 
+> This is important because when we derive the causal effect, we find
+> that it does not depend on x_{n+1} precisely because there are no
+> interaction terms.
+>
+> We now note to the possibility of extending the model in this way
+> when discussing the causal effect, by adding, right after we show
+> that $\delta(x_{n+1})=\beta_T:
+> 
+> "Note that, if interaction terms between $X$ and $T$ were present in
+> the model (for example, a term of the form, say, $\eta XT$ for some
+> parameter vector $\eta$), that would result in a dependence of the
+> causal effect on $x_{n+1}$."
+
 • How strong is the assumption of choosing the probit function in equation
 (6)? Can the authors please discuss?
 
