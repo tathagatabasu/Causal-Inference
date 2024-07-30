@@ -72,10 +72,16 @@ centered around the fact that RBCE outperforms the SOTA in terms of
 variable selection. The main point should be along the lines of “We beat
 everybody at the variable selection game, and we perform almost on par
 with them in estimating the causal effect”.
+
+> *** TODO: TB? ***
+
 • Even though the authors say that underestimating the treatment effect
 is of no concern, from Table 4 we can see that RBCE intervals (almost)
 never contain the true value 4. This is one of the reasons of my comment
 above.
+
+> *** TODO: TB? ***
+
 • In the Introduction (and/or in the Conclusion), when discussing about
 the existing literature on sensitivity analysis, the authors should cite the
 seminal work [4]. There, the authors develop a way to compute analytically
@@ -111,9 +117,17 @@ force optimizations.
 model, the authors should cite [2], where extended probabilities are used
 to deal with missing data and the closed world assumption.
 
-> We thank the reviewer for this suggestion. Whilst missing data is an
-> important topic, we are unsure why the reviewer suggests this
-> citation, as we do not deal with missing data in this paper.
+> We thank the reviewer for this suggestion. Missing data is indeed an
+> important topic. We added a reference to De Cooman & Zaffalon's
+> excellent 2004 paper on this, as it aligns very well with our approach.
+> We added the following paragraph to the conclusion:
+>
+> "Another topic of interest pertinent to medical diagnosis is missing
+> data. It has been shown that using bounded probability is
+> particularly suitable for dealing with instances where data cannot
+> be assumed missing at random \citep{decoomanzaffalon2004}.
+> Incorporating robustness against missing data could lead to an
+> interesting extension of the model in this paper."
 
 The following are stylistic comments that the authors are free to ignore, but
 that in my opinion would make the paper a better read.
