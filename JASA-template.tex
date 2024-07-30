@@ -32,6 +32,8 @@
 \usepackage{lineno}
 \linenumbers
 
+\newcommand{\added}[1]{\textcolor{blue}{#1}}
+
 \begin{document}
 
 \begin{frontmatter}
@@ -241,9 +243,11 @@ $\beta \coloneqq (\beta_1$, \dots, $\beta_p)^{\top}$ denote the vector of regres
 coefficients
 related to the predictors, and let $\beta_T$ denote a regression coefficient related to the
 treatment decision.
+\added{%
 Following the usual approach in the literature
 (see for instance \citep{winship99,HECKMAN1985}),
-we model the outcome using a linear model
+we model the outcome using a linear model%
+}
 \begin{equation}
 	Y_i =  T_i \beta_{T} + X_i\beta + \epsilon_i
 \end{equation}
@@ -274,16 +278,23 @@ For our model, due to linearity of expectation, we have that
 Note that, for this model, the causal effect $\delta(x_{n+1})$
 does not depend on the observed value $x_{n+1}$ of $X_{n+1}$.
 So, to find the causal effect, we simply need to estimate $\beta_T$.
-Note that, if interaction terms between $X$ and $T$ were present in
-the model (for example a term of the form, say, $\eta XT$ for some
+\added{%
+Note that, if interaction terms between $X_i$ and $T_i$ were present in
+the model (for example a term of the form, say, $\eta X_iT_i$ for some
 parameter vector $\eta$), that would result in a dependence of the
-causal effect on $x_{n+1}$.
+causal effect on $x_{n+1}$.%
+}
 
 To estimate $\beta_T$ from the data $X$, $Y$ and $T$,
 especially in the presence of confounders,
 we also need to consider the
 association between the treatment indicators $T$ and the predictors $X$.
-A common choice in the literature is to use a probit link function.
+A common choice in the literature is to use a probit link function
+\citep{winship99},
+\added{%
+though other link functions, such as the logit, can also be used
+\citep{HECKMAN1985}.%
+}
 In this way, we can
 specify the conditional probability that subject $i$ receives the treatment through a linear model. 
 That is, for another vector of regression coefficients 

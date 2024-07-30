@@ -33,7 +33,7 @@ the authors add one line to explain why such a choice makes sense?
 >
 > "Following the usual approach in the literature (see for instance [4,8]),
 > we model the outcome using a linear model ..."
-
+>
 > This is important because when we derive the causal effect, we find
 > that it does not depend on x_{n+1} precisely because there are no
 > interaction terms.
@@ -42,8 +42,8 @@ the authors add one line to explain why such a choice makes sense?
 > when discussing the causal effect, by adding, right after we show
 > that $\delta(x_{n+1})=\beta_T:
 > 
-> "Note that, if interaction terms between $X$ and $T$ were present in
-> the model (for example, a term of the form, say, $\eta XT$ for some
+> "Note that, if interaction terms between $X_i$ and $T_i$ were present in
+> the model (for example, a term of the form, say, $\eta X_iT_i$ for some
 > parameter vector $\eta$), that would result in a dependence of the
 > causal effect on $x_{n+1}$."
 
@@ -57,8 +57,12 @@ the authors add one line to explain why such a choice makes sense?
 > cosmetic, as both model similar tendencies. The probit is easy to
 > model and simulate using a latent variable, and therefore we used
 > it, following [4].
-> We added:
-> *** TODO ***
+>
+> We added a reference to [4] when mentioning the
+> probit for the first time, and added:
+>
+> "though other link functions, such as the logit, can also be used
+> \citep{HECKMAN1985}"
 
 • The following is the main change that I feel the paper needs. It seems
 to me that the proposed method does not outperform the state of the
