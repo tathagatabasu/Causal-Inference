@@ -261,18 +261,20 @@ we are mainly interested in the effect of the treatment on the outcome.
 More precisely, the causal effect of a new individual, indexed as $n+1$,
 whose outcome $Y_{n+1}$ is not yet observed, and with observed predictors $X_{n+1}=x_{n+1}$, is defined by:
 \begin{align}
-  &\delta(x_{n+1})\nonumber\\
-  &\coloneqq\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)
-\end{align}
-For our model, due to linearity of expectation, we have that
-\begin{align}
+  \begin{split}
   \delta(x_{n+1})
-  =\beta_T+&x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \nonumber\\
-  - &x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)
-  \end{align}
-  {and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
-  \begin{align}
+    &\coloneqq\mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \\
+    &\qquad - \mathbb{E}(Y_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1}=0)
+  \end{split}
+  \intertext{For our model, due to linearity of expectation, we have that}
+  \begin{split}
   \delta(x_{n+1})
+    &=\beta_T
+      +x_{n+1}\beta+\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =1) \\
+    &\qquad\,\,\, %%% for alignment
+      -x_{n+1}\beta-\mathbb{E}(\epsilon_{n+1}\mid X_{n+1}=x_{n+1},T_{n+1} =0)
+  \end{split}
+\intertext{and because $\epsilon_{n+1}$ is independent from $X_{n+1}$ and $T_{n+1}$,}
   &=\beta_{T}.
 \end{align}
 Note that, for this model, the causal effect $\delta(x_{n+1})$
