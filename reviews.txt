@@ -13,6 +13,7 @@ give my comments about the manuscript.
 
 I have a few minor comments that I would like the authors to address before
 the paper is accepted.
+
 • In line 111, is it a strong assumption to assume ϵi ∼ N(0, σ2)? If not, can
 the authors add one line to explain why such a choice makes sense?
 
@@ -131,9 +132,10 @@ to deal with missing data and the closed world assumption.
 
 The following are stylistic comments that the authors are free to ignore, but
 that in my opinion would make the paper a better read.
+
 • Please use ⊤ (via command \top) to denote a transpose matrix or vector.
 This way it does not get confused with letter T used for the treatment
-decisions (and for the subscript of βT ).
+decisions (and for the subscript of βT).
 
 > Done. Thank you for this excellent suggestion!
 
