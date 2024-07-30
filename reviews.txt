@@ -111,8 +111,6 @@ to deal with missing data and the closed world assumption.
 > important topic, we are unsure why the reviewer suggests this
 > citation, as we do not deal with missing data in this paper.
 
-> *** TODO MT check ***
-
 The following are stylistic comments that the authors are free to ignore, but
 that in my opinion would make the paper a better read.
 • Please use ⊤ (via command \top) to denote a transpose matrix or vector.
