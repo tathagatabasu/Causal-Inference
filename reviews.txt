@@ -53,12 +53,12 @@ the authors add one line to explain why such a choice makes sense?
 > The use of the probit function is standard in linear modelling when
 > dealing with binary variables. Following the literature, usual
 > choices for the link function are either probit or logit. For
-> instance, [4] uses a probit, whereas [8] uses a logit. The choice is
+> instance, Winship uses a probit, whereas Heckman uses a logit. The choice is
 > cosmetic, as both model similar tendencies. The probit is easy to
 > model and simulate using a latent variable, and therefore we used
-> it, following [4].
+> it, following Winship.
 >
-> We added a reference to [4] when mentioning the
+> We added a reference to Winship when mentioning the
 > probit for the first time, and added:
 >
 > "though other link functions, such as the logit, can also be used
@@ -98,10 +98,14 @@ force optimizations.
 > available. Additionally, we do not consider imprecise likelihoods
 > either.
 >
-> Methods that integrate directly with MCMC, such as importance
+> Methods that can integrate directly with MCMC, such as importance
 > sampling, might be more suited to avoid brute force optimisation. A
 > reference to this is already mentioned in the conclusion in the
 > original paper, whence we have made no changes in response to this.
+>
+> *** TODO: should we add a note somewhere in the intro that the
+>     purpose of the paper is to focus on the modelling and not on
+>     computational aspects? ***
 
 • In the Conclusion, when discussing different possibilities to extend their
 model, the authors should cite [2], where extended probabilities are used
