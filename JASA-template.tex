@@ -432,8 +432,8 @@ We use a beta prior to
 model our uncertainty about
 the selection probabilities $\pi_j$ where  $q_j$ represents our prior expectation of $\pi_j$ and $s$ acts as 
 a concentration parameter.
-For the causal effect (\cref{eq:prior:causal}), we want to use a Gaussian distribution that 
-matches the scale of the noise term. Therefore, we consider $\beta_T\sim \normal(0,\sigma^2)$. 
+For the causal effect \added{in \cref{eq:prior:causal}}, we want to use a Gaussian distribution that 
+matches the scale of the noise term. Therefore, we consider $\beta_T\added{\mid\sigma^2}\sim \normal(0,\sigma^2)$. 
 
 In \cref{fig:regress}, we show a probabilistic graphical representation
 of our hierarchical model. In the figure, grey circular nodes represent the

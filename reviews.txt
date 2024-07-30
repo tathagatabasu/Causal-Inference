@@ -138,11 +138,27 @@ decisions (and for the subscript of βT ).
 > Done. Thank you for this excellent suggestion!
 
 • Equation (2) is out of bounds.
+
+> Fixed.
+
 • Equations (3) and (4) should be aligned according to xn+1.
+
+> Fixed.
+
 • There is a full stop missing at the end of equation (10).
+
+> Fixed.
+
 • Many equations are numbered, but their number is not used in the text.
+
+> This is intentional, as it makes it easier for others to refer to
+> the manuscript.
+
 • In line 143, please add the reference to equation (15) as follows: “For the
 causal effect (15), we want [...]”
+
+> Fixed.
+
 • Please get rid of “instead” in line 274.
 • Please rephrase lines 293-294 as “[...]: column RBCE-l gives the lower
 bound, and column RBCE-u gives the upper bound”.
