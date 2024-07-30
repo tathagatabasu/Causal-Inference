@@ -16,19 +16,34 @@ the paper is accepted.
 • In line 111, is it a strong assumption to assume ϵi ∼ N(0, σ2)? If not, can
 the authors add one line to explain why such a choice makes sense?
 
-> This is a standard assumption in linear modelling, and follows.
-> We changed
-> "where ϵi ∼ N(0, σ2) ..."
+> This is a standard assumption in linear modelling. Linear models
+> with residuals distributed in this manner can be estimated via
+> ordinary least squares. It is well known that one can always add
+> additional interaction terms or transformations if the residuals are
+> not distributed as i.i.d. normals.  Interaction terms just lead to a
+> larger linear model with more predictors, as each interaction term
+> adds a predictor.  Consequently, in practice, it is not a very
+> strong assumption.  Unsurprisingly, this assumption is prevalent in
+> models that try to capture causality and confounding (see [4, 8]).
+> To clarify this is a standard choice, we changed:
+>
+> "Then we can define a linear model for the outcome so that ..."
+>
 > to
-> "where we make the usual assumption that ϵi ∼ N(0, σ2) ..."
-> *** TODO check ref, add to paper ***
+>
+> "Following the usual approach in the literature (see for instance [4,8]),
+> we model the outcome using a linear model ..."
 
 • How strong is the assumption of choosing the probit function in equation
 (6)? Can the authors please discuss?
 
-> The use of the probit function is standard in linear modelling when dealing with binary variables.
-> Following the literature,
-> usual choices for the link function are either probit or logit.
+> The use of the probit function is standard in linear modelling when
+> dealing with binary variables. Following the literature, usual
+> choices for the link function are either probit or logit. For
+> instance, [4] uses a probit, whereas [8] uses a logit. The choice is
+> cosmetic, as both model similar tendencies. The probit is easy to
+> model and simulate using a latent variable, and therefore we used
+> it, following [4].
 > We added:
 > *** TODO ***
 
