@@ -461,6 +461,9 @@ intensive algorithms. For instance, as the authors acknowledge on page
 11, the computation of posterior bounds as described in equations
 (19), (20), (24), and (25) involves brute force methods.
 
+> We now mention this weakness more explicitly in the conclusion (see
+> response to reviewer #1 concerning computational efficiency).
+
 Furthermore, the authors also note that in their simulation study
 their methodology tends to underestimate the causal effect when
 certain predictors are only linked to the outcome (p. 17). This
@@ -472,7 +475,10 @@ comment, and I do not expect the authors to make any modifications to
 their paper regarding this, as it would require a comprehensive
 revision of the entire methodology.
 
-> *** TODO MT to address this, maybe in conclusion ***
+> Indeed, this consistent bias was a somewhat surprising finding.
+
+> *** MT to TB: I can't really think of a good answer here, could
+>     there still be a problem with the code? ***
 
 Technical comments:
 
@@ -489,6 +495,9 @@ is needed on how to choose P and estimate s from the data, since this
 methodology is very susceptible to the chosen priors.
 
 > *** TODO this needs some thought... ***
+
+> *** MT to TB: we need to do some adjustment of \underline{k} and
+>     \overline{k}, and also of s, in the simulation study... ***
 
 2. While a threshold of 1/2 is commonly used, it would be beneficial
 to consider alternative thresholds for co-variate selection in the
@@ -520,7 +529,7 @@ of further tests to determine whether that variable is important is
 cheaper than mistreating an individual) seems like an interesting
 idea.  However, I do not see where the constant loss values `1; `2 and
 `3 from page 9 are used in the methodology explained in the subsequent
-pages. Furthermore, consid- ering that these losses do not depend on
+pages. Furthermore, considering that these losses do not depend on
 the predictor in question seems overly simplistic and could
 potentially weaken the approach. Could it not be possible that the
 threshold mentioned in the previous point could be chosen based on
