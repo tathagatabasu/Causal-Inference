@@ -597,12 +597,18 @@ the variable selection procedure.
 
 > *** TODO: TB to think about what we can do to address this ***
 
-6. Minor comments: Since subsection 2.1 is the only one subsection in
-section 2, the designation as a subsection can be eliminated.  Figure
-3 is very helpful in clarifying the relationship between the different
-parameters and variables in the model.  The R library rjags for
-Bayesian Graphical Models using MCMC (page 14) must be properly
-referenced.  The captions for the tables and figures should be more
+6. Minor comments:
+
+Since subsection 2.1 is the only one subsection in section 2, the
+designation as a subsection can be eliminated.
+
+Figure 3 is very helpful in clarifying the relationship between the
+different parameters and variables in the model.
+
+The R library rjags for Bayesian Graphical Models using MCMC (page 14)
+must be properly referenced.
+
+The captions for the tables and figures should be more
 informative. For example, the caption for Table 1 should indicate that
 it corresponds to the comparison between scenarios 1a and 1b.
 
