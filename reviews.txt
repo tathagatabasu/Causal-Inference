@@ -270,10 +270,10 @@ The quality of the figures is essential. Could you please supply some
 high-resolution figures? There are some figures of low resolution in
 the text part.
 
-> *** TODO: refute? ***
-
 Example: In figure 2, x should be italicized and the numbers 1 and 2
 that accompany x should be italicized
+
+> We replaced the figure to look a bit nicer.
 
 All acronyms must be defined.
 

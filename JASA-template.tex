@@ -12,6 +12,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 \tikzset{>={Stealth[length=3mm]}} % better arrow heads
+\usepackage{pgfplots}
 \usepackage{color}
 
 \usepackage{hyperref}
@@ -437,11 +438,46 @@ We illustrate the components of a bivariate spike and slab prior in
 \cref{fig:ssbl} (with fixed $\sigma=1$). We generate the spike component 
 with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
 
-\begin{figure}[h]
+\begin{figure}
 	\begin{center}
-		\includegraphics[width = 0.95\linewidth]{spike_slab_bi.pdf}
+\begin{tikzpicture}[scale=0.6]
+    \begin{axis}[
+        width=10cm,
+        view={60}{30},
+        xlabel={$x_1$},
+        ylabel={$x_2$},
+        ]
+        \addplot3[
+            surf,
+            samples=51,
+            domain=-7:7,
+            y domain=-7:7,
+        ] 
+        {exp(-0.5*(x^2 + y^2)/0.09) / (2*pi*0.09)};
+
+    \end{axis}
+\end{tikzpicture}
+\qquad
+\begin{tikzpicture}[scale=0.6]
+    \begin{axis}[
+        width=10cm,
+        view={60}{30},
+        xlabel={$x_1$},
+        ylabel={$x_2$},
+        ]
+        \addplot3[
+            surf,
+            samples=26,
+            domain=-7:7,
+            y domain=-7:7,
+        ] 
+        {exp(-0.5*(x^2 + y^2)/25) / (2*pi*25)};
+
+    \end{axis}
+\end{tikzpicture}
+          %\includegraphics[width = 0.95\linewidth]{spike_slab_bi.pdf}
 	\end{center}
-	\caption{Spike (left) and slab (right) components of a bivariate distribution for $\tau_0 = 0.001$, $\tau_1$ = 5 and $\sigma=1$.}
+	\caption{Spike (left) and slab (right) components of a bivariate distribution for $\tau_0 = 0.3$, $\tau_1 = 5$ and $\sigma=1$.}
 	\label{fig:ssbl}
 \end{figure}
 
