@@ -559,9 +559,33 @@ $q\in\mathcal{P}$, where $\mathcal{P} \subseteq \left(0, 1\right)^{p}$.
 Here, the equality occurs for the near vacuous case. However, in real-life
 situations, performing a robust Bayesian analysis for the near vacuous case is 
 not practical. Instead, we incorporate expert elicitation to define our model.
-For instance, we can consider $q\in \left[\underline{q}, \overline{q}\right]$
-where $p\underline{q}$ and $p\overline{q}$ represent the bounds of the prior expectation on the
-total number of variables present in either of the models.
+
+\added{%
+For instance, assume $\underline{k}$ and $\overline{k}$ represent the expert's bounds of the prior expectation on the
+total number of variables present in either of the models. We can then consider $q\in \left[\underline{k}/p, \overline{k}/p\right]$.%
+}
+
+\added{%
+We may also use the empirically observed correlations from the data directly.
+This may give us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
+When doing so, we need
+% \added{
+a prior judgement on what is a reasonable
+%}
+correlation between active predictors and the outcome.
+Say the expert judges that
+an active predictor has a correlation with the outcome
+that is typically between $\underline{c}$ and $\overline{c}$.
+Let $\overline{k}$ be the number of predictors with marginal correlation greater than $\underline{c}$
+and $\underline{k}$ be number of predictors with marginal 
+correlation greater than $\overline{c}$.
+%%% MT to TB: in retrospect, using \underline{k} to lower bound the
+%%% number of active variables is a bit strange... it seems like we're
+%%% treating variables with "too high" correlations as inactive;
+%%% should we simply set \underline{k} directly (e.g. 0, 1, or higher
+%%% if suitable) instead of using the correlations?
+As before, we can then consider $q\in \left[\underline{k}/p, \overline{k}/p\right]$.%
+}
 
 \subsection{Variable selection and coefficient adjustment}
 For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
@@ -749,20 +773,19 @@ estimation \citep{koch2020}; and BSSL for Bayesian spike and slab LASSO
 where $p\le n$, we do not have any results for $n<50$ for these cases.
 
 \paragraph{Elicitation}
-One way to elicit $\mathcal{P}$
-is through a prior expected bound on the number of active predictors.
-Although we may do so directly,
-we may alternatively also use the empirically observed correlations from the data directly.
-This may give us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
-When doing so, we need \added{a prior judgement on what is a reasonable} correlation between active predictors and the outcome.
 
-So, say we judge, through expert elicitation, that
+\added{%
+To elicit $\mathcal{P}$,
+as discussed earlier,
+we use the empirically observed correlations from the data directly.
+We assume that, through expert elicitation,
 an active predictor has a correlation with the outcome
 that is typically between $0.15$ and $0.35$.
-Let $p_1$ be the number of predictors with marginal correlation greater than $0.15$
-and let $p_2$ be number of predictors with marginal 
+Let $\overline{k}$ be the number of predictors with marginal correlation greater than $0.15$
+and let $\underline{k}$ be number of predictors with marginal 
 correlation greater than $0.35$.
-Then $\mathcal{P}=[p_2/p , p_1/p]$ (note that $p_2\le p_1$) gives us a prior bound on the selection probability of each predictor, reflecting our prior expert judgement.
+Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]$ gives us a prior bound on the selection probability of each predictor, reflecting our prior expert judgement.%
+}
 
 \paragraph{Initialisation} 
 To implement our method, we use \texttt{rjags} and for the other three
