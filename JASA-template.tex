@@ -127,8 +127,25 @@ concerns, design cost, population size, to name a few. This
 leaves us with observational studies
 where data is collected though surveys or record keeping.
 
-But this
-can be problematic in the presence of confounding.
+\added{%
+Unfortunately, without fully controlled randomised trials and full
+knowledge of potential confounders, it is well understood that
+statistical models are unable to infer causality, as correlation
+does not imply causation especially in the presence of confounders.
+Still, it is highly desirable to try to adjust for confounding in
+our statistical models to the best of our ability. This is termed
+(perhaps somewhat unfortunately) \emph{causal inference} in the
+literature
+\citep{rubin1978,rosenbaum83,Robins1986ANA,winship99,stuart10,Zigler2014,wang2015,koch2018,Hahn2018,koch2020}.
+This is also the approach that we will follow here, under the
+disclaimer that whether actual causality can be inferred
+remains a subject of interpretation and conjecture specific to the
+sitation being studied.%
+}
+
+%%% MT to TB: removed this phrase for now to make text flow better
+% But this
+% can be problematic in the presence of confounding.
 \begin{figure}
 \begin{center}
 \begin{tikzpicture}[node distance=2cm, auto]

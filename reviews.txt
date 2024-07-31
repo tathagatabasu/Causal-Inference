@@ -317,7 +317,7 @@ confounders and the impact of "high dimensional" data.
 > *** TODO: MT to address this one (similar comment made by reviewer #1) ***
 
 Reviewer #5: Before proceeding with my review, I feel it is important
-to express my reservations regard- ing the concept of Causal
+to express my reservations regarding the concept of Causal
 Inference. While I acknowledge that causality can be inferred to a
 certain degree of confidence, achieving absolute certainty seems
 elusive due to the potential presence of unobserved confounders and
@@ -334,7 +334,28 @@ and focus instead on evaluating the methodological rigor and formal
 aspects of the manuscript, rather than delving deeply into the causal
 interpretation of the results.
 
-> *** TODO MT express agreement with reviewer, add comment to paper ***
+> We agree with the reviewer. We follow prior literature in calling
+> this modelling "causal inference" by measuring the "causal effect";
+> see many of the references cited, including Robins, Winship, Stuart,
+> Rubin, Wang, Zigler, and Koch. In this setting, fully controlled
+> randomised trials are typically unethical, and thus whether actual
+> causality has been measured remains a matter of conjecture. We added
+> the following paragraph to the introduction to make this clear to
+> readers who may not be familiar with these issues:
+
+> "Unfortunately, without fully controlled randomised trials and full
+> knowledge of potential confounders, it is well understood that
+> statistical models are unable to infer causality, as correlation
+> does not imply causation especially in the presence of confounders.
+> Still, it is highly desirable to try to adjust for confounding in
+> our statistical models to the best of our ability. This is termed
+> (perhaps somewhat unfortunately) \emph{causal inference} in the
+> literature
+> \citep{rubin1978,rosenbaum83,Robins1986ANA,winship99,stuart10,Zigler2014,wang2015,koch2018,Hahn2018,koch2020}.
+> This is also the approach that we will follow here, under the
+> disclaimer that whether actual causality can be inferred
+> remains a subject of interpretation and conjecture specific to the
+> sitation being studied."
 
 In this paper, the authors introduce a Bayesian approach to causal
 inference within the context of the linear regression model. The
@@ -383,7 +404,7 @@ differs from previous works such as [11], [12] and [16].
 3. Weaknesses: The methodology introduced in this work is based on
 Bayesian statistics, which assumes prior distributions for the
 parameters. Although the authors perform a sensitivity analysis, the
-choice of prior distributions is subjective and can in uences the
+choice of prior distributions is subjective and can influences the
 results. Additionally, this methodology requires computationally
 intensive algorithms. For instance, as the authors acknowledge on page
 11, the computation of posterior bounds as described in equations
