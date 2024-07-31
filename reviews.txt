@@ -334,12 +334,12 @@ and focus instead on evaluating the methodological rigor and formal
 aspects of the manuscript, rather than delving deeply into the causal
 interpretation of the results.
 
-> We agree with the reviewer. We follow prior literature in calling
+> We fully agree with the reviewer. We follow prior literature in calling
 > this modelling "causal inference" by measuring the "causal effect";
 > see many of the references cited, including Robins, Winship, Stuart,
 > Rubin, Wang, Zigler, and Koch. In this setting, fully controlled
 > randomised trials are typically unethical, and thus whether actual
-> causality has been measured remains a matter of conjecture. We added
+> causality has been measured indeed remains a matter of conjecture. We added
 > the following paragraph to the introduction to make this clear to
 > readers who may not be familiar with these issues:
 
@@ -382,6 +382,10 @@ model parameters, thereby improving the accuracy of the parameter
 estimates.
 
 > *** TODO TB to respond to "refitting"; misunderstanding? ***
+
+> *** MT to TB: I had a closer look, I think this is fine and needs no
+> response (beyond clarifying that we don't do a refit as part of the
+> simulation) ***
 
 General comments:
 
