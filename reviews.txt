@@ -607,8 +607,12 @@ designation as a subsection can be eliminated.
 Figure 3 is very helpful in clarifying the relationship between the
 different parameters and variables in the model.
 
+> Thank you.
+
 The R library rjags for Bayesian Graphical Models using MCMC (page 14)
 must be properly referenced.
+
+> Fixed.
 
 The captions for the tables and figures should be more
 informative. For example, the caption for Table 1 should indicate that
