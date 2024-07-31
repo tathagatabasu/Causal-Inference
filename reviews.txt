@@ -602,6 +602,8 @@ the variable selection procedure.
 Since subsection 2.1 is the only one subsection in section 2, the
 designation as a subsection can be eliminated.
 
+> Fixed.
+
 Figure 3 is very helpful in clarifying the relationship between the
 different parameters and variables in the model.
 
