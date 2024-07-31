@@ -277,6 +277,8 @@ that accompany x should be italicized
 
 All acronyms must be defined.
 
+> *** TODO: TB ***
+
 Results need more explanations. Additional analysis is required at
 each experiment to show the its main purpose. A full statistical
 analysis of the results could be provided related to Table 1 and
@@ -623,10 +625,13 @@ it corresponds to the comparison between scenarios 1a and 1b.
 Conclusion:
 
 Although the methodology appears useful and sufficiently robust, I
-have identified what I consider to be a significant aw in the research
+have identified what I consider to be a significant flaw in the research
 data: the inadequate statistical analysis needed to draw
 scientifically sound conclusions. Therefore, I advise against the
 publication of the paper in its current form.  My recommendation is
 for a major revision. I hope my explanations have clarified the
 revisions I believe are necessary and why they are important in my
 opinion.
+
+> Thank you for your constructive comments, and for encouraging us to
+> improve the statistical analysis.
