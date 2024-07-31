@@ -282,7 +282,7 @@ does not depend on the observed value $x_{n+1}$ of $X_{n+1}$.
 So, to find the causal effect, we simply need to estimate $\beta_T$.
 \added{%
 Note that, if interaction terms between $X_i$ and $T_i$ were present in
-the model (for example a term of the form, say, $\eta X_iT_i$ for some
+the model (for example a term of the form, say, $T_iX_i\eta$ for some
 parameter vector $\eta$), that would result in a dependence of the
 causal effect on $x_{n+1}$.%
 }
@@ -306,7 +306,16 @@ assume
 	P(T_i=1\mid X_i) = \Phi(X_i\gamma)
 \end{align}
 where $\Phi$ denotes the cumulative distribution function
-of a standard normal distribution. To incorporate this probit
+of a standard normal distribution.
+\added{%
+The key assumption made here is that
+there is a monotone relationship between
+the predictors and the probability of treatment.
+Here too, interaction terms between the $X_i$ could be added
+to form more complex models if so desired.%
+}
+
+To incorporate this probit
 link function, we model the $T_i$ as follows \citep{albert93}:
 \begin{align}
     T_i^* &= X_i\gamma +u_i \\

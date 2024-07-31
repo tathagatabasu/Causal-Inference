@@ -39,18 +39,25 @@ the authors add one line to explain why such a choice makes sense?
 > that it does not depend on x_{n+1} precisely because there are no
 > interaction terms.
 >
-> We now note to the possibility of extending the model in this way
+> We now hint at the possibility of extending the model
 > when discussing the causal effect, by adding, right after we show
 > that $\delta(x_{n+1})=\beta_T:
 > 
 > "Note that, if interaction terms between $X_i$ and $T_i$ were present in
-> the model (for example, a term of the form, say, $\eta X_iT_i$ for some
+> the model (for example, a term of the form, say, $T_iX_i\eta$ for some
 > parameter vector $\eta$), that would result in a dependence of the
 > causal effect on $x_{n+1}$."
 
 • How strong is the assumption of choosing the probit function in equation
 (6)? Can the authors please discuss?
 
+> We added a sentence to clarify this:
+> 
+> "The key assumption made here is that there is a monotone
+> relationship between the predictors and the probability of
+> treatment.  Here too, interaction terms between the $X_i$ could be
+> added to form more complex models if so desired."
+> 
 > The use of the probit function is standard in linear modelling when
 > dealing with binary variables. Following the literature, usual
 > choices for the link function are either probit or logit. For
