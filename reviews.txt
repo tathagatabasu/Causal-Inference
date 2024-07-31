@@ -282,7 +282,7 @@ each experiment to show the its main purpose. A full statistical
 analysis of the results could be provided related to Table 1 and
 Figure 5.
 
-> See response to reviewer #4.
+> See response to reviewer #5.
 
 Conclusion should state scope for future work.
 
