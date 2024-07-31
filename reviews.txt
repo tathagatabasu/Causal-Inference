@@ -100,26 +100,37 @@ force optimizations.
 
 > We thank the reviewer for these suggested references. We agree there
 > is a large body of excellent computational work on robust Bayesian
-> inference, including the papers above. We use the
-> Williams/Berger/Walley framework which is more general than the
-> models admitted by Choquet capacities, thus the formulas from
-> Wasserman & Kadane can at best used for bounding. In addition,
+> inference, including the papers above.
+
+> We use the Williams/Berger/Walley framework which is more general
+> than the models admitted by Choquet capacities, thus the formulas
+> from Wasserman & Kadane can at best used for bounding. In addition,
 > evaluating the Choquet integral requires knowledge of the lower (or
-> upper) probabilities of the cut sets, which would still require
+> upper) probabilities of the cut sets, so does not avoid
 > brute force optimisation. Whence, there is no clear gain in
 > modelling the problem via Choquet integration in general, unless the
 > lower/upper probabilities of cut sets are readily
 > available. Additionally, we do not consider imprecise likelihoods
 > either.
->
+
 > Methods that can integrate directly with MCMC, such as importance
 > sampling, might be more suited to avoid brute force optimisation. A
 > reference to this is already mentioned in the conclusion in the
-> original paper, whence we have made no changes in response to this.
->
-> *** TODO: should we add a note somewhere in the intro that the
->     purpose of the paper is to focus on the modelling and not on
->     computational aspects? ***
+> original paper.
+
+> To conclude, though we are thankful to the reviewer for helping us
+> to think about how we might improve the simulation efficiency, the
+> suggested references will not help address the computational issues
+> in the specific model of the paper, and they are therefore
+> not relevant to this paper.
+
+> However, computational efficiency is definitely a weakness of the
+> approach in the paper, and this deserves more emphasis in the
+> conclusion. We added the following sentence to the conclusion:
+
+> "A weakness of our approach is simulation efficiency,
+> as we resorted to brute force optimisation.
+> However, there is ample opportunity to improve computational aspects."
 
 • In the Conclusion, when discussing different possibilities to extend their
 model, the authors should cite [2], where extended probabilities are used

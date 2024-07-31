@@ -1049,7 +1049,13 @@ and compare with other state of the art Bayesian methods.
 
 Currently, the paper proposes a robust Bayesian approach for causal effect estimation where
 we rely on sampling strategies to obtain the posterior bounds as well as performing 
-variable selection. \added{In the future,} it will be interesting to derive inner approximation bounds
+variable selection.
+\added{%
+A weakness of our approach is simulation efficiency,
+as we resorted to brute force optimisation.
+However, there is ample opportunity to improve computational aspects.%
+}
+\added{In the future,} it will be interesting to derive inner approximation bounds
 for the posterior estimates to reduce the computational cost,
 or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}. Moreover, for the sake of
 illustration, we rely on simple loss functions
