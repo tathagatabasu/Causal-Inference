@@ -344,7 +344,7 @@ interpretation of the results.
 > readers who may not be familiar with these issues:
 
 > "Unfortunately, without fully controlled randomised trials and full
-> knowledge of potential confounders, it is well understood that
+> knowledge of confounders, it is well understood that
 > statistical models are unable to infer causality, as correlation
 > does not imply causation especially in the presence of confounders.
 > Still, it is highly desirable to try to adjust for confounding in
