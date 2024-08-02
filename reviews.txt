@@ -645,6 +645,8 @@ pag. 13 are only correlations with the outcome considered?
 line 296 "We notice that...". What is meant by is more consistent?
 What does the vague expression is somewhat in agreement mean?
 
+> *** TB: this is about the simulations, can you address this? ***
+
 • Overall, I believe there is a deficiency in the application of
 statistical methods to compare RBCE method against the other three
 across all four sce- narios. Proper statistical methods should be
