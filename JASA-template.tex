@@ -759,7 +759,7 @@ Note that here, we described a precise Bayesian refit model, but obviously this 
 \section{Simulation Studies}\label{sec:sim}
 
 For the simulation studies, we consider \added{2 different cases each with 2 sub-cases, amounting to 4 studies in total}. In each
-\alert{of these 4 studies}, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
+\added{of these 4 studies}, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
 for $1\le i\le n$ where $\Sigma_{ij} = 0.3^{|i-j|}$. In this way, we 
 generate predictors for our model with mild correlations between them.
 We then use the following distributions to generate the outcome and
@@ -773,8 +773,8 @@ where $\epsilon_i\sim\mathcal{N}(0,0.1^2)$.
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
 
 \added{In case 1, we consider an} increasing number of observations. \added{We} have two
-sub-cases: in \alert{case 1a} we consider all active variables to be confounders
-and in the second \alert{case 1b} we consider some active variables which are only related to
+sub-cases: in \added{case 1a} we consider all active variables to be confounders
+and in the second \added{case 1b} we consider some active variables which are only related to
 the outcome model. 
 \begin{description}
     \item[\added{Case} 1a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
