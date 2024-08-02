@@ -408,8 +408,6 @@ which involves considering a family of Beta priors defined by the
 parameter q belonging to P \subset (0; 1)^p (incidentally, how P is
 chosen? By expert elicitation?),
 
-*** TODO: MT to sync this text with the document
-
 > Yes. This was explained just above section 3.2 in the paper, right
 > after the introduction of P. We explicitly mentioned "expert
 > elicitation" and how this might work by bounding the number of
