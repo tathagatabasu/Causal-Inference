@@ -1133,14 +1133,19 @@ However, there is ample opportunity to improve computational aspects.%
 }
 \added{In the future,} it will be interesting to derive inner approximation bounds
 for the posterior estimates to reduce the computational cost,
-or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}. Moreover, for the sake of
-illustration, we rely on simple loss functions
-%TB to MT: edited the conclusion
+or to find better ways than brute force optimisation, such as for instance iterative importance sampling \citep{cruz22_importance}.
+
+\added{To compare the different methods, we rely on simple loss functions
 associated with the predictor selection. However,
-this paradigm can be used for a generalised
-decision theoretic framework as well where based on
-the predictor selection we can formulate the 
-problem as a decision support problem for treating a subject.
+loss functions could be used for a generalised
+decision theoretic framework as well.
+For instance,
+the selection problem itself could be formulated as a decision problem,
+potentially leading to different selection thresholds or even selection systems that are directly based on a loss function.
+Additionally, we could formulate the 
+problem of whether or not to treat a subject as a decision support problem
+based on predictor selection.%
+}
 
 \added{%
 Another topic of interest pertinent to medical diagnosis is missing data.

@@ -547,8 +547,23 @@ potentially weaken the approach. Could it not be possible that the
 threshold mentioned in the previous point could be chosen based on
 these loss values?
 
-> *** TODO: MT to think about this, can we use loss function to formulate selection
-> as a decision problem and then apply maximality/interval dominance/...? ***
+> Indeed, they used purely to evaluate and compare the different
+> methodologies, and are not part of the new method itself. The
+> threshold of 1/2 comes from the literature as explained above.
+> However, we completely agree that formulating variable selection as
+> a formal decision problem from the start is conceptually a good
+> idea. We hinted at this possibility in the conclusion. We have made
+> this text a little bit clearer. The paragraph now reads:
+
+> "To compare the different methods, we rely on simple loss functions
+> associated with the predictor selection. However, loss functions
+> could be used for a generalised decision theoretic framework as
+> well.  For instance, the selection problem itself could be
+> formulated as a decision problem, potentially leading to different
+> selection thresholds or even selection systems that are directly
+> justified by the loss function. Additionally, we could formulate the
+> problem of whether or not to treat a subject as a decision support
+> problem based on predictor selection."
 
 4. In relation to the writing and organization of the manuscript, I
 find it unclear that the acronym for the proposed method (RBCE)
