@@ -417,39 +417,51 @@ chosen? By expert elicitation?),
 
 > We mentioned a different elicitation method in section 4 as part of
 > the simulation study. We took this opportunity to add this to
-> section 3.2 as well. The complete text on elicitation of P is now:
+> section 3.2 as well, and to improve the explanation.
+> The complete text on elicitation of P is now:
 
 > "For instance, assume $\underline{k}$ and $\overline{k}$ represent
 > the expert's bounds of the prior expectation on the total number of
 > variables present in either of the models. We can then consider
-> $q\in \left[\underline{k}/p, \overline{k}/p\right]$."
+> $q\in \left[\underline{k}/p, \overline{k}/p\right]$.  Using an
+> interval for the prior expectation on the total number of active
+> variables gives us a more cautious approach to specifying the prior
+> distribution on variable selection, and thus more robust
+> inferences."
 
-> "We may also use the empirically observed correlations from the data
-> directly. This may give us a better prior judgement since any
-> predictors that are correlated with the outcome are good candidates
-> to be active.  When doing so, we need a prior judgement on what is a
-> reasonable correlation between active predictors and the outcome.
-> Say the expert judges that an active predictor has a correlation
-> with the outcome that is typically between $\underline{c}$ and
-> $\overline{c}$.  Let $\overline{k}$ be the number of predictors with
-> marginal correlation greater than $\underline{c}$ and
-> $\underline{k}$ be number of predictors with marginal correlation
-> greater than $\overline{c}$.  As before, we can then consider $q\in
-> \left[\underline{k}/p, \overline{k}/p\right]$."
+> "Alternatively, we may also use the empirically observed correlations
+> from the data directly.  This may give us a better prior judgement
+> since any predictors that are correlated with the outcome are good
+> candidates to be active.  When doing so, we need a prior judgement
+> on what is a reasonable correlation between active predictors and
+> the outcome.  Say the expert judges that an active predictor has a
+> correlation with the outcome that lies typically in
+> $[-1,-c]\cup[c,1]$, i.e.  an absolute correlation larger than $c$.
+> Let $k_c$ be the number of predictors with absolute marginal
+> correlation greater than $c$.  We could then consider $q=k_c/p$ for
+> the prior, as it gives a prior estimate on the selection probability
+> that is consistent with a prior predictive expectation of $k_c$
+> active variables.  Now, it is in general quite difficult to specify
+> an exact value for $c$ a priori.  Therefore, we consider an interval
+> $[\underline{c},\overline{c}]$ for $c$, leading to $q\in
+> \left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]$ (note that
+> $k_c$ is monotonically non-increasing in $c$)."
 
 > The corresponding paragraph in the simulation study was adjusted
 > accordingly:
 
-> "To elicit $\mathcal{P}$, as discussed earlier, we use the
-> empirically observed correlations from the data directly.  We assume
-> that, through expert elicitation, an active predictor has a
-> correlation with the outcome that is typically between $0.15$ and
-> $0.35$.  Let $\overline{k}$ be the number of predictors with
-> marginal correlation greater than $0.15$ and let $\underline{k}$ be
-> number of predictors with marginal correlation greater than $0.35$.
-> Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]$ gives us a
-> prior bound on the selection probability of each predictor,
-> reflecting our prior expert judgement."
+> "To elicit $\mathcal{P}$, as discussed earlier in
+> \cref{sec:robustbayesanalysis}, we use the empirically observed
+> correlations from the data directly.  We assume that, through expert
+> elicitation, an active predictor has an absolute correlation with
+> the outcome that is typically larger than a value lying in the
+> interval $[0.15,0.35]$. Let $\overline{k}$ be the number of
+> predictors with absolute marginal correlation greater than $0.15$
+> and let $\underline{k}$ be number of predictors with absolute
+> marginal correlation greater than $0.35$.  Then
+> $\mathcal{P}=[\underline{k}/p , \overline{k}/p]$ gives us a prior
+> bound on the selection probability of each predictor, reflecting our
+> prior expert judgement."
 
 and performing a sensitivity analysis
 to select variables in the regression model and adjust coefficients,
