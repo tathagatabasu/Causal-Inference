@@ -634,6 +634,13 @@ the prior probability that the j-th predictor is associated with the
 outcome or the treatment (see (14)), why in the definition of P on
 pag. 13 are only correlations with the outcome considered?
 
+> We hope we have now explained this better; see above response to
+> concerns around the elicitation of P.
+
+> *** MT to TB: is it possible to add a citation of someone else doing
+      this too, e.g. to use the correlations with the outcome to
+      inform a prior on the selection probability? ***
+
 • I do not understand the sentence starting on line 294 and ending on
 line 296 "We notice that...". What is meant by is more consistent?
 What does the vague expression is somewhat in agreement mean?
