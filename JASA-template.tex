@@ -595,7 +595,7 @@ not practical. Instead, we incorporate expert elicitation to define our model.
 
 \added{%
 For instance, assume $\underline{k}$ and $\overline{k}$ represent the expert's bounds of the prior expectation on the
-total number of variables present in either of the models. We can then consider $q\in \left[\underline{k}/p, \overline{k}/p\right]$.
+total number of variables present in either of the models. We can then consider $\mathcal{P}=\left[\underline{k}/p, \overline{k}/p\right]^p$.
 Using an interval for the prior expectation on the total number of active variables
 gives us a more cautious approach to specifying the prior distribution on variable selection,
 and thus more robust inferences.%
@@ -617,7 +617,7 @@ Let $k_c$ be the number of predictors with absolute marginal correlation greater
 We could then consider $q=k_c/p$ for the prior, as it gives a prior estimate on the selection probability that is consistent with a prior predictive expectation of $k_c$ active variables.
 Now, it is in general quite difficult to specify an exact value for $c$ a priori.
 Therefore, we consider an interval $[\underline{c},\overline{c}]$ for $c$, leading to
-$q\in \left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]$
+$\mathcal{P}=\left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]^p$
 (note that $k_c$ is monotonically non-increasing in $c$).
 }
 
@@ -816,7 +816,7 @@ that is typically larger than a value lying in the interval $[0.15,0.35]$
 *** TODO TB cite some papers with values consistent with this ***.
 Let $\overline{k}$ be the number of predictors with absolute marginal correlation greater than $0.15$
 and let $\underline{k}$ be number of predictors with absolute marginal correlation greater than $0.35$.
-Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]$ gives us a prior bound on the selection probability of each predictor, reflecting our prior expert judgement.%
+Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]^p$ gives us a prior bound on the selection probability of each predictor, reflecting our prior expert judgement.%
 }
 
 \paragraph{Initialisation} 

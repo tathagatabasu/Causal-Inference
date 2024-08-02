@@ -442,13 +442,13 @@ chosen? By expert elicitation?),
 > distribution on variable selection, and thus more robust
 > inferences."
 
-> "Alternatively, we may also use the empirically observed correlations
-> from the data directly.  This may give us a better prior judgement
-> since any predictors that are correlated with the outcome are good
-> candidates to be active.  When doing so, we need a prior judgement
-> on what is a reasonable correlation between active predictors and
-> the outcome.  Say the expert judges that an active predictor has a
-> correlation with the outcome that lies typically in
+> "Alternatively, we may also use the empirically observed
+> correlations from the data directly.  This may give us a better
+> prior judgement since any predictors that are correlated with the
+> outcome are good candidates to be active.  When doing so, we need a
+> prior judgement on what is a reasonable correlation between active
+> predictors and the outcome.  Say the expert judges that an active
+> predictor has a correlation with the outcome that lies typically in
 > $[-1,-c]\cup[c,1]$, i.e.  an absolute correlation larger than $c$.
 > Let $k_c$ be the number of predictors with absolute marginal
 > correlation greater than $c$.  We could then consider $q=k_c/p$ for
@@ -456,9 +456,9 @@ chosen? By expert elicitation?),
 > that is consistent with a prior predictive expectation of $k_c$
 > active variables.  Now, it is in general quite difficult to specify
 > an exact value for $c$ a priori.  Therefore, we consider an interval
-> $[\underline{c},\overline{c}]$ for $c$, leading to $q\in
-> \left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]$ (note that
-> $k_c$ is monotonically non-increasing in $c$)."
+> $[\underline{c},\overline{c}]$ for $c$, leading to
+> $\mathcal{P}=\left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]^p$
+> (note that $k_c$ is monotonically non-increasing in $c$)."
 
 > The corresponding paragraph in the simulation study was adjusted
 > accordingly:
@@ -472,7 +472,7 @@ chosen? By expert elicitation?),
 > predictors with absolute marginal correlation greater than $0.15$
 > and let $\underline{k}$ be number of predictors with absolute
 > marginal correlation greater than $0.35$.  Then
-> $\mathcal{P}=[\underline{k}/p , \overline{k}/p]$ gives us a prior
+> $\mathcal{P}=[\underline{k}/p , \overline{k}/p]^p$ gives us a prior
 > bound on the selection probability of each predictor, reflecting our
 > prior expert judgement."
 
@@ -606,14 +606,24 @@ lines). Similarly, dataset (line 297) should perhaps be setting?
 would be appreciated, as their explanation is somewhat challenging to
 follow.
 
+> *** TODO: TB? ***
+
 • It would be appreciated if access to the data used in this section
 could be provided for the sake of reproducibility and
 transparency. Similarly, access to the R scripts used by the authors
 to conduct the experiments would be beneficial.
 
+> *** TODO: TB? ***
+
 • On page 9, P\subset (0,1)^p, but in the elicitation part of Section
 4 (page 13), P = [p2=p; p1=p] \subset (0; 1), indicating an
-inconsistency in notation. Setting this aside, along with the fact
+inconsistency in notation
+
+> We have now resolved this inconsistency. Both paragraphs were edited
+> as part of previous comments, see response to "elicitation of P"
+> above.
+
+Setting this aside, along with the fact
 that 0.15 and 0.35 are arbitrarily chosen values to define p1 and p2,
 which are then used to represent expert elicitation on the prior Beta,
 if q 2 P and qj represents the prior expectation of \pi_j , which is
