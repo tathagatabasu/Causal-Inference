@@ -316,7 +316,12 @@ compared with previous works, and also identify the limit of the
 approach, in particular regarding the good identification of the
 confounders and the impact of "high dimensional" data.
 
-> *** TODO: MT to address this one (similar comment made by reviewer #1) ***
+> *** TODO: MT to address "limit of the approach" ***
+> *** TODO: TB to address interest compared to previous works ***
+> By being more careful about when to determine a variable to be surely active,
+> compared to previous works *** TB cite them here ***,
+> the causal inferences from our model are more robust against noise,
+> *** as demonstrated by our simulations??? TB to make argument ***.
 
 Reviewer #5: Before proceeding with my review, I feel it is important
 to express my reservations regarding the concept of Causal
@@ -403,6 +408,8 @@ which involves considering a family of Beta priors defined by the
 parameter q belonging to P \subset (0; 1)^p (incidentally, how P is
 chosen? By expert elicitation?),
 
+*** TODO: MT to sync this text with the document
+
 > Yes. This was explained just above section 3.2 in the paper, right
 > after the introduction of P. We explicitly mentioned "expert
 > elicitation" and how this might work by bounding the number of
@@ -430,10 +437,6 @@ chosen? By expert elicitation?),
 > greater than $\overline{c}$.  As before, we can then consider $q\in
 > \left[\underline{k}/p, \overline{k}/p\right]$."
 
-> *** MT to TB: I'd like to discuss the lower bound as it makes no
->     sense to me in retrospect (see manuscript for additional
->     comments) ***
-
 > The corresponding paragraph in the simulation study was adjusted
 > accordingly:
 
@@ -451,8 +454,6 @@ chosen? By expert elicitation?),
 and performing a sensitivity analysis
 to select variables in the regression model and adjust coefficients,
 differs from previous works such as [11], [12] and [16].
-
-> *** TODO TB to address this ***
 
 3. Weaknesses: The methodology introduced in this work is based on
 Bayesian statistics, which assumes prior distributions for the
@@ -521,8 +522,7 @@ thresholds on model performance in the sensitivity study. This will
 provide insights into the robustness of the selected variables and
 help determine the most appropriate threshold.
 
-> *** TODO: can do this, fair comment, could justify threshold from utility arugment? ***
-> *** TODO: or explain where 1/2 comes from and that this is the optimal value ***
+> *** TODO: explain where 1/2 comes from and that this is the optimal value ***
 > *** TODO: TB to investigate ***
 
 3. Considering a utility based framework in which abstention from
@@ -578,7 +578,7 @@ outcome or the treatment (see (14)), why in the definition of P on
 pag. 13 are only correlations with the outcome considered?
 
 • I do not understand the sentence starting on line 294 and ending on
-line 296 \We notice that...". What is meant by is more consistent?
+line 296 "We notice that...". What is meant by is more consistent?
 What does the vague expression is somewhat in agreement mean?
 
 • Overall, I believe there is a deficiency in the application of
@@ -620,7 +620,7 @@ The captions for the tables and figures should be more
 informative. For example, the caption for Table 1 should indicate that
 it corresponds to the comparison between scenarios 1a and 1b.
 
-> *** TODO: MT to address minor comments ***
+> *** TODO: BT to address minor comments ***
 
 Conclusion:
 
