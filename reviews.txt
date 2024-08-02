@@ -626,6 +626,9 @@ inconsistency in notation
 Setting this aside, along with the fact
 that 0.15 and 0.35 are arbitrarily chosen values to define p1 and p2,
 which are then used to represent expert elicitation on the prior Beta,
+
+> *** TODO: TB to add some citations to back these up ***
+
 if q 2 P and qj represents the prior expectation of \pi_j , which is
 the prior probability that the j-th predictor is associated with the
 outcome or the treatment (see (14)), why in the definition of P on
