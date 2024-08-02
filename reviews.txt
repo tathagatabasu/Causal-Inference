@@ -316,7 +316,17 @@ compared with previous works, and also identify the limit of the
 approach, in particular regarding the good identification of the
 confounders and the impact of "high dimensional" data.
 
-> *** TODO: MT to address "limit of the approach" ***
+> Concerning the limits of our approach, we now more explicitly
+> mention some of the weaknesses compared to previous works. First, we
+> explicitly mention computational issues along with some thoughts on
+> how we might resolve these (see response to reviewer #1 concerning
+> computational efficiency). This is particularly relevant for high
+> dimensional data. We also more explicitly mention that our approach
+> is based on the 1/2 probability threshold for variable selection
+> from the literature, with thoughts on how this could be improved
+> using loss functions (see response to reviewer #5, technical comment
+> concerning a utility based framework).
+
 > *** TODO: TB to address interest compared to previous works ***
 > By being more careful about when to determine a variable to be surely active,
 > compared to previous works *** TB cite them here ***,
@@ -561,7 +571,7 @@ these loss values?
 > well.  For instance, the selection problem itself could be
 > formulated as a decision problem, potentially leading to different
 > selection thresholds or even selection systems that are directly
-> justified by the loss function. Additionally, we could formulate the
+> based on a loss function. Additionally, we could formulate the
 > problem of whether or not to treat a subject as a decision support
 > problem based on predictor selection."
 
@@ -645,7 +655,7 @@ The captions for the tables and figures should be more
 informative. For example, the caption for Table 1 should indicate that
 it corresponds to the comparison between scenarios 1a and 1b.
 
-> *** TODO: BT to address minor comments ***
+> *** TODO: TB to address minor comments ***
 
 Conclusion:
 
