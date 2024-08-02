@@ -39,8 +39,7 @@
 
 \begin{frontmatter}
 
-%%% MT to TB: what about "Robust Bayesian Analysis of Causal Inference in Medical Diagnosis and Treatment"
-%%% TB to MT: changed it
+%%% MT what about using "Robust Bayesian causal estimation" (name for our method) in the title, e.g. "Robust Bayesian causal estimation for causal inference in medical diagnosis"
 \title{Robust Bayesian Analysis of Causal Inference in Medical Diagnosis and Treatment}
 \author[1]{Tathagata Basu\corref{cor1}}
 \ead{tathagatabasumaths@gmail.com}
@@ -108,7 +107,7 @@ estimation model as well as the importance of a robust Bayesian analysis. These
 are accompanied by a new subsection discussing refit model, which can be
 used for better understanding and selection of a single model from set of causal models.
 \item A larger simulation study with more number of observations. Additionally
-we have introduced a new simulation setting where we vary the number of predictors
+we have introduced a new simulation where we vary the number of predictors
 for better understanding of the performance of our approach.
 \end{highlights}
 
@@ -561,8 +560,7 @@ we also must be cautious about the side effects of a treatment.
 Therefore, we are particularly interested in constructing a robust Bayesian framework
 for variable selection. In this way, when we are preparing guidelines for treatment, we 
 can have the option to ask for more data before reaching any conclusion. To achieve this,
-we consider a utility based framework with three possible 
-scenarios.
+we consider a utility based framework with three possible \added{outcomes}.
 
 In particular, through predictor selection, we also want 
 to check if a certain bio-marker should be considered
@@ -760,8 +758,8 @@ Note that here, we described a precise Bayesian refit model, but obviously this 
 
 \section{Simulation Studies}\label{sec:sim}
 
-For the simulation studies, we consider 4 different settings. In each
-case, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
+For the simulation studies, we consider \added{2 different cases each with 2 sub-cases, amounting to 4 studies in total}. In each
+\alert{of these 4 studies}, we generate the design matrix $X$ such that $X_i\sim\mathcal{N}(0, \Sigma)$
 for $1\le i\le n$ where $\Sigma_{ij} = 0.3^{|i-j|}$. In this way, we 
 generate predictors for our model with mild correlations between them.
 We then use the following distributions to generate the outcome and
@@ -774,29 +772,27 @@ the treatment indicator:
 where $\epsilon_i\sim\mathcal{N}(0,0.1^2)$.
 Note that the simulated causal effect $\beta_T$ is equal to $4$.
 
-These four cases can be split in two categories. In one category we consider the
-case where we have increasing number of observations. In the first category we have two
-sub cases, in the first case we consider all active variables to be confounders
-and in the second case we consider some active variables which are only related to
+\added{In case 1, we consider an} increasing number of observations. \added{We} have two
+sub-cases: in \alert{case 1a} we consider all active variables to be confounders
+and in the second \alert{case 1b} we consider some active variables which are only related to
 the outcome model. 
 \begin{description}
-    \item[Scenario 1a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
-    \item[Scenario 1b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+    \item[\added{Case} 1a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item[\added{Case} 1b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
-For both
-scenarios, we consider different numbers of observations $n$ where
+For both \added{case 1a and 1b}, we consider different numbers of observations $n$ where
 $n=25+ 5k$ for $k=0,1,2,\dots,25$ and $p=50$
 predictors. This way, we check the efficiency of our method with varying level of information.
 
-For the second category, we check our method for varying number of predictors 
+For \added{case 2}, we check our method for varying number of predictors 
 (and hence sparsity level, i.e.\ the percentage of active variables present in the model).
-Similar to the first category we also have two sub cases:
+Similar to \added{case 1} we also have two \added{sub-cases}:
 \begin{description}
-    \item[Scenario 2a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
-    \item[Scenario 2b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
+    \item[\added{Case} 2a] --- $|\gamma_j|, |\beta_j|>0$ for $j\le 10$
+    \item[\added{Case} 2b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both
-cases, we consider different numbers of predictors $p$ where
+\added{case 2a and 2b}, we consider different numbers of predictors $p$ where
 $p=25+ 5k$ for $k=1,2,\dots,25$ and $n=100$
 subjects.
 
@@ -839,15 +835,15 @@ to initiate the analyses.
 
 \paragraph{Results}
 \Cref{tab:causal1} shows the results of estimating the causal effect $\beta_T$
-for the first and second scenarios.
+for \added{case 1a and 1b}.
 For reference, recall the true value is $\beta_T=4$. 
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect:
 \added{column RBCE-l gives the lower bound
 and column RBCE-u gives the upper bound}. We notice that our method is 
 somewhat in agreement with the other methods but is more consistent
-in terms of estimating the causal effect in the first setting. However, this is not the
-case for the analysis with second dataset. We notice that our method tends to under
+in terms of estimating the causal effect in \added{case 1a}. However, this is not the
+case for the analysis with \added{case 1b}. We notice that our method tends to under
 estimate the causal effect. However, sometimes, other methods produce extreme 
 values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. %Here, the true 
 %value is represented by the black straight line for $\beta_T = 4$. 
@@ -869,15 +865,15 @@ second decimal place.
 % Tue May 23 18:29:20 2023
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
 % Mon Mar 25 09:52:08 2024
-\begin{table}[ht]
+\begin{table}
 \centering
 \tiny
 \caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
 \begin{tabular}{c|ccccc|ccccc}
   \hline
- Case&  &  & 1 &  &  &  &  & 2 &  &  \\ 
+ Case&  &  & \added{1a} &  &  &  &  & \added{1b} &  &  \\ 
   \hline
- & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
+\added{Obs} & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
   \hline
 25 & 2.61 & 3.38 &  &  & 2.19 & 2.70 & 3.29 &  &  & 8.80 \\ 
   30 & 3.14 & 3.56 &  &  & 3.99 & 3.01 & 3.54 &  &  & 9.02 \\ 
@@ -930,10 +926,10 @@ The table counts the number of
 false positives (FP) and false negatives (FN). For RBCE, we have an
 additional column (ID)
 which counts the number of indeterminate predictors.
-From the table it can be seen that for the first scenario, our method
+From the table it can be seen that for \added{case 1}, our method
 abstains from identifying some variables for 
 $n \le 50$. Especially for $n=25$, our method identifies 39 and 35 variables as indeterminate
-for the first setting and second setting respectively. However,
+for \added{cases 1a and 1b} respectively. However,
 later on our method gives more precise results in terms of variable
 selection. We also notice that the other methods tend to perform poorly
 in terms of variable selection in the second case giving away many FNs. 
@@ -942,7 +938,7 @@ as well.
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Wed May 24 00:50:53 2023
 \begin{table}[ht]
-\caption{Loss based on misspecification of active variables for first scenario.}\label{tab:misspec1}
+\caption{Loss based on misspecification of active variables for \added{case 1a}.}\label{tab:misspec1}
 \centering
 \small
 \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
@@ -983,7 +979,7 @@ as well.
 \end{table}
 \begin{table}
 \small
-\caption{Loss based on misspecification of active variables for second scenario}
+\caption{Loss based on misspecification of active variables for \added{case 1b}}
 \label{tab:misspec2}
 \begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
   \hline
@@ -1040,7 +1036,7 @@ perfectly in variable selection giving no misspecified variables this
 can also be understood from \cref{fig:comp:trt:pred} because
 in case of misspecified variables we get a very different value
 of the treatment effect. Therefore,
-we omit the table of variable selection for third and fourth scenarios.
+we omit the table of variable selection for \added{cases 2a and 2b}.
 
 
 % latex table generated in R 4.3.2 by xtable 1.8-4 package

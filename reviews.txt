@@ -311,6 +311,11 @@ I also suggest to change the title by removing the word diagnosis
 
 > *** TODO: TB address why it is relevant ***
 
+> *** MT to TB: what about "Robust Bayesian causal estimation for
+      causal inference in medical diagnosis" - then we respond to this
+      point and also we name our method directly in the title of the
+      paper, which seems like a good idea. ***
+
 The conclusion should clearly synthetize the interest of the approach
 compared with previous works, and also identify the limit of the
 approach, in particular regarding the good identification of the
@@ -592,6 +597,10 @@ than later when it is applied in the simulation section.
 settings (line 238) are latter referred to as cases (line 245). The
 sub-cases (line 247) are then called scenarios (line 250 and following
 lines). Similarly, dataset (line 297) should perhaps be setting?
+
+> We have carefully revised the terminology. There too many changes to
+> list them all here in detail, but they are all highlighted in the
+> manuscript.
 
 • An outline or diagram summarizing the various experiments conducted
 would be appreciated, as their explanation is somewhat challenging to
