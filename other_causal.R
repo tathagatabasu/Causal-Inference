@@ -2,6 +2,8 @@ library(truncnorm)
 library(MCMCpack) 
 library(parcor)
 
+# adaptlasso for high dimensional case
+
 #Xorig: nxp matrix of covariates 
 #Yorig: nx1 vector of outcomes
 #Aorig: nx1 binary vector indicating treatment assignment
@@ -30,7 +32,6 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   #transform covariates to have mean zero and unit variance
   Xstd <- cbind(t(t(Xorig - matrix(rep(apply(Xorig, 2, mean), nrow(Xorig)), 
                                    nrow(Xorig),byrow=TRUE))*(1/apply(Xorig, 2, sd))), 1, Aorig)
-  
   #initialize beta to zero
   beta <- rep(0, p+2)
   
@@ -97,7 +98,7 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   
   #find sigma.2.y_a.x for all covariates that have coefficients equal to zero according to lasso
   temp <-  (1/(n-length(nonzero.lasso.coef)))*sum((Yorig - Xstd[,c(nonzero.lasso.coef, p+1, p+2)]
-                                                   %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Xstd[,c(nonzero.lasso.coef, p+1, p+2)])
+                                                   %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Xstd[,c(nonzero.lasso.coef, p+1, p+2)] + diag(1e-5, nrow = (length(nonzero.lasso.coef) + 2)))
                                                        %*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Yorig))^2) 
   
   #set sigma.2.y_a.x to the value above for all covariates (we change the values below for covariates
@@ -108,7 +109,8 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   temp <- unlist(lapply(nonzero.lasso.coef, function(g) 
     (1/(n-length(nonzero.lasso.coef)))*sum((Yorig - Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g]
                                             %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%
-                                                        Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])
+                                                        Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g] + diag(1e-5, nrow = (nrow(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%
+                                                                                                                                Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g]))))%*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])
                                                 %*%Yorig))^2)  ))
   
   #set sigma.2.y_a.x to the values above for the covariates with non-zero coefficients
