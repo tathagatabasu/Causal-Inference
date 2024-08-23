@@ -20,24 +20,20 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
     
     for (i in 1:N) 
     {
-      mean[i] = b_T * a[i] + inprod(x[i,], b) #+ b_int
+      mean[i] = b_T * a[i] + inprod(x[i,], b) 
       y[i] ~ dnorm(mean[i], inv.var)
       
       a_us[i] ~ dbern(a_prob[i])
       
       probit(a_prob[i]) = a_dumm[i]
       
-      a_dumm[i] = inprod(x[i,], g) #+ g_int
+      a_dumm[i] = inprod(x[i,], g)
     }
     
     # Prior on the mean
     
     b_T ~ dnorm(0,inv.var)
     
-    # b_int ~ dnorm(0,inv.var)
-    # 
-    # g_int ~ dnorm(0,1)
-    # 
     # prior on the precision
     
     inv.var ~ dgamma(gam_a, gam_b)

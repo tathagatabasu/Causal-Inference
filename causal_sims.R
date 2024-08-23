@@ -43,7 +43,7 @@ y2_all = 4*a2_all + x_all[,1:length(beta2)] %*% beta2 + rnorm(n, sd = .1)
 
 # setting1
 
-if(F){
+if(T){
   
   for (k in 1:11) { #
     N = 20 + 5*k
@@ -186,7 +186,7 @@ if(T){
 # setting2
 
 
-if(F){
+if(T){
   
   for (k in 1:11) {
     P = 20 + 5*k
