@@ -10,24 +10,8 @@ library(xtable)
 library(foreach)
 library(doParallel)
 
-source("other_causal.R")
-
-
-set.seed(1e8)
-
-sig1 = matrix(nrow=50,ncol = 50)#diag(50)#
-
-for (i in 1:50) {
-  for (j in 1:50) {
-    sig1[i,j] = 0.3^abs(i-j)
-  }
-}
-
-ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
   MCMC = list()
-  x_scale = scale(x)
-  x_ctr = attr(x_scale,"scaled:center")
-  x_sd = attr(x_scale,"scaled:scale")
   
   string = "
   model {
@@ -36,18 +20,24 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1,
     
     for (i in 1:N) 
     {
-      mean[i] = b_T * a[i] + inprod(x[i,], b)
+      mean[i] = b_T * a[i] + inprod(x[i,], b) #+ b_int
       y[i] ~ dnorm(mean[i], inv.var)
       
-      a[i] ~ dinterval(a_dumm[i], 0)
+      a_us[i] ~ dbern(a_prob[i])
       
-      a_dumm[i] ~ dnorm(inprod(x[i,], g), 1)
+      probit(a_prob[i]) = a_dumm[i]
+      
+      a_dumm[i] = inprod(x[i,], g) #+ g_int
     }
     
     # Prior on the mean
     
     b_T ~ dnorm(0,inv.var)
     
+    # b_int ~ dnorm(0,inv.var)
+    # 
+    # g_int ~ dnorm(0,1)
+    # 
     # prior on the precision
     
     inv.var ~ dgamma(gam_a, gam_b)
@@ -59,18 +49,21 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1,
     for (j in 1:p) 
     {
       # prior on the selection probability
-      w[j] ~ dbeta(2*alpha, 2*(1-alpha))I(0.001,0.999)
       
+      w[j] ~ dbeta(2*alpha, 2*(1-alpha))I(0.001,0.999)
       
       # Prior on beta
       
       spike[j] ~ dnorm(0, (inv.var / tau_0^2))
       slab[j] ~ dnorm(0, (inv.var / tau_1^2))
       
+      b[j] = w[j] * slab[j]  + (1 - w[j]) * spike[j]
+      
+      # Prior on gamma
+      
       spikeg[j] ~ dnorm(0, (1 / tau_0^2))
       slabg[j] ~ dnorm(0, (1 / tau_1^2))
       
-      b[j] = w[j] * slab[j]  + (1 - w[j]) * spike[j]
       g[j] = w[j] * slabg[j]  + (1 - w[j]) * spikeg[j]
     }
     
@@ -92,9 +85,10 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1,
     ISVS <- textConnection(string, open = "r")
     
     data = list(
-      y = as.vector(y),
-      x = x,
-      a = a,
+      y = as.vector(y - mean(y)),
+      x = scale(x, scale = F),
+      a = a - mean(a),
+      a_us = a,
       p = ncol(x),
       N = nrow(x),
       alpha = alpha,
@@ -118,320 +112,35 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 10, gam_b = 1,
   
   for (i in 1:length(alphas)) {
     
-    b_post[[i]] = as.matrix(MCMC[[i]][[1]])[,1:ncol(x)] / x_sd
+    b_post[[i]] = as.matrix(MCMC[[i]][[1]])[,1:ncol(x)] 
     
     b_T_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(1+ncol(x))]
     
-    g_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)] / x_sd
+    g_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)] 
     
     w_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3):(3*ncol(x)+2)]
     
   }
   
-  output = list("MCMC" = MCMC, "Betas" = b_post, "probs" = w_post, "Causal_post" = b_T_post, "Gammas" = g_post)
+  output = list("MCMC" = MCMC, "Betas" = b_post, "probs" = w_post, "Causal_post" = b_T_post, "Gammas" = g_post, "x" = x, "y" = y)
   
   return(output)
 }
 
-coeff_adj = function(rbvs_obj){
-  
-}
-##############################################################################################
-
-# setting1 
-
-if(T){
-  x_all = rmvnorm(75, sigma = sig1)
-  
-  beta1 = c(runif(5, -4, -1), runif(5, 1, 4))
-  gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
-  
-  a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-  a1_all = sapply(1:75, function(j)rbinom(1,1,a1_dum_all[j]))
-  
-  
-  y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(75, sd = .1)
-}
-
-# val1 = sum(abs(cor(x_all,y1_all))>0.2)
-# val2 = sum(abs(cor(x_all,y1_all))>0.3)
-# 
-# alph_min = min(val1, val2) /50
-# alph_max = max(val1, val2) /50
-
-for (k in 5:10) {
-  N = 25 + 5*k
-  
-  x = x_all[1:N,]
-  y1 = y1_all[1:N]
-  a1 = a1_all[1:N]
-  
-  val1 = sum(abs(cor(x,y1))>0.15)
-  val2 = sum(abs(cor(x,y1))>0.35)
-
-  alph_min = min(val1, val2) /50
-  alph_max = max(val1, val2) /50
-
-  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-  
-  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
+sparse_adjust = function(rbvs_obj, set_active, x){
   
   beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
   
   gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
   
-  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
   beta_dss = list()
   gamma_dss = list()
   
   for (i in 1:length(rbvs_obj$Causal_post)) {
-    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
+    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,set_active], x[,set_active] %*% beta_exp[i,set_active], penalty.factor = 1/abs(beta_exp[i,set_active]), intercept = F), s = "lambda.min")[-1])
+    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,set_active], x[,set_active] %*% gamma_exp[i,set_active], penalty.factor = 1/abs(gamma_exp[i,set_active]), intercept = F), s = "lambda.min")[-1])
   }
   
-  assign(paste0("set1_active_", k), active)
-  assign(paste0("set1_casual_", k), causal_exp)
-  assign(paste0("set1_rbvs_obj_",k), rbvs_obj)
-  
-  SSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = FALSE)
-  BSSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = TRUE)
-  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-  
-  assign(paste0("set1_SSCE_", k), SSCE.fit)
-  assign(paste0("set1_BSSCE_", k), BSSCE.fit)
-  assign(paste0("set1_BSSL_",k), BSSL.fit)
-  print(k)
+  return(list("sparse_beta" = beta_dss, "sparse_gamma" = gamma_dss))
 }
 
-for (k in 0:4) {
-  N = 25 + 5*k
-  
-  x = x_all[1:N,]
-  y1 = y1_all[1:N]
-  a1 = a1_all[1:N]
-  
-  val1 = sum(abs(cor(x,y1))>0.15)
-  val2 = sum(abs(cor(x,y1))>0.35)
-
-  alph_min = min(val1, val2) /50
-  alph_max = max(val1, val2) /50
-  
-  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-  
-  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-  
-  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  beta_dss = list()
-  gamma_dss = list()
-  
-  for (i in 1:length(rbvs_obj$Causal_post)) {
-    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-  }
-  
-  assign(paste0("set1_active_", k), active)
-  assign(paste0("set1_casual_", k), causal_exp)
-  assign(paste0("set1_rbvs_obj_",k), rbvs_obj)
-  
-  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-  
-  assign(paste0("set1_BSSL_",k), BSSL.fit)
-  print(k)
-}
-###############################################################################################
-
-# setting2
-
-# beta2 = c(runif(10, -4, -1), runif(5, 1, 4))
-# gamma2 = c(runif(5, -4, -1), runif(5, 1, 4))
-
-if(T){
-  x_all = rmvnorm(75, sigma = sig1)
-  
-  beta1 = c(runif(10, -4, -1), runif(5, 1, 4))
-  gamma1 = c(runif(5, -4, -1), runif(5, 1, 4))
-  
-  a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-  a1_all = sapply(1:75, function(j)rbinom(1,1,a1_dum_all[j]))
-  
-  
-  y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(75, sd = .1)
-}
-
-# val1 = sum(abs(cor(x_all,y1_all))>0.2)
-# val2 = sum(abs(cor(x_all,y1_all))>0.3)
-# 
-# alph_min = min(val1, val2) /50
-# alph_max = max(val1, val2) /50
-
-for (k in 5:10) {
-  N = 25 + 5*k
-  
-  x = x_all[1:N,]
-  y1 = y1_all[1:N]
-  a1 = a1_all[1:N]
-  
-  val1 = sum(abs(cor(x,y1))>0.15)
-  val2 = sum(abs(cor(x,y1))>0.35)
-
-  alph_min = min(val1, val2) /50
-  alph_max = max(val1, val2) /50
-  
-  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 1)
-  
-  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-  
-  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  beta_dss = list()
-  gamma_dss = list()
-  
-  for (i in 1:length(rbvs_obj$Causal_post)) {
-    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-  }
-  
-  assign(paste0("set2_active_", k), active)
-  assign(paste0("set2_casual_", k), causal_exp)
-  assign(paste0("set2_rbvs_obj_",k), rbvs_obj)
-  
-  SSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = FALSE)
-  BSSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = TRUE)
-  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-  
-  assign(paste0("set2_SSCE_", k), SSCE.fit)
-  assign(paste0("set2_BSSCE_", k), BSSCE.fit)
-  assign(paste0("set2_BSSL_",k), BSSL.fit)
-  print(k)
-}
-
-k=0
-
-for (k in 0:4) {
-  N = 25 + 5*k
-  
-  x = x_all[1:N,]
-  y1 = y1_all[1:N]
-  a1 = a1_all[1:N]
-  
-  val1 = sum(abs(cor(x,y1))>0.15)
-  val2 = sum(abs(cor(x,y1))>0.35)
-
-  alph_min = min(val1, val2) /50
-  alph_max = max(val1, val2) /50
-  
-  rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-  
-  prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-  
-  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-  
-  beta_dss = list()
-  gamma_dss = list()
-  
-  for (i in 1:length(rbvs_obj$Causal_post)) {
-    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*% beta_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(beta_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,which(active[i,] ==T)], x[,which(active[i,] ==T)] %*%gamma_exp[i,which(active[i,] ==T)], penalty.factor = 1/abs(gamma_exp[i,which(active[i,] ==T)]), intercept = F))[-1])
-  }
-  
-  assign(paste0("set2_active_", k), active)
-  assign(paste0("set2_casual_", k), causal_exp)
-  assign(paste0("set2_rbvs_obj_",k), rbvs_obj)
-  
-  BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-  
-  assign(paste0("set2_BSSL_",k), BSSL.fit)
-  print(k)
-}
-
-######################################################################################
-
-# tables
-
-set1_sum_beta_trt = c()
-for (k in 0:4) {
-  set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), NA, NA, get(paste0("set1_BSSL_", k))$means[52]))
-}
-
-for (k in 5:10) {
-  set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), get(paste0("set1_SSCE_", k))$mean.trt.effect, get(paste0("set1_BSSCE_", k))$mean.trt.effect, get(paste0("set1_BSSL_", k))$means[52]))
-}
-
-set2_sum_beta_trt = c()
-for (k in 0:4) {
-  set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), NA, NA, get(paste0("set2_BSSL_", k))$means[52]))
-}
-
-for (k in 5:10) {
-  set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), get(paste0("set2_SSCE_", k))$mean.trt.effect, get(paste0("set2_BSSCE_", k))$mean.trt.effect, get(paste0("set2_BSSL_", k))$means[52]))
-}
-
-set1_sum_loss = c()
-
-for (k in 0:4) {
-  set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10), 
-                                             sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
-                                             sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
-                                             NA, NA,
-                                             NA, NA,
-                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]>=0.5) >10),
-                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]<0.5) <=10)))
-}
-
-for (k in 5:10) {
-  set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10), 
-                                             sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
-                                             sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
-                                             sum(which(get(paste0("set1_SSCE_",k))$IP>=0.5) >10), 
-                                             sum(which(get(paste0("set1_SSCE_",k))$IP<0.5) <=10),
-                                             sum(which(get(paste0("set1_BSSCE_",k))$IP>=0.5) >10), 
-                                             sum(which(get(paste0("set1_BSSCE_",k))$IP<0.5) <=10),
-                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]>=0.5) >10),
-                                             sum(which(get(paste0("set1_BSSL_", k))$IP[1:50]<0.5) <=10)))
-}
-
-set2_sum_loss = c()
-
-for (k in 0:4) {
-  set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15), 
-                                             sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
-                                             sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
-                                             NA, NA,
-                                             NA, NA,
-                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]>=0.5) >15),
-                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]<0.5) <=15)))
-}
-
-for (k in 5:10) {
-  set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15), 
-                                             sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
-                                             sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
-                                             sum(which(get(paste0("set2_SSCE_",k))$IP>=0.5) >15), 
-                                             sum(which(get(paste0("set2_SSCE_",k))$IP<0.5) <=15),
-                                             sum(which(get(paste0("set2_BSSCE_",k))$IP>=0.5) >15), 
-                                             sum(which(get(paste0("set2_BSSCE_",k))$IP<0.5) <=15),
-                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]>=0.5) >15),
-                                             sum(which(get(paste0("set2_BSSL_", k))$IP[1:50]<0.5) <=15)))
-}

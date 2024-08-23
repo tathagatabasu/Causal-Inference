@@ -15,7 +15,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
 \usepackage{color}
-
+\usepackage{arydshln}
 \usepackage{hyperref}
 \usepackage[capitalise]{cleveref}
 \usepackage{url}
@@ -41,7 +41,7 @@
 \begin{frontmatter}
 
 %%% MT what about using "Robust Bayesian causal estimation" (name for our method) in the title, e.g. "Robust Bayesian causal estimation for causal inference in medical diagnosis"
-\title{Robust Bayesian Analysis of Causal Inference in Medical Diagnosis and Treatment}
+\title{\added{Robust Bayesian causal estimation for causal inference in medical diagnosis}}
 \author[1]{Tathagata Basu\corref{cor1}}
 \ead{tathagatabasumaths@gmail.com}
 \cortext[cor1]{Corresponding author}
@@ -61,59 +61,37 @@
             country={United Kingdom}}
 
 \begin{abstract}
-Causal inference aims to find the causal effect on subjects
+\added{Causal effect estimation is a critical task in statistical learning} that aims to find the causal effect on subjects
 by identifying causal links between
-a number of predictor (or, explanatory) variables and the outcome of a treatment.
-However, estimation of such causal links is extremely 
-difficult because the causal effects may vary from subject 
-to subject. Unfortunately, modelling the underlying heterogeneity explicitly makes the 
-problem practically unsolvable. Additionally, for high dimensional problems,
-we often need to find a subset of 
-predictor variables to initiate the treatment. However, current variable selection methods
-simply tend to maximise the predictive performance of the outcome model. This can be problematic when information and data are limited,
-as the consequence of mistreatment can be harmful. 
-So, in this paper, we develop a model for causal inference using
-robust Bayesian analysis, to allow for abstention when selecting
-predictor variables.
-We
-use a set of spike and slab priors 
-through prior elicitation to obtain robust estimates for
-both the treatment and outcome model. We are specifically interested 
-in the sensitivity of the causal effect in high dimensional causal inference
-as well as identifying predictor variables that are causally linked. However, indicator
-based variable selection can be deceptive, especially
-when the predictor is strongly associated with either the treatment or 
-the outcome, as this increases the posterior expectation of the selection
-indicators. To avoid that, we apply a post-hoc selection scheme
-which successfully removes negligible non-zero effects from the model,
-attaining a smaller set of 
-predictors.
-Finally, we illustrate
-our method using a synthetic dataset.
+a number of predictor (or, explanatory) variables and the outcome of a treatment. \added{In a regressional
+framework, we assign a treatment and outcome model to
+estimate the average causal effect.} Additionally, for high dimensional \added{regression problems, variable selection methods are also used} to find a subset of 
+predictor variables \added{that} maximises the predictive performance of the \added{underlying model for better estimation of the causal effect.}  In this paper, we \added{propose a different approach. We focus on the variable selection aspects of
+high dimensional causal estimation problem. We suggest a cautious
+Bayesian group LASSO framework for variable selection using prior sensitivity analysis. We  argue that in some cases, abstaining from selecting (or, rejecting) a predictor is beneficial and we should gather more information to obtain a more decisive result. We also show that for problems with very limited information, expert elicited variable selection can give us a more stable causal effect estimation as it avoids overfitting. Lastly, we carry a comparative study with
+synthetic dataset and show the applicability of our method in
+real-life situations.}
+
 \end{abstract}
 
 \begin{keyword}
-  high dimensional data\sep variable selection\sep Bayesian analysis\sep imprecise probability
+  high dimensional \added{regresssion}\sep variable selection\sep Bayesian analysis\sep imprecise probability
 \end{keyword}
 
 \begin{highlights}
-\item Earlier a version of this paper was presented in ECSQARU 2023 conference. 
-Since then we have changed the following contents of the paper for this extended version. 
-\item A thorough introduction with additional image to express our problem
-formulation in a better way as well as discussion of previous works.
-\item Introduction of additional equations to justify and explain the
-causal inference model under confounding.
-\item We have put additional text for better explanation of Bayesian causal
-estimation model as well as the importance of a robust Bayesian analysis. These
-are accompanied by a new subsection discussing refit model, which can be
-used for better understanding and selection of a single model from set of causal models.
-\item A larger simulation study with more number of observations. Additionally
-we have introduced a new simulation where we vary the number of predictors
-for better understanding of the performance of our approach.
+\item \added{A robust variable selection method for high dimensional causal estimation} 
+
+\item \added{Prior sensitivity analysis of spike and slab group-LASSO.} 
+
+\item \added{We show importance of elicitation in variable
+selection problem}
+
+\item \added{We show empirical behaviour of our method and
+its usefulness in medical diagnosis.}
+
 \end{highlights}
 
 \end{frontmatter}
-
 \section{Introduction}\label{sec:intro}
 
 Causal inference using observational data is important in
@@ -137,11 +115,13 @@ Still, it is highly desirable to try to adjust for confounding in
 our statistical models to the best of our ability. This is termed
 (perhaps somewhat unfortunately) \emph{causal inference} in the
 literature
-\citep{rubin1978,rosenbaum83,Robins1986ANA,winship99,stuart10,Zigler2014,wang2015,koch2018,Hahn2018,koch2020}.
+\citep{rubin1978,rosenbaum83,Robins1986ANA,winship99,stuart10,Zigler2014,wang2015,koch2018,Hahn2018,koch2020}. 
 This is also the approach that we will follow here, under the
 disclaimer that whether actual causality can be inferred
 remains a subject of interpretation and conjecture specific to the
-sitation being studied.%
+sitation being studied. In this regard, we also refer to \citep{imbiens_2022}
+where a detailed discussion on different interpretations of `causality'
+in statistics and econometrics can be found 
 }
 
 %%% MT to TB: removed this phrase for now to make text flow better
@@ -186,39 +166,44 @@ confounding),
 where an informative prior obtained from
 the treatment model is applied on the outcome model for
 estimating the causal effect. Several other methods were
-proposed to tackle confounders from a Bayesian perspective,
-see for instance \citep{Zigler2014,Hahn2018} among others.
+proposed to tackle confounders,
+see for instance \citep{Zigler2014,Hahn2018} among others \added{for
+	a Bayesian perspective and
+	\citep{zhang_2018} for a survey of methods for addressing unmeasured confounding.}
 
-In this paper we take inspiration from the approach of \citet{koch2020}, who proposed a bi-level spike and slab prior for causal effect 
-estimation. They considered a data-driven adaptive approach to
+In this paper, we take inspiration from the approach of \citet{koch2020}, who proposed a bi-level spike and slab prior for causal effect estimation \added{in high dimensional problems (i.e.~when number of predictors
+	is larger than the number of observation)}. 
+	They considered a data-driven adaptive approach to
 propose their prior which reduces the variance of the causal estimate. 
-Our approach is based on
+Our approach \added{however focuses on the other aspect of high
+dimensional causal inference problem, ie.~variable selection. To achieve that we rely} on \added{prior}
 sensitivity analysis, where instead of using a single prior, 
-we consider a set of priors \citep{BERGER1990303}. %TB to MT: added zaffalon paper
-Some works have been done in this approach of
-prior sensitivity analysis. \citet{zaffalon20a} 
+we consider a set of priors \citep{BERGER1990303}. 
+\added{Prior sensitivity analysis for causal inference has
+been a topic of interest lately.} \citet{zaffalon20a} 
 used credal networks in structured causal models
-for causal inference; \citet{raices_cruz22} suggested
-that causal effect estimation can be performed 
-through a meta analysis where robust Bayesian analysis 
-can be beneficial under severe uncertainty. 
-This motivates us to extend prior sensitivity analysis for 
-regression models. This is particularly beneficial, as for high dimensional regression problems 
-we have to rely on very limited data to perform our Bayesian analysis and 
-inference with a single prior
-is unreliable.
-To perform a prior sensitivity analysis, we use expert opinion to elicit a set of priors 
+for causal inference; \citet{raices_cruz22} \added{performed 
+	a meta analysis in a robust Bayesian framework for causal effect estimation. However, variable selection in causal estimation
+	problem has not been investigated in robust Bayesian framework.} 
+This motivates us to \added{investigate the role and applicability of} prior sensitivity analysis in high dimensional \added{causal estimation} problems. This is particularly beneficial, as
+in high dimensional problems,
+we have to rely on very limited \added{observations} to perform our Bayesian analysis and
+\added{as a result variable selection} with a single prior
+can be unreliable \citep{basu2023robust} \added{in many cases, Moreover, in causal effect estimation, failing to correctly identify a relation between the treatment effect and predictor can lead to
+harmful side-effects. Therefore, it
+is extremely important to adopt a cautious approach in selecting
+or rejecting a variable.}
+To \added{achieve this cautious paradigm and to} perform a prior sensitivity analysis, we rely on expert opinion to elicit a set of priors 
 based on empirical evidence. 
 This allows us to construct the problem of 
 predictor selection
-in a framework where abstention has a relatively positive gain i.e.~
-when the cost of further tests/data collection is cheaper than
-mistreating a subject.
+in a framework where abstention has a relatively positive gain i.e.~when the cost of further tests/data collection is cheaper than
+\added{incorrect treatment} a subject. 
 
 Our framework considers a set of continuous spike and slab priors 
 \citep{ishwaran2005} for
 predictor selection.
-We thereby construct a Bayesian group LASSO \citep{xu2015} type problem.
+We thereby construct a Bayesian group LASSO \added{(least absolute shrinkage and selection operator)} \citep{xu2015} type problem.
 To perform sensitivity analysis,
 we consider a set of beta priors on the covariate selection 
 probability of the spike and slab priors. We use the posteriors of this
@@ -385,15 +370,19 @@ where $\nu \coloneqq (\beta_T, \beta^{\top}, \gamma^{\top})^{\top}$ and
 \end{align}
 
 
-\section{Bayesian Causal Estimation}\label{sec:bayes}
+\section{\added{Robust} Bayesian Causal Estimation}\label{sec:bayes}
 
 The likelihood given by \cref{eq:like:group} gives us
 a foundation for a Bayesian group LASSO 
 \citep{xu2015} type model. In this way, we can look into the posterior selection
-probability of each predictor. There are several
+probability of each predictor. \added{In this section, we formally introduce our
+	proposed methodology for causal estimation and we call it as
+	`robust Bayesian causal estimation' as we perform a robust
+	Bayesian analysis \citep{BERGER1990303} to achieve a cautious
+	variable selection paradigm. There are several
 ways to construct spike and slab priors for
-variable selection. Here, we consider a continuous type
-prior \citep{ishwaran2005} for faster posterior
+variable selection. In our method}, we consider a continuous type
+prior \citep{basu2023robust,ishwaran2005} for faster posterior
 computation.
 
 
@@ -453,7 +442,7 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
             domain=-7:7,
             y domain=-7:7,
         ] 
-        {exp(-0.5*(x^2 + y^2)/0.09) / (2*pi*0.09)};
+        {exp(-0.5*(x^2 + y^2)/0.01) / (2*pi*0.01)};
 
     \end{axis}
 \end{tikzpicture}
@@ -477,7 +466,7 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
 \end{tikzpicture}
           %\includegraphics[width = 0.95\linewidth]{spike_slab_bi.pdf}
 	\end{center}
-	\caption{Spike (left) and slab (right) components of a bivariate distribution for $\tau_0 = 0.3$, $\tau_1 = 5$ and $\sigma=1$.}
+	\caption{\added{Spike (left) and slab (right) components of a bivariate distribution for $\tau_0 = 0.1$, $\tau_1 = 5$ and $\sigma=1$.}}
 	\label{fig:ssbl}
 \end{figure}
 
@@ -556,7 +545,7 @@ variable $T^*$.
 
 The hierarchical model presented above is a standard spike and slab model for
 variable selection and performs well when we have sufficient data. 
-However, especially in the case of causal inference, we do not always have sufficient data. Moreover, 
+However, especially in many situations, we do not always have sufficient data. Moreover, 
 we also must be cautious about the side effects of a treatment.
 Therefore, we are particularly interested in constructing a robust Bayesian framework
 for variable selection. In this way, when we are preparing guidelines for treatment, we 
@@ -572,13 +561,13 @@ pressure of the subject before treating them. This is
 useful as an unnecessary treatment of a subject can have severe consequences because of the medicinal
 side effects. In general, it is hard to associate such consequences 
 with a suitable loss function. Instead, we
-assume that we can always revert any initial mistreatment by further treatments, 
+assume that we can always revert any initial incorrect treatment by further treatments, 
 and we can associate a loss function with the cost of further treatments.
 So, we will associate two constant loss values $\ell_1$ and $\ell_2$ 
 with false positives (falsely selected predictor) and 
 false negatives (falsely rejected predictor) respectively. 
 Clearly, false positives may lead to unwanted side effects and
-false negatives may lead to mistreatment of the patient. Finally, we associate
+false negatives may lead to incorrect treatment of the patient. Finally, we associate
 a loss value $\ell_3$ for abstention from selecting
 a variable which can be interpreted as the cost of further tests to determine whether that bio-marker
 is important for constructing the treatment guideline.
@@ -603,8 +592,10 @@ and thus more robust inferences.%
 }
 
 \added{%
-Alternatively, we may also use the empirically observed correlations from the data directly.
-This may give us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
+Alternatively, we may also use the empirically observed correlations from the data directly. This is particularly common in ultra high
+dimensional problems (when $p\gg n$) for reducing the dimensionality
+of the problem \citep{fan2008}. We can also use this approach
+to have us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
 When doing so, we need
 % \added{
 a prior judgement on what is a reasonable
@@ -622,9 +613,9 @@ $\mathcal{P}=\left[k_{\overline{c}}/p, k_{\underline{c}}/p\right]^p$
 (note that $k_c$ is monotonically non-increasing in $c$).
 }
 
-\subsection{Variable selection and coefficient adjustment}
-For the co-variate selection, we look into the posterior expectation of $\pi_j$. 
-We consider the $j$-th predictor to be removed from both the
+\paragraph{Variable selection}
+\added{Ideally, we should check the joint posterior probability of $\pi_j$'s to select the most probable model. However, this means we have to search a space of dimension $2^p$, which is practically impossible when $p$ is very large. Instead, we can use the posterior of individual $\pi_j$ as \citet{barbieri2004} showed that median probability model gives the optimal model. That is we can set a threshold of $1/2$ to select a variable. Therefore,}
+we consider the $j$-th predictor to be removed from both the
 treatment and outcome model, if
 \begin{align}\label{eq:vs:remove}
 	\uexp (\pi_j\mid W)\coloneqq \sup_{q\in \mathcal{P}} \mathbb{E}_q(\pi_j\mid W) < 1/2.
@@ -636,11 +627,12 @@ Similarly, we consider the $j$-th predictor to be present in at least one of the
 Otherwise, we consider the variable to be indeterminate,  in which case we abstain from putting
 it in any of the models but instead just report a lack of information.
 
-In general, this framework is
-sufficient
-for variable selection. However, for
-model fitting and prediction, we need to evaluate the values 
-of the regression coefficients. For that we first need to find the set of active
+\subsection{\added{Coefficient Adjustment and Refit}}
+In general, \added{our} framework is
+intended
+for \added{robust} variable selection \added{in causal effect estimation problem}. However, \added{one might also be interested in}
+model fitting and prediction, \added{for that} we need to evaluate the values 
+of the regression coefficients. To do so, we first need to find the set of active
 predictors with respect to our prior expectation of the selection probability $q$.
 For any fixed $q$, we define the set $S(q)$ as the set of all variables which are active
 in the treatment model or in the outcome model:
@@ -713,35 +705,7 @@ By varying $q$, this gives us a set of point estimates for the model parameters 
 To compute the posterior bounds (as in \cref{eq:vs:remove,eq:vs:sel,eq:beta:lower,eq:beta:upper}), unfortunately, we usually have to resort to brute force optimisation, due to the lack of tractable expressions for the posterior expectations. 
 This is obviously a major drawback of this approach.
 
-\iffalse
-The DSS method explained
-above give us adjusted coefficient estimates for the treatment
-and outcome model. However, as result the causal effect estimate
-remains the same and modelling with such adjusted sparse effect 
-will contribute to the prediction error. Therefore, we need to 
-adjust the causal effect estimate as well. Let
-\begin{equation}
-    \hat{T}^D = \mathbb{I}\left(X_{S(q)}\hat{\gamma}^D_{S(q)} >0\right)
-    \quad\text{and}\quad
-    \hat{T} = \mathbb{I}\left(X\hat{\gamma}^q >0\right).
-\end{equation}
-and let $\beta_{T}^D(q)$
-be the causal effect after applying `DSS' and $\hat{\beta}_{T}(q)$ be the
-posterior estimate of the causal effect for any fixed $q\in\mathcal{P}$. Then
-the adjusted estimate is given by:
-\begin{equation}
-    \beta_{T}^D(q) = \left(\left(\hat{T}^D\right)^{\top} \hat{T}^D\right)^{-1}
-    \left(\hat{T}^D\right)^{\top} \left[\hat{\beta}_{T}(q)\hat{T} 
-    + X_{S(q)}\left(\hat{\beta}_{S(q)} - \hat{\beta}^D_{S(q)}\right) 
-    +X_{S^C(q)}\hat{\beta}_{S^C(q)}\right]
-\end{equation}
-where
-\begin{equation}
-    S^C(q)\coloneqq \left\{1,2,\cdots, p\right\} \neg S(q).
-\end{equation}
-\fi
-
-\subsection{Refit}
+\paragraph{Refit}
 
 In our setting, the DSS method only gives us a set of point estimates for the final selection of variables: some coefficients may be always selected, some never, and some will be indeterminate. For the final inference model, the modeller will need to make a judgement about which of the indeterminate coefficients $\beta_j$ and $\gamma_j$ to include in the final model or not. Once done so, the model can be refitted to account for the effect of variable selection on the estimation of the model parameters.
 
@@ -782,7 +746,7 @@ the outcome model.
     \item[\added{Case} 1b] --- $|\gamma_j|>0$ for $j\le 10$ and $|\beta_j|>0$ for $j\le 15$
 \end{description}
 For both \added{case 1a and 1b}, we consider different numbers of observations $n$ where
-$n=25+ 5k$ for $k=0,1,2,\dots,25$ and $p=50$
+\added{$n=20+ 5k$ for $k=1,2,\dots,11$ and $p=50$}
 predictors. This way, we check the efficiency of our method with varying level of information.
 
 For \added{case 2}, we check our method for varying number of predictors 
@@ -794,16 +758,33 @@ Similar to \added{case 1} we also have two \added{sub-cases}:
 \end{description}
 For both
 \added{case 2a and 2b}, we consider different numbers of predictors $p$ where
-$p=25+ 5k$ for $k=1,2,\dots,25$ and $n=100$
+\added{$p=20+ 5k$ for $k=1,2,\dots,11$ and $n=40$}
 subjects.
 
-We present our analyses in \cref{tab:causal1,tab:misspec1,tab:misspec2}.
-For the sake of clarity we use the following accronyms: RBCE for 
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[node distance=2cm, auto]
+			\node (1) at (0,2) [circle,draw,align=center] {increasing \\ observation};
+			\node (2) at (4,2) [circle,draw,align=center] {increasing \\ predictor \\ (predictor)};
+			\node (a) at (0,-2) [circle,draw,align=center] {only \\ confounders};
+			\node (b) at (4,-2) [circle,draw,align=center] {outcome \& \\ confounders};
+			\draw[->] (1) to (a);
+			\draw[->] (1) to (b);
+			\draw[->] (2) to (a);
+			\draw[->] (2) to (b);
+			%\draw[->,dashed] (predictor) to (outcome);
+		\end{tikzpicture}
+	\end{center}
+	\caption{\added{Diagram of the simulation setup for comparative study.}}
+	\label{fig:experiment}
+\end{figure}
+
+\added{We use these studies to compare our method with three other approaches. From now on, for the sake of illustration,}
+we use the following acronyms: RBCE for 
 robust Bayesian causal estimation (our method); SSCE for spike and
 slab causal estimation \citep{koch2020}; BSSCE for bi-level spike and slab causal
 estimation \citep{koch2020}; and BSSL for Bayesian spike and slab LASSO
-\citep{xu2015}. Note that since SSCE and BSSCE are formulated for problems
-where $p\le n$, we do not have any results for $n<50$ for these cases.
+\citep{xu2015}. 
 
 \paragraph{Elicitation}
 
@@ -811,11 +792,42 @@ where $p\le n$, we do not have any results for $n<50$ for these cases.
 To elicit $\mathcal{P}$,
 as discussed earlier in \cref{sec:robustbayesanalysis},
 we use the empirically observed correlations from the data directly.
-We assume that, through expert elicitation,
-an active predictor has an absolute correlation with the outcome
-that is typically larger than a value lying in the interval $[0.15,0.35]$
-*** TODO TB cite some papers with values consistent with this ***.
-Let $\overline{k}$ be the number of predictors with absolute marginal correlation greater than $0.15$
+For expert elicitation, we follow the correlation guidelines mentioned in \citep{AKOGLU201891}
+where the authors provide \cref{tab:corr}.}
+
+\begin{table}
+	\centering
+	\caption{\added{Interpretation of the Pearson's and Spearman's correlation coefficients in absolute values}}
+	\begin{tabular}{|c|l|l|l|}
+		\hline
+		Absolute & Dancey \& Reidy\citep{dancey2007statistics} & Chan YH\citep{chan2003biostatistics} & Quinnipiac University \\
+		Correlation & (Psychology)& (Medicine) & (Politics)\\
+		\hline
+		1.0 & Perfect & Perfect & Perfect \\
+		0.9 & Strong & Very strong & Very strong \\
+		0.8 & Strong & Very Strong & Very strong \\
+		0.7 & Strong & Moderate & Very strong \\
+		0.6 & Moderate & Moderate & Strong \\
+		0.5 & Moderate & Fair & Strong \\
+		0.4 & Moderate & Fair & Strong \\
+		\cdashline{2-2}
+		0.3 & Weak & Fair & Moderate \\
+		0.2 & Weak & Poor & Weak \\
+		\cdashline{4-4}
+		0.1 & Weak & Poor & Negligible\\
+		0.0 & Zero & Zero & Zero \\
+		\hline
+	\end{tabular}
+	\label{tab:corr}
+\end{table}
+
+\added{From \cref{tab:corr}, we notice that the number of
+	labelled relations is different for different columns. As
+	a result it is difficult to obtain a single value for $c$
+	as mentioned in \cref{sec:robustbayesanalysis}. Instead,
+	we can disregard the last labelled relation (other than zero)
+	and assume that $c$ is typically larger than a value lying in the interval $[0.15,0.35]$
+	Let $\overline{k}$ be the number of predictors with absolute marginal correlation greater than $0.15$
 and let $\underline{k}$ be number of predictors with absolute marginal correlation greater than $0.35$.
 Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]^p$ gives us a prior bound on the selection probability of each predictor, reflecting our prior expert judgement.%
 }
@@ -823,6 +835,8 @@ Then $\mathcal{P}=[\underline{k}/p , \overline{k}/p]^p$ gives us a prior bound o
 \paragraph{Initialisation} 
 To implement our method, we use \texttt{rjags} \added{\citep{rjags2023}} and for the other three
 methods we use the code provided in the appendix of \citep{koch2020}.
+\added{However, we modify to accommodate analysis with `high dimensional'
+	data.}
 For our method, we set $\tau_0=10^{-6}$ and $\tau_1=1$ to construct the
 spike and slab prior.
 %%% MT to TB: where does a=10 come from? can we say something about that?
@@ -832,7 +846,8 @@ our Bayesian analysis with \texttt{rjags}, we first consider an adaptive
 stage with 2000 iterations followed by discarding of 2000 burn in samples 
 to refine the posteriors. We consider 5000 MCMC samples to compute the
 posterior estimates. For the other methods we use the in-built settings 
-to initiate the analyses.
+to initiate the analyses. \added{We also transform the data so that the data is centred around $0$
+for the outcome model to avoid having an intercept term.}
 
 \paragraph{Results}
 \Cref{tab:causal1} shows the results of estimating the causal effect $\beta_T$
@@ -841,79 +856,65 @@ For reference, recall the true value is $\beta_T=4$.
 As we perform a sensitivity analysis,
 our method gives an interval estimate for the causal effect:
 \added{column RBCE-l gives the lower bound
-and column RBCE-u gives the upper bound}. We notice that our method is 
-somewhat in agreement with the other methods but is more consistent
+and column RBCE-u gives the upper bound}. We notice that 
+\added{as we increase the number of observation our approach provides more precise estimates which shows that our set of priors is able to learn from the data. We also observe that our method gives an estimate close to the true value} and is more consistent
 in terms of estimating the causal effect in \added{case 1a}. However, this is not the
 case for the analysis with \added{case 1b}. We notice that our method tends to under
-estimate the causal effect. However, sometimes, other methods produce extreme 
-values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. %Here, the true 
-%value is represented by the black straight line for $\beta_T = 4$. 
+estimate the causal effect \added{observations fewer than $55$}. However, sometimes, other methods produce extreme 
+values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. \added{In the figure, the top row
+illustrates the case 1a where the left image shows the estimated
+causal effect with respect to observations and the right image
+shows the same within the range of $[3.8,4.2]$. Similarly, the
+bottom row represents the causal effect estimation for case 1b. In the figure, RBCE bounds are given by red lines; SSCE estimates by blue lines; BSSCE estimates by green lines; BSSL estimates by purple line; and true value by black lines. }
 
-In these simulations, our method tends
-to underestimate the causal effect by a very short amount.
+\added{We see that for case 1b}, our method tends
+to underestimate the causal effect \added{for fewer number of observations.}
 This suggests that
 we may want to seek for a different value of $a$ based on the sample size
-instead of a fixing $a=50$ for all of our analyses irrespective of the
-sample size.
-We can also see that the lower bound tends to improve
-with increased number of observations: as we accumulate
-more information, the interval becomes smaller and converges towards
-a single value. Note that in some cases lower and upper bound for 
-RBCE is same. However, this is only due to approximation upto the
-second decimal place.
+instead of a fixing $a=50$ for all of our analyses. \added{We also provide the posterior distributions of the causal effect in \cref{fig:post:trt:obs} for different observations. Since we perform
+a prior sensitivity analysis therefore it is not possible to obtain a single value for percentiles. Instead we provide the maximum taken over all $q\in\mathcal{P}$ for 5 (green dotted line) and 25(green solid line) percentile whereas the minimum taken over all $q\in\mathcal{P}$ is provided for 95 (red dotted line) and 75 (red solid line) percentile. We notice that the true value of the causal effect is contained within the 25 and 75 percentile in all the cases except one. We can also see that we have different variability in the posteriors, this can be explained from the fact that we have different number of observations for our analyses.} 
 
-% latex table generated in R 4.3.0 by xtable 1.8-4 package
-% Tue May 23 18:29:20 2023
-% latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Mon Mar 25 09:52:08 2024
 \begin{table}
 \centering
 \tiny
-\caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
+\caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations. On the left section (1a), we illustrate the results when all the active variables are confounders. On the right section (1b), we present the results when some variables are also related to the outcome model.}}
 \begin{tabular}{c|ccccc|ccccc}
   \hline
  Case&  &  & \added{1a} &  &  &  &  & \added{1b} &  &  \\ 
   \hline
 \added{Obs} & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
   \hline
-25 & 2.61 & 3.38 &  &  & 2.19 & 2.70 & 3.29 &  &  & 8.80 \\ 
-  30 & 3.14 & 3.56 &  &  & 3.99 & 3.01 & 3.54 &  &  & 9.02 \\ 
-  35 & 3.15 & 3.52 &  &  & 3.98 & 3.22 & 3.66 &  &  & 6.66 \\ 
-  40 & 3.60 & 3.75 &  &  & 3.98 & 3.20 & 3.70 &  &  & 4.42 \\ 
-  45 & 3.76 & 3.82 &  &  & 3.96 & 3.61 & 3.74 &  &  & 3.99 \\ 
-  50 & 3.79 & 3.84 & 3.99 & 4.01 & 3.99 & 3.75 & 3.79 & 9.04 & 9.36 & 4.01  \\ 
-  55 & 3.89 & 3.91 & 3.97 & 4.00 & 3.98 & 3.77 & 3.81 & 5.92 & 6.38 & 4.02 \\ 
-  60 & 3.93 & 3.95 & 3.99 & 4.00 & 3.98 & 3.76 & 3.77 & 3.89 & 3.50 & 4.03 \\ 
-  65 & 3.95 & 3.96 & 4.00 & 4.02 & 4.00 & 3.76 & 3.78 & 3.91 & 3.99 & 4.02 \\ 
-  70 & 3.94 & 3.96 & 4.01 & 4.05 & 4.00 & 3.77 & 3.79 & 4.01 & 3.96 & 4.03 \\ 
-  75 & 3.97 & 3.98 & 4.02 & 4.03 & 4.02  & 3.82 & 3.83 & 4.03 & 4.02 & 4.04 \\ 
-  80 & 3.96 & 3.98 & 4.02 & 4.05 & 4.01 & 3.83 & 3.85 & 4.04 & 4.05 & 4.05 \\ 
-  85 & 3.96 & 3.98 & 4.03 & 4.04 & 4.03 & 3.84 & 3.86 & 4.05 & 4.06 & 4.06 \\ 
-  90 & 3.97 & 3.99 & 4.05 & 4.07 & 4.04 & 3.87 & 3.88 & 4.06 & 4.04 & 4.05 \\ 
-  95 & 3.96 & 3.98 & 4.02 & 4.05 & 4.04 & 3.88 & 3.89 & 4.05 & 4.06 & 4.06 \\ 
-  100 & 3.95 & 3.98 & 4.03 & 4.05 & 4.04 & 3.88 & 3.89 & 4.07 & 4.06 & 4.07 \\ 
-  105 & 3.97 & 3.98 & 4.03 & 4.05 & 4.03 & 3.89 & 3.90 & 4.07 & 4.06 & 4.07 \\ 
-  110 & 3.97 & 3.99 & 4.03 & 4.05 & 4.03 & 3.90 & 3.91 & 4.07 & 4.05 & 4.07 \\ 
-  115 & 3.98 & 3.99 & 4.04 & 4.05 & 4.04 & 3.91 & 3.92 & 4.06 & 4.06 & 4.06 \\ 
-  120 & 3.98 & 3.99 & 4.04 & 4.05 & 4.03 & 3.91 & 3.92 & 4.04 & 4.05 & 4.04 \\ 
-  125 & 3.99 & 3.99 & 4.03 & 4.04 & 4.03 & 3.91 & 3.92 & 4.04 & 4.04 & 4.04 \\ 
-  130 & 3.98 & 3.99 & 4.02 & 4.04 & 4.02 & 3.92 & 3.93 & 4.03 & 4.04 & 4.04 \\ 
-  135 & 3.99 & 3.99 & 4.02 & 4.04 & 4.02 & 3.94 & 3.94 & 4.04 & 4.05 & 4.04 \\ 
-  140 &  3.99 & 4.00 & 4.03 & 4.05 & 4.03 & 3.94 & 3.95 & 4.04 & 4.05 & 4.04 \\ 
-  145 & 3.99 & 3.99 & 4.03 & 4.04 & 4.03 & 3.95 & 3.95 & 4.05 & 4.05 & 4.05 \\ 
-  150 & 3.99 & 3.99 & 4.02 & 4.02 & 4.02 & 3.94 & 3.95 & 4.04 & 4.04 & 4.04 \\ 
-   \hline
+25 & 3.74 & 4.13 & 28.71 & 28.78 & 3.82 & 3.66 & 3.96 & 1.04 & 20.38 & 3.10 \\ 
+30 & 3.72 & 4.06 & 3.90 & 28.56 & 3.90 & 3.05 & 3.34 & 20.61 & 20.29 & -2.41 \\ 
+35 & 3.95 & 4.04 & 12.35 & 25.11 & 3.97 & 3.67 & 3.71 & 22.82 & 22.93 & 3.90 \\ 
+40 & 3.98 & 4.02 & 3.97 & 29.78 & 3.98 & 3.72 & 3.77 & 4.75 & 22.83 & 3.93 \\ 
+45 & 4.03 & 4.06 & 4.03 & 28.52 & 4.03 & 3.78 & 3.82 & 4.41 & 4.13 & 3.95 \\ 
+50 & 4.02 & 4.05 & 4.02 & 4.04 & 4.02 & 3.83 & 3.89 & 3.97 & 4.33 & 3.94 \\ 
+55 & 4.03 & 4.05 & 4.04 & 4.19 & 4.04 & 3.99 & 4.01 & 4.15 & 4.09 & 3.93 \\ 
+60 & 4.04 & 4.07 & 4.02 & 4.03 & 4.02 & 3.99 & 4.02 & 3.94 & 3.97 & 3.93 \\ 
+65 & 4.03 & 4.06 & 4.02 & 4.06 & 4.02 & 4.00 & 4.05 & 3.96 & 3.96 & 3.96 \\ 
+70 & 4.04 & 4.06 & 4.01 & 4.06 & 4.01 & 4.00 & 4.03 & 3.95 & 3.97 & 3.95 \\ 
+75 & 4.06 & 4.08 & 4.01 & 4.07 & 4.01 & 4.01 & 4.03 & 3.98 & 3.99 & 3.98 \\ 
+\hline
 \end{tabular}
 \label{tab:causal1}
 \end{table}
 \begin{figure}
     \centering
-    \includegraphics[width = 0.9\linewidth]{treat_obs.pdf}
-    \caption{Comparison of different methods in estimating the causal effect for varying number of observations.}
+    \includegraphics[width = 0.95\linewidth]{treat_obs_rev.pdf}
+    \caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations. The top (bottom) row
+    represents case 1a (case 1b). The left images show the estimated causal effects and right images show the same within $[3.8,4.2]$ to compare with true value. }}
     \label{fig:comp:trt}
 \end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width = 0.95\linewidth]{treat_post_obs.png}
+	\caption{\added{Posterior of the causal effect for varying number of observations. The top (bottom) row
+			represents the posteriors for case 1a (case 1b). The green dotted (solid) lines represent the maximum of 5 (25) percentile taken over all $q$ and red dotted (solid) lines represent the minimum of 95 (75) percentile taken over all $q$. }}
+	\label{fig:post:trt:obs}
+\end{figure}
 
-We also provide tables for the performance of variable selection in \cref{tab:misspec1,tab:misspec2}.
+We also provide tables for the performance of variable selection in \cref{fig:comp:loss:obs}.
 For variable selection, we use a loss function as described earlier.
 Here, we consider
 $\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
@@ -922,175 +923,118 @@ and a loss of $0.2$ with indeterminate selections.
 Note that we could also choose more 
 sophisticated loss functions based on \citep{ZAFFALON20121282}.
 We sum these losses together across all predictors
-to obtain the total loss, presented in \cref{tab:misspec1,tab:misspec2}.
-The table counts the number of
-false positives (FP) and false negatives (FN). For RBCE, we have an
-additional column (ID)
-which counts the number of indeterminate predictors.
-From the table it can be seen that for \added{case 1}, our method
+\added{and divide by the total number of predictors} to obtain the total \added{relative} loss.
+From the \added{figure} it can be seen that for \added{case 1}, our method
 abstains from identifying some variables for 
-$n \le 50$. Especially for $n=25$, our method identifies 39 and 35 variables as indeterminate
-for \added{cases 1a and 1b} respectively. However,
+$n \le 35$. However,
 later on our method gives more precise results in terms of variable
-selection. We also notice that the other methods tend to perform poorly
-in terms of variable selection in the second case giving away many FNs. 
-This can be seen in the bottom figure of \cref{fig:comp:trt}
-as well.
-% latex table generated in R 4.3.0 by xtable 1.8-4 package
-% Wed May 24 00:50:53 2023
-\begin{table}[ht]
-\caption{Loss based on misspecification of active variables for \added{case 1a}.}\label{tab:misspec1}
-\centering
-\small
-\begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
-  \hline
-  &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c||}{SSCE}
-  &\multicolumn{3}{c||}{BSSCE}&\multicolumn{3}{c|}{BSSL}\\
-  \cline{2-14}
- Obs & FP & FN & ID & Tot & FP & FN & Tot & FP & FN & Tot & FP & FN & Tot \\ 
-  \hline
-25 & 1 & 0 & 39 & 8.8 &  &  &  &  &  &  & 9 & 1 & 10 \\ 
-  30 & 0 & 0 & 3 & 0.6 &  &  &  &  &  &  & 0 & 0 & 0 \\ 
-  35 & 0 & 0 & 3 & 0.6 &  &  &  &  &  &  & 0 & 0 & 0 \\ 
-  40 & 0 & 0 & 0 & 0 &  &  &  &  &  &  & 0 & 0 & 0 \\ 
-  45 & 0 & 0 & 0 & 0 &  &  &  &  &  &  & 0 & 0 & 0 \\ 
-  50 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  55 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  65 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  70 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  75 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  80 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  85 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  90 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  95 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  100 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  105 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  110 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  115 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  120 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  125 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  130 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  135 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  145 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  150 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-   \hline
-\end{tabular}
-\end{table}
-\begin{table}
-\small
-\caption{Loss based on misspecification of active variables for \added{case 1b}}
-\label{tab:misspec2}
-\begin{tabular}{|c||rrr|r||rr|r||rr|r||rr|r|}
-  \hline
-  &\multicolumn{4}{c||}{RBCE}&\multicolumn{3}{c||}{SSCE}
-  &\multicolumn{3}{c||}{BSSCE}&\multicolumn{3}{c|}{BSSL}\\
-  \cline{2-14}
- Obs & FP & FN & ID & Tot & FP & FN & Tot & FP & FN & Tot & FP & FN & Tot \\ 
-  \hline
-25 &   5 & 0 & 35 & 12 &  &  &  &  &  &  & 0 & 15 & 15 \\ 
-  30 & 0 & 2 & 7 & 3.4 &  &  &  &  &  &  & 0 & 14 & 14 \\ 
-  35 & 0 & 1 & 9 & 2.8 &  &  &  &  &  &  & 0 & 14 & 14 \\ 
-  40 & 0 & 0 & 21 & 4.2 &  &  &  &  &  &  & 0 & 10 & 10 \\ 
-  45 & 0 & 0 & 1 & 0.2 &  &  &  &  &  &  & 0 & 0 & 0 \\ 
-  50 & 0 & 0 & 0 & 0 & 0 & 15 & 15 & 0 & 15 & 15 & 0 & 0 & 0 \\ 
-  55 & 0 & 0 & 0 & 0 & 0 & 14 & 14 & 0 & 14 & 14 & 0 & 0 & 0 \\ 
-  60 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  65 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  70 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  75 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  80 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  85 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  90 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  95 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  100 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  105 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  110 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  115 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  120 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  125 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  130 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  135 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  140 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  145 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  150 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
-  \hline
-\end{tabular}
-\end{table}
+selection. We also notice that the SSCE and BSSCE tend to perform poorly
+in terms of variable selection \added{case 1a}. \added{For} case 
+\added{1b, even BSSL performs poorly for fewer number of observation leading to a higher relative loss, unlike case 1a.} 
+
+\begin{figure}
+	\centering
+	\includegraphics[width = 0.95\linewidth]{loss_obs.pdf}
+	\caption{\added{Comparison of different methods in identifying the confounders for varying number of observations. One the left (right) we present case 1a (1b). The red line presents RBCE; blue line presents SSCE; green line presents BSSCE; and purple line
+	presents BSSL}}
+	\label{fig:comp:loss:obs}
+\end{figure}
+
 
 We show the result of our analyses with different number of predictors and
-fixed number of sample in \cref{fig:comp:trt:pred,tab:causal2}. Similar to
+fixed number of sample in \cref{tab:causal2,fig:comp:trt:pred}. Similar to
 our analyses with increasing number of observations, we notice that our method 
 is overall in agreement with
-other methods. However, our method slightly
-underestimates the treatment effect (5\% in the worst case). 
+\added{BSSL for case 2a}. However, our method tends to
+underestimate the treatment effect (approximately 8\% in the worst case) for \added{case 2b}. 
 This result is also similar to our
-analyses with increasing number of observations in \cref{tab:causal1}.
-Specifically, this can be understood from the result when $n=100$ and 
-$p=50$ in \cref{tab:causal1,tab:causal2}. In general this is not of great
-concern. But we can improve this estimation by using the refit method
-as described before. 
+analyses with increasing number of observations in \cref{tab:causal1}
+\added{especially, for 1b with fewer observations than the predictors}.
+In general, \added{this can be explained from the fact that our prior sensitivity analysis gives us indeterminate variables in some cases and as a result the regression coefficients may not be shrinked close to zero leading to some deviations in the causal effect estimation. Similar to our analyses with varying observations, we also provide the posteriors of the causal effect in \cref{fig:post:trt:pred}. We notice that for case 2a the true value is always contained within 25 to 75 percentiles. However, for case 2b, the true values is not contained within 25 to 75 percentiles in 4 different cases, though they were inside 5 and 95 percentiles bound}. 
 
-Besides this, we notice that all of the four methods perform
-perfectly in variable selection giving no misspecified variables this
-can also be understood from \cref{fig:comp:trt:pred} because
-in case of misspecified variables we get a very different value
-of the treatment effect. Therefore,
-we omit the table of variable selection for \added{cases 2a and 2b}.
-
+\added{Besides these, we also provide the performance in variable selection for case 2a and 2b in \cref{fig:comp:loss:pred}. We notice that our method performs extremely good and outperforms all the other methods in most cases. Only SSCE and BSSCE is able to match our accuracy in variable selection in few cases. }
 
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
 % Mon Mar 25 10:08:22 2024
 \begin{table}[ht]
 \centering
 \tiny
-\caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+\caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors. On the left section (2a), we illustrate the results when all the active variables are confounders. On the right section (2b), we present the results when some variables are also related to the outcome model.}}
 \begin{tabular}{c|ccccc|ccccc}
   \hline
- Case&  &  & 1 &  &  &  &  & 2 &  &  \\ 
+ Case&  &  & \added{2a} &  &  &  &  & \added{2b} &  &  \\ 
   \hline
- & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
+ \added{Pred} & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
   \hline
-\hline
-30 & 3.93 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.02 & 4.02 & 4.01 \\ 
-  35 & 3.93 & 3.94 & 3.99 & 3.99 & 3.99 & 3.88 & 3.91 & 4.02 & 4.01 & 4.02 \\ 
-  40 & 3.93 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.01 & 4.03 & 4.01 \\ 
-  45 & 3.93 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
-  50 & 3.94 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.91 & 4.01 & 4.02 & 4.02 \\ 
-  55 & 3.94 & 3.95 & 3.99 & 4.00 & 3.98 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
-  60 & 3.94 & 3.95 & 3.99 & 4.01 & 3.99 & 3.89 & 3.91 & 4.02 & 4.02 & 4.02 \\ 
-  65 & 3.94 & 3.94 & 3.99 & 4.00 & 3.98 & 3.89 & 3.91 & 4.02 & 4.03 & 4.02 \\ 
-  70 & 3.93 & 3.95 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.02 & 4.02 & 4.02 \\ 
-  75 & 3.92 & 3.94 & 3.99 & 4.00 & 3.99 & 3.89 & 3.90 & 4.01 & 4.02 & 4.02 \\ 
-  80 & 3.92 & 3.94 & 3.99 & 3.99 & 3.99 & 3.89 & 3.90 & 4.01 & 4.01 & 4.02 \\ 
-  85 & 3.92 & 3.94 & 3.99 & 4.00 & 3.98 & 3.88 & 3.90 & 4.02 & 4.02 & 4.02 \\ 
-  90 & 3.92 & 3.93 & 3.99 & 4.00 & 3.99 & 3.88 & 3.90 & 4.02 & 4.01 & 4.02 \\ 
-  95 & 3.92 & 3.94 & 3.99 & 4.00 & 3.98 & 3.87 & 3.90 & 4.02 & 4.01 & 4.02 \\ 
-  100 & 3.92 & 3.94 & 3.99 & 3.99 & 3.98 & 3.88 & 3.90 & 4.02 & 4.02 & 4.01 \\ 
-  105 & 3.92 & 3.94 &  &  & 3.98 & 3.86 & 3.90 &  &  & 4.02 \\ 
-  110 & 3.92 & 3.94 &  &  & 3.99 & 3.87 & 3.90 &  &  & 4.01 \\ 
-  115 & 3.91 & 3.94 &  &  & 3.98 & 3.87 & 3.90 &  &  & 4.02 \\ 
-  120 & 3.91 & 3.94 &  &  & 3.99 & 3.87 & 3.91 &  &  & 4.02 \\ 
-  125 & 3.91 & 3.94 &  &  & 3.99 & 3.87 & 3.89 &  &  & 4.02 \\ 
-  130 & 3.92 & 3.94 &  &  & 3.99 & 3.86 & 3.90 &  &  & 4.01 \\ 
-  135 & 3.90 & 3.93 &  &  & 3.98 & 3.86 & 3.90 &  &  & 4.01 \\ 
-  140 & 3.91 & 3.93 &  &  & 3.99 & 3.85 & 3.89 &  &  & 4.01 \\ 
-  145 & 3.90 & 3.94 &  &  & 3.98 & 3.84 & 3.89 &  &  & 4.01 \\ 
-  150 & 3.90 & 3.93 &  &  & 3.99 & 3.85 & 3.88 &  &  & 4.02 \\ 
-   \hline
+ 25 & 3.90 & 3.94 & 29.44 & 4.07 & 3.98 & 3.61 & 3.70 & 3.98 & 4.07 & 3.94 \\ 
+ 30 & 3.89 & 3.96 & 3.97 & 4.04 & 3.98 & 3.61 & 3.69 & 4.03 & 4.19 & 3.94 \\ 
+ 35 & 3.96 & 4.00 & 4.75 & 4.15 & 3.98 & 3.62 & 3.73 & 3.95 & 6.77 & 3.92 \\ 
+ 40 & 3.96 & 4.01 & 3.98 & 4.55 & 3.97 & 3.56 & 3.71 & 3.98 & 22.76 & 3.92 \\ 
+ 45 & 3.98 & 4.01 & 3.98 & 4.28 & 3.98 & 3.72 & 3.75 & 17.81 & 21.77 & 3.93 \\ 
+ 50 & 3.98 & 4.05 & 10.55 & 29.61 & 3.98 & 3.65 & 3.77 & 22.70 & 22.43 & 3.95 \\ 
+ 55 & 3.98 & 4.02 & 29.61 & 29.56 & 3.97 & 3.74 & 3.81 & 4.60 & 14.69 & 3.94 \\ 
+ 60 & 3.99 & 4.07 & 3.97 & 29.72 & 3.98 & 3.77 & 3.83 & 6.88 & 21.84 & 3.94 \\ 
+ 65 & 4.02 & 4.11 & 3.97 & 29.67 & 3.97 & 3.77 & 3.88 & 3.94 & 22.23 & 3.92 \\ 
+ 70 & 4.01 & 4.12 & 5.70 & 28.93 & 3.98 & 3.74 & 3.86 & 4.34 & 22.54 & 3.91 \\ 
+ 75 & 4.00 & 4.11 & 3.97 & 29.96 & 3.98 & 3.73 & 3.84 & 6.46 & 18.41 & 3.93 \\ 
+ \hline
 \end{tabular}
 \label{tab:causal2}
 \end{table}
 
 \begin{figure}
     \centering
-    \includegraphics[width = 0.9\linewidth]{treat_pred.pdf}
-    \caption{Comparison of different methods in estimating the causal effect for varying number of predictors.}
+    \includegraphics[width = 0.9\linewidth]{treat_pred_rev.pdf}
+    \caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors.}}
     \label{fig:comp:trt:pred}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\includegraphics[width = 0.95\linewidth]{treat_post_pred.png}
+	\caption{\added{Posterior of the causal effect for varying number of predictors. The top (bottom) row
+			represents the posteriors for case 2a (case 2b). The green dotted (solid) lines represent the maximum of 5 (25) percentile taken over all $q$ and red dotted (solid) lines represent the minimum of 95 (75) percentile taken over all $q$. }}
+	\label{fig:post:trt:pred}
+\end{figure}
 
+
+\begin{figure}
+	\centering
+	\includegraphics[width = 0.9\linewidth]{loss_pred.pdf}
+	\caption{\added{Comparison of different methods in identifying the confounders for varying number of predictors.}}
+	\label{fig:comp:loss:pred}
+\end{figure}
+
+\paragraph{\added{Importance of prior elicitation}}\label{sec:importance:elicit}
+\added{Our method relies on expert elicitation and prior sensitivity analysis. So we also explore the effect of prior elicitation in identifying the active variables in our model. As mentioned earlier,
+	we consider $c$ is expected to be lying in the interval $[0.15,0.35]$
+	based on \cref{tab:corr}. However, we might want to choose a different
+	value for $c$. To compare the effect of having different value for $c$, we use the case 2b and set $c\in[0.2,0.4]$. That is we set a higher threshold for the correlation so that $\overline{k}$ becomes smaller and hence the prior expectation of the inclusion probability. We show our results in \cref{tab:comp:elict}. In the left hand side we elicit the expected number of active variables by setting the marginal correlation threshold $c\in[0.15,0.35]$ and the right we set $c\in[0.2,0.4]$. On the left hand side, we see our method tends to give higher number of indeterminate variables for fewer observations than the right hand side. As we increase the observation the higher threshold of marginal correlation plays an important role and we see more cases of false negative variables on the right hand side. }
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{c|ccc|ccc}
+		\hline
+		$[\underline{c},\overline{c}]$ &  &   $[0.15,0.35]$ &    &  & $[0.2,0.4]$ &    \\
+		\hline
+		Pred & FP & FN & ID & FP & FN & ID  \\ 
+		\hline
+		25 & 0 & 0 & 1 & 0 & 0 & 1  \\ 
+		30 & 0 & 0 & 3 & 0 & 0 & 1  \\ 
+		35 & 0 & 0 & 2 & 0 & 0 & 1  \\ 
+		40 & 0 & 0 & 2 & 0 & 0 & 1  \\ 
+		45 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
+		50 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
+		55 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
+		60 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
+		65 & 0 & 1 & 0 & 0 & 1 & 0  \\ 
+		70 & 0 & 1 & 0 & 0 & 1 & 0  \\ 
+		75 & 0 & 1 & 1 & 0 & 1 & 1  \\ 
+		\hline
+	\end{tabular}
+	\caption{\added{Effect of elicitation of the inclusion probability of the variables where FP stands for false positive, FN stands for false negative and ID stands for indeterminate. }}
+	\label{tab:comp:elict}
+\end{table}
 
 \section{Conclusion}\label{sec:conc}
 
@@ -1100,13 +1044,6 @@ be performed \added{with the utmost care} as in many cases poor estimation can h
 In this paper, we tackle this issue by proposing a robust Bayesian analysis of the causal 
 effect estimation problem for high dimensional data. Our 
 framework is focused on the effect of prior elicitation on
-%%% MT to TB: I don't understand "confounder selection" - do you mean
-%%% "predictor selection" or "variable selection"? (also see later,
-%%% "confounder selection" is repeated a few times; I'm not sure
-%%% "confounder" is the correct term here, some variables may be
-%%% confounding but some may not; if it is appropriate then earlier in
-%%% the paper we should talk a bit more to explain why these variables
-%%% are all confounders and be consistent with our terminology)
 predictor selection
 as well as causal effect estimation. We consider a spike and slab type
 prior for predictor selection and discuss the possible sources of uncertainty that
@@ -1114,10 +1051,10 @@ need to be tackled carefully. We were particularly focused on the uncertainty as
 with prior selection probabilities for which we consider a set of beta priors to perform
 sensitivity analysis. We showed that the sensitivity analysis on the prior selection probability
 gives us a robust predictor selection scheme. In this way, we can abstain from selecting
-a predictor when the available data is not sufficient. We also propose a generalised
+a predictor when the available data is not sufficient. We also propose a more relaxed
 utility based framework, where we associate a loss for abstaining which can be interpreted 
-as the cost of further data collection. Finally, we illustrate our method with synthetic dataset
-and compare with other state of the art Bayesian methods. 
+as the cost of further data collection. We illustrate our method with synthetic dataset
+and compare with other state of the art Bayesian methods. \added{We could see that our elicitation based approach helps to have a more consistent causal effect estimation for very limited number of observations and avoids producing extreme values for the causal effect. Moreover, we also notice correct elicitation of the inclusion probability plays a crucial role in identifying the active variables and therefore can be extremely useful in cases where we need to design a treatment guideline with multiple bio-markers. }
 
 
 Currently, the paper proposes a robust Bayesian approach for causal effect estimation where

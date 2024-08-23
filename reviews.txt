@@ -70,7 +70,7 @@ the authors add one line to explain why such a choice makes sense?
 > probit for the first time, and added:
 >
 > "though other link functions, such as the logit, can also be used
-> \citep{HECKMAN1985}"
+> Heckman (https://doi.org/10.1016/0304-621 4076(85)90139-3.)"
 
 • The following is the main change that I feel the paper needs. It seems
 to me that the proposed method does not outperform the state of the
@@ -81,14 +81,24 @@ variable selection. The main point should be along the lines of “We beat
 everybody at the variable selection game, and we perform almost on par
 with them in estimating the causal effect”.
 
-> *** TODO: TB? ***
+> Thank you for this insightful feedback. It is true that our approach
+> indeed is more focused on the variable selection aspect of the high
+> dimensional causal inference problem. We now have modified the
+> abstract, text and supporting simulations to showcase that.
 
 • Even though the authors say that underestimating the treatment effect
 is of no concern, from Table 4 we can see that RBCE intervals (almost)
 never contain the true value 4. This is one of the reasons of my comment
 above.
 
-> *** TODO: TB? ***
+> We noticed that the bounds of our expected treatment effect does not
+> contain the true value. However, it was mostly (barring few cases) 
+> contained in the inter-quartile range. We now,
+> have provided additional figures showcasing this aspect. Moreover,
+> it also boils down to your previous insight that we outperform other
+> methods in terms of variable selection and we perform reasonably well
+> in terms of causal estimation even if it's not the best method amongst
+> others.
 
 • In the Introduction (and/or in the Conclusion), when discussing about
 the existing literature on sensitivity analysis, the authors should cite the
@@ -240,9 +250,17 @@ https://www.gsb.stanford.edu/faculty-research/publications?combine=imbens.
 
 This research isn't taken into account in the development of the proposal.
 
-> *** TODO TB: check references and add, maybe with brief discussion ***
+> Thank you for your insightful suggestion. The introduction is now modified
+> to accommodate different interpretations of causality that also refers
+> to the above mentioned article. We understand that there's large body
+> of work in this context and several other documents are available. However,
+> it is beyond our scope to discuss and cover all such documents. We have now
+> mentioned some of the suggested literature wherever applicable in our
+> manuscript.
 
 Reviewer #3: Highlights should be more compact.
+
+> We have updated the highlights now.
 
 Abstract should include the significance and importance of the
 work. It should also discuss more about the proposed method related to
@@ -264,7 +282,11 @@ an explanation of the necessity for a new or improved solution
 questions or problems
 5. Interpretation of the results and presentation of conclusions.
 
-> *** TODO TB: revise abstract, MT to check *** 
+> Thank you very much for your constructive feedback.
+> We now have updated the abstract and the introduction to define our
+> goal in a more explicable manner. We also have updated our simulation
+> more focused towards the limited information case and change the 
+> conclusion accordingly.
 
 The quality of the figures is essential. Could you please supply some
 high-resolution figures? There are some figures of low resolution in
@@ -277,7 +299,8 @@ that accompany x should be italicized
 
 All acronyms must be defined.
 
-> *** TODO: TB ***
+> We have now provided the acronyms of the methods whenever
+> those methods are introduced for the first time.
 
 Results need more explanations. Additional analysis is required at
 each experiment to show the its main purpose. A full statistical
@@ -288,7 +311,8 @@ Figure 5.
 
 Conclusion should state scope for future work.
 
-> *** TODO: TB to try address comments ***
+> The conclusion has been rewritten now to discuss the limitation
+> of our method along with the prospects future works.
 
 Reviewer #4: The paper is clear, well organized and well written. The
 authors extend an existing method for prior sensitivity analysis to
@@ -305,21 +329,27 @@ predictors.
 Highlights should be reviewed: the list of bullets shows the
 differences with the initial paper presented in ESCQARU.
 
-> *** TODO: TB (see also other reviewer) ***
+> We have updated the highlights now.
 
 I also suggest to change the title by removing the word diagnosis
 
-> *** TODO: TB address why it is relevant ***
+> We now have rephrased the title slightly. However, the motivation of
+> a robust variable selection routine is linked with cautious
+> diagnosis so we wish to keep the focus around that. 
 
-> *** MT to TB: what about "Robust Bayesian causal estimation for
-      causal inference in medical diagnosis" - then we respond to this
-      point and also we name our method directly in the title of the
-      paper, which seems like a good idea. ***
 
 The conclusion should clearly synthetize the interest of the approach
 compared with previous works, and also identify the limit of the
 approach, in particular regarding the good identification of the
 confounders and the impact of "high dimensional" data.
+
+> Thanks for your insightful comments. We now have restructured the
+> paper in a more explicable manner. We focus on the high dimensional
+> aspect of the problem that is when we have more predictors than the
+> the number of observations. We notice that our method is robust against
+> very limited information and produces less extreme value for causal
+> effect estimation. All these have been reported in the simulation
+> studies and the conclusion section.
 
 > Concerning the limits of our approach, we now more explicitly
 > mention some of the weaknesses compared to previous works. First, we
@@ -332,11 +362,6 @@ confounders and the impact of "high dimensional" data.
 > using loss functions (see response to reviewer #5, technical comment
 > concerning a utility based framework).
 
-> *** TODO: TB to address interest compared to previous works ***
-> By being more careful about when to determine a variable to be surely active,
-> compared to previous works *** TB cite them here ***,
-> the causal inferences from our model are more robust against noise,
-> *** as demonstrated by our simulations??? TB to make argument ***.
 
 Reviewer #5: Before proceeding with my review, I feel it is important
 to express my reservations regarding the concept of Causal
@@ -372,12 +397,25 @@ interpretation of the results.
 > Still, it is highly desirable to try to adjust for confounding in
 > our statistical models to the best of our ability. This is termed
 > (perhaps somewhat unfortunately) \emph{causal inference} in the
-> literature
+> literature [1,2,3,4,5,6,7,8,9,10]
 > \citep{rubin1978,rosenbaum83,Robins1986ANA,winship99,stuart10,Zigler2014,wang2015,koch2018,Hahn2018,koch2020}.
 > This is also the approach that we will follow here, under the
 > disclaimer that whether actual causality can be inferred
 > remains a subject of interpretation and conjecture specific to the
-> sitation being studied."
+> situation being studied."
+
+> [1] https://doi.org/10.1214/aos/1176344064
+> [2] https://doi.org/10.1093/biomet/70.1.41
+> [3] [3] J. M. Robins, A new approach to causal inference in mortality studies
+> with a sustained exposure period—application to control of the healthy
+> worker survivor effect, Mathematical Modelling
+> [4] doi:10.1146/annurev.soc.25.1.659.
+> [5] https://doi.org/10.1214/09-STS313
+> [6] http://www.jstor.org/stable/24247140
+> [7] https://doi.org/10.1111/biom.12315
+> [8] https://onlinelibrary.wiley.com/doi/pdf/10.1111/biom.12736
+> [9] https://doi.org/10.1214/16-BA1044
+> [10] doi:10.1177/0962280219898497
 
 In this paper, the authors introduce a Bayesian approach to causal
 inference within the context of the linear regression model. The
@@ -403,11 +441,10 @@ account for the effect of variable selection on the estimation of the
 model parameters, thereby improving the accuracy of the parameter
 estimates.
 
-> *** TODO TB to respond to "refitting"; misunderstanding? ***
-
-> *** MT to TB: I had a closer look, I think this is fine and needs no
-> response (beyond clarifying that we don't do a refit as part of the
-> simulation) ***
+> We want to clarify that we do not perform refitting in our work.
+> We float this idea as in many cases someone might actually want
+> to have precise values to have a more decisive outcome and 
+> refitting will help on that.
 
 General comments:
 
@@ -464,7 +501,7 @@ chosen? By expert elicitation?),
 > accordingly:
 
 > "To elicit $\mathcal{P}$, as discussed earlier in
-> \cref{sec:robustbayesanalysis}, we use the empirically observed
+> the paragraph titled robust Bayesian analysis, we use the empirically observed
 > correlations from the data directly.  We assume that, through expert
 > elicitation, an active predictor has an absolute correlation with
 > the outcome that is typically larger than a value lying in the
@@ -504,9 +541,7 @@ their paper regarding this, as it would require a comprehensive
 revision of the entire methodology.
 
 > Indeed, this consistent bias was a somewhat surprising finding.
-
-> *** MT to TB: I can't really think of a good answer here, could
->     there still be a problem with the code? ***
+> 
 
 Technical comments:
 
@@ -522,10 +557,10 @@ P\subset (0,1)^p to perform a sensitivity analysis, more explanation
 is needed on how to choose P and estimate s from the data, since this
 methodology is very susceptible to the chosen priors.
 
-> *** TODO this needs some thought... ***
-
-> *** MT to TB: we need to do some adjustment of \underline{k} and
->     \overline{k}, and also of s, in the simulation study... ***
+> The choice of P is now explained with more details now. It's true
+> that choosing different values of s might help us to have a more
+> flexible prior for the inclusion probability. However, at this
+> it's beyond our scope. 
 
 2. While a threshold of 1/2 is commonly used, it would be beneficial
 to consider alternative thresholds for co-variate selection in the
@@ -547,8 +582,15 @@ thresholds on model performance in the sensitivity study. This will
 provide insights into the robustness of the selected variables and
 help determine the most appropriate threshold.
 
-> *** TODO: explain where 1/2 comes from and that this is the optimal value ***
-> *** TODO: TB to investigate ***
+> Having different thresholds for the variable selection is indeed
+> very fascinating. However, the choice of 1/2 in high dimensional
+> regression model comes from median probability model. Barbieri and Berger
+> showed that this gives us the optimal model selection under 
+> squared loss. Since we are working with gaussian noise terms, we
+> therefore chose this value to do our analyses. Instead, we show
+> the effect of elicitation of the inclusion probability using different
+> P, where having a smaller upper prior-expectation of inclusion probability
+> leads to false negative variables. 
 
 3. Considering a utility based framework in which abstention from
 selecting a variable has a positively relative gain `3 (when the cost
@@ -589,7 +631,9 @@ the method is introduced be titled with the name of the method,
 clearly establishing what it is and its acronym at that point, rather
 than later when it is applied in the simulation section.
 
-> *** TODO: TB to address ***
+> Thank you for pointing this out. We now have renamed section 3 
+> to robust Bayesian causal estimation and state the motivation and
+> the novelty of our approach. 
 
 5. Simulation: I have some concerns about the simulation studies (Section 4).
 
@@ -606,14 +650,14 @@ lines). Similarly, dataset (line 297) should perhaps be setting?
 would be appreciated, as their explanation is somewhat challenging to
 follow.
 
-> *** TODO: TB? ***
+> A small diagram has been added to show the experimental setup.
 
 • It would be appreciated if access to the data used in this section
 could be provided for the sake of reproducibility and
 transparency. Similarly, access to the R scripts used by the authors
 to conduct the experiments would be beneficial.
 
-> *** TODO: TB? ***
+> We have provided the R scripts.
 
 • On page 9, P\subset (0,1)^p, but in the elicitation part of Section
 4 (page 13), P = [p2=p; p1=p] \subset (0; 1), indicating an
@@ -627,7 +671,8 @@ Setting this aside, along with the fact
 that 0.15 and 0.35 are arbitrarily chosen values to define p1 and p2,
 which are then used to represent expert elicitation on the prior Beta,
 
-> *** TODO: TB to add some citations to back these up ***
+> Thank you for pointing this out, we now have added relevant references
+> for that.
 
 if q 2 P and qj represents the prior expectation of \pi_j , which is
 the prior probability that the j-th predictor is associated with the
@@ -635,21 +680,18 @@ outcome or the treatment (see (14)), why in the definition of P on
 pag. 13 are only correlations with the outcome considered?
 
 > We hope we have now explained this better; see above response to
-> concerns around the elicitation of P.
-
-> *** MT to TB: is it possible to add a citation of someone else doing
-      this too, e.g. to use the correlations with the outcome to
-      inform a prior on the selection probability? ***
+> concerns around the elicitation of P. We also have provided 
+> relevant references.
 
 • I do not understand the sentence starting on line 294 and ending on
 line 296 "We notice that...". What is meant by is more consistent?
 What does the vague expression is somewhat in agreement mean?
 
-> *** TB: this is about the simulations, can you address this? ***
+> We have corrected this now.
 
 • Overall, I believe there is a deficiency in the application of
 statistical methods to compare RBCE method against the other three
-across all four sce- narios. Proper statistical methods should be
+across all four scenarios. Proper statistical methods should be
 robust and fit-for-purpose. In my opinion, the Results subsection of
 Section 4 requires significant revision to effectively compare the
 method proposed in the paper against other state- of-the-art
@@ -663,7 +705,17 @@ evidence.  This comment applies to both the estimation of the causal
 effect (fiT = 4 in the simulation examples) and to the performance of
 the variable selection procedure.
 
-> *** TODO: TB to think about what we can do to address this ***
+> Thank you for your insightful comments. Our main objective of the
+> paper is to show the usefulness of a robust variable selection
+> scheme for high dimensional causal estimation problem. In this
+> updated manuscript, the simulation studies are catered to show that
+> aspect. Moreover, we also removed some tables with repeated values
+> and have reduced to the size of the simulation to avoid the
+> monotonous nature of the studies. Instead we now have provided
+> new figures showcasing the posterior of the causal effects using
+> MCMC samples. A major philosophical part of the paper is the 
+> importance of expert elicitation. We now have provided additional
+> study to showcase this aspect.
 
 6. Minor comments:
 
@@ -686,7 +738,7 @@ The captions for the tables and figures should be more
 informative. For example, the caption for Table 1 should indicate that
 it corresponds to the comparison between scenarios 1a and 1b.
 
-> *** TODO: TB to address minor comments ***
+> We have updated the captions wherever applicable.
 
 Conclusion:
 

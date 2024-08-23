@@ -1,0 +1,9 @@
+A robust variable selection method for high dimensional causal estimation. 
+
+Prior sensitivity analysis of spike and slab group-LASSO. 
+
+We show importance of elicitation in variable
+selection problem.
+
+We show empirical behaviour of our method and
+its usefulness in medical diagnosis.
