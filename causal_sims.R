@@ -48,7 +48,7 @@ y2_all = lapply(1:M, function(i) (4*a2_all[[i]] + x_all[[i]][,1:length(beta2)] %
 
 if(F){
   
-  for (k in c(1,3,5,7,9,11)) { #
+  for (k in 1:11) { #
     N = 20 + 5*k
     
     assign(paste0("set1_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:N,1:50], y1_all[[i]][1:N], a1_all[[i]][1:N]), mc.cores = no.of.cores))
@@ -66,7 +66,7 @@ if(F){
 
 if(F){
   
-  for (k in c(1,3,5,7,9,11)) { #
+  for (k in 1:11) { #
     N = 20 + 5*k
     
     assign(paste0("set2_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:N,1:50], y2_all[[i]][1:N], a2_all[[i]][1:N]), mc.cores = no.of.cores))
@@ -85,7 +85,7 @@ if(F){
 
 if(F){
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     P = 20 + 5*k
     
     assign(paste0("set3_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y1_all[[i]][1:40], a1_all[[i]][1:40]), mc.cores = no.of.cores))
@@ -104,7 +104,7 @@ if(F){
 
 if(F){
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     P = 20 + 5*k
     
     assign(paste0("set4_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40]), mc.cores = no.of.cores))
@@ -124,7 +124,7 @@ if(F){
 
 if(F){
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     P = 20 + 5*k
     
     assign(paste0("set5_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40], min.cor = 0.2, max.cor = 0.4), mc.cores = no.of.cores))
@@ -141,13 +141,13 @@ if(F){
   
   set1_sum_beta_trt = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), get(paste0("set1_SSCE_", k))$mean.trt.effect, get(paste0("set1_BSSCE_", k))$mean.trt.effect, get(paste0("set1_BSSL_", k))$means[52]))
   }
   
   set1_sum_loss = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10),
                                                sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
                                                sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
@@ -161,13 +161,13 @@ if(F){
   
   set2_sum_beta_trt = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), get(paste0("set2_SSCE_", k))$mean.trt.effect, get(paste0("set2_BSSCE_", k))$mean.trt.effect, get(paste0("set2_BSSL_", k))$means[52]))
   }
   
   set2_sum_loss = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
@@ -248,19 +248,19 @@ if(F){
   
   set3_sum_beta_trt = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), get(paste0("set3_SSCE_", k))$mean.trt.effect, get(paste0("set3_BSSCE_", k))$mean.trt.effect, get(paste0("set3_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set4_sum_beta_trt = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), get(paste0("set4_SSCE_", k))$mean.trt.effect, get(paste0("set4_BSSCE_", k))$mean.trt.effect, get(paste0("set4_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set3_sum_loss = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10),
                                                sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
                                                sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
@@ -274,7 +274,7 @@ if(F){
   
   set4_sum_loss = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
@@ -351,13 +351,13 @@ if(F){
   
   set5_sum_beta_trt = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set5_sum_beta_trt = cbind(set5_sum_beta_trt, rbind(min(range(get(paste0("set5_casual_", k)))), max(range(get(paste0("set5_casual_", k)))), get(paste0("set5_SSCE_", k))$mean.trt.effect, get(paste0("set5_BSSCE_", k))$mean.trt.effect, get(paste0("set5_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set5_sum_loss = c()
   
-  for (k in c(1,3,5,7,9,11)) {
+  for (k in 1:11) {
     set5_sum_loss = rbind(set5_sum_loss, cbind(sum(which(colMeans(get(paste0("set5_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set5_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set5_active_",k)))<1 & colMeans(get(paste0("set5_active_",k)))>0)),
