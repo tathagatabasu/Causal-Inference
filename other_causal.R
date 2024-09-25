@@ -267,12 +267,18 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   #mean of each covariate coefficient in treatment model
   trt.cov.means <- colMeans(trt.cov.mat)
   
-  return(list(IP=IP, mean.trt.effect = mean.trt.effect, lower.limit=lower.limit, upper.limit=upper.limit,
-              trt.effect.post = trt.effect.post, out.cov.means = out.cov.means, 
-              trt.cov.means = trt.cov.means, out.cov.mat = out.cov.mat, 
-              trt.cov.mat = trt.cov.mat, out.intercept.mean = out.intercept.mean, 
-              trt.intercept.mean = trt.intercept.mean, out.intercept.post = out.intercept.post,
-              trt.intercept.post = trt.intercept.post))
+  return(list(IP=IP, 
+              mean.trt.effect = mean.trt.effect, 
+              lower.limit=lower.limit, upper.limit=upper.limit,
+              trt.effect.post = trt.effect.post, 
+              out.cov.means = out.cov.means, 
+              trt.cov.means = trt.cov.means, 
+              # out.cov.mat = out.cov.mat, increases RAM for sims 
+              # trt.cov.mat = trt.cov.mat, 
+              out.intercept.mean = out.intercept.mean, 
+              trt.intercept.mean = trt.intercept.mean)) # , increases RAM for sims 
+              # out.intercept.post = out.intercept.post,
+              # trt.intercept.post = trt.intercept.post))
 }
 
 
@@ -390,9 +396,11 @@ BSSL <- function(Xorig, Yorig, Aorig, M, burn){
   upper.limit <- quantile(mat[,p+2], 0.975)
   
   
-  return(list(IP=IP, means = means, mean.trt.effect = mean(mat[,p+2]),
+  return(list(IP=IP, mean.trt.effect = means[p+2],
+              lower.limit=lower.limit, upper.limit=upper.limit,
               trt.effect.post = mat[,p+2],
-              lower.limit=lower.limit, upper.limit=upper.limit))
+              out.cov.means = means[1:p], 
+              out.intercept.mean = means[p+1]))
   
 }
 

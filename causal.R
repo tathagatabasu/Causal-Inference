@@ -69,7 +69,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
     
   }
   "
-  params = c("b","b_T", "g", "sigma2", "w")
+  params = c("b","b_int", "b_T", "g", "g_int", "sigma2", "w")
   
   for (i in 1:length(alphas)) {
     
@@ -96,18 +96,24 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
     MCMC[[i]] = coda.samples(model, params, n.sample)
   }
   
-  probs = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3):(3*ncol(x)+2)]))))
-  
   b_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,1:ncol(x)]))))
   
-  g_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)]))))
+  b_int_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)mean(as.matrix(MCMC[[i]][[1]])[,1+ncol(x)]))))
   
-  causal_post = do.call(cbind, lapply(1:length(alphas), function(i)as.matrix(MCMC[[i]][[1]])[,(1+ncol(x))]))
+  causal_post = do.call(cbind, lapply(1:length(alphas), function(i)as.matrix(MCMC[[i]][[1]])[,(2+ncol(x))]))
   
-  sigma2_post = do.call(cbind, lapply(1:length(alphas), function(i)as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+2)]))
+  g_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(ncol(x)+3):(2*ncol(x)+2)]))))
   
-  output = list("MCMC" = MCMC, "Betas" = b_post_mean, "probs" = probs, 
-                "Causal_post" = causal_post, "Gammas" = g_post_mean, 
+  g_int_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)mean(as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3)]))))
+  
+  sigma2_post = do.call(rbind, lapply(1:length(alphas), function(i)mean(as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+4)])))
+  
+  probs = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+5):(3*ncol(x)+4)]))))
+  
+  output = list("MCMC" = MCMC, "Betas" = b_post_mean, 
+                "probs" = probs, "Beta_int" = b_int_post_mean,
+                "Causal_post" = causal_post, 
+                "Gammas" = g_post_mean, "Gamma_int" = g_int_post_mean, 
                 "Sigma2" = sigma2_post, "x" = x, "y" = y)
   
   return(output)
@@ -126,7 +132,16 @@ rbce_wrapper_sim = function(x, y, a, min.cor = 0.15, max.cor = 0.35, tau_1 = 1){
   
   trt = colMeans(rbvs_obj$Causal_post)
   IP = rbvs_obj$probs
-  trt_post = rbvs_obj$Causal_post
+  lower.limit = apply(rbvs_obj$Causal_post, 2, function(x)quantile(x, 0.025))
+  upper.limit = apply(rbvs_obj$Causal_post, 2, function(x)quantile(x, 0.975))
   
-  return(list(each_sim = rbvs_obj, trt = trt, trt_post = trt_post, IP = IP))
+  
+  return(list(IP = rbvs_obj$probs, mean.trt.effect = trt,
+              lower.limit = lower.limit,
+              upper.limit = upper.limit,
+              trt.effect.post = rbvs_obj$Causal_post,
+              out.cov.means = rbvs_obj$Betas,
+              trt.cov.means = rbvs_obj$Gammas,
+              out.intercept.mean = rbvs_obj$Beta_int,
+              trt.intercept.mean = rbvs_obj$Gamma_int))
 }
