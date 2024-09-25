@@ -10,7 +10,7 @@ library(xtable)
 library(foreach)
 library(doParallel)
 
-ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1, n.iter = 2000, n.adapt = 2000, n.sample = 5000, n.cores = 1){
+ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1, n.burn = 500, n.sample = 2500){
   MCMC = list()
   
   string = "
@@ -20,20 +20,24 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
     
     for (i in 1:N) 
     {
-      mean[i] = b_T * a[i] + inprod(x[i,], b) 
+      mean[i] = b_T * a[i] + inprod(x[i,], b) + b_int
       y[i] ~ dnorm(mean[i], inv.var)
       
-      a_us[i] ~ dbern(a_prob[i])
+      a[i] ~ dbern(a_prob[i])
       
       probit(a_prob[i]) = a_dumm[i]
       
-      a_dumm[i] = inprod(x[i,], g)
+      a_dumm[i] = inprod(x[i,], g) + g_int
     }
     
     # Prior on the mean
     
     b_T ~ dnorm(0,inv.var)
     
+    b_int ~ dnorm(0,inv.var)
+
+    g_int ~ dnorm(0,1)
+
     # prior on the precision
     
     inv.var ~ dgamma(gam_a, gam_b)
@@ -67,14 +71,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
   "
   params = c("b","b_T", "g", "sigma2", "w")
   
-  if(n.cores>detectCores()){
-    n.cores = detectCores() - 2 #not to overload your computer
-  }
-  
-  cl = makeCluster(n.cores) 
-  registerDoParallel(cl)
-  
-  MCMC = foreach (i = 1:length(alphas), .packages = 'rjags') %dopar% {
+  for (i in 1:length(alphas)) {
     
     alpha = as.vector(alphas[i])
     
@@ -83,8 +80,7 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
     data = list(
       y = as.vector(y - mean(y)),
       x = scale(x, scale = F),
-      a = a - mean(a),
-      a_us = a,
+      a = a,
       p = ncol(x),
       N = nrow(x),
       alpha = alpha,
@@ -94,49 +90,43 @@ ISVS = function(x, y, a, alphas, tau_0 = 1e-6, tau_1 = 5, gam_a = 50, gam_b = 1,
       tau_1 = tau_1
     )
     
-    model <- jags.model(data = data, file = ISVS, n.chains = 1, n.adapt = n.adapt)
-    update(model, n.iter)
-    coda.samples(model, params, n.sample)
+    model <- jags.model(data = data, file = ISVS, n.chains = 1, n.adapt = 0)
+    update(model, n.burn)
+    
+    MCMC[[i]] = coda.samples(model, params, n.sample)
   }
   
-  stopCluster(cl)
+  probs = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3):(3*ncol(x)+2)]))))
   
-  b_post = list()
-  b_T_post = list()
-  g_post = list()
-  w_post = list()
+  b_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,1:ncol(x)]))))
   
-  for (i in 1:length(alphas)) {
-    
-    b_post[[i]] = as.matrix(MCMC[[i]][[1]])[,1:ncol(x)] 
-    
-    b_T_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(1+ncol(x))]
-    
-    g_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)] 
-    
-    w_post[[i]] = as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+3):(3*ncol(x)+2)]
-    
-  }
+  g_post_mean = do.call(rbind, (lapply(1:length(alphas), function(i)colMeans(as.matrix(MCMC[[i]][[1]])[,(ncol(x)+2):(2*ncol(x)+1)]))))
   
-  output = list("MCMC" = MCMC, "Betas" = b_post, "probs" = w_post, "Causal_post" = b_T_post, "Gammas" = g_post, "x" = x, "y" = y)
+  causal_post = do.call(cbind, lapply(1:length(alphas), function(i)as.matrix(MCMC[[i]][[1]])[,(1+ncol(x))]))
+  
+  sigma2_post = do.call(cbind, lapply(1:length(alphas), function(i)as.matrix(MCMC[[i]][[1]])[,(2*ncol(x)+2)]))
+  
+  output = list("MCMC" = MCMC, "Betas" = b_post_mean, "probs" = probs, 
+                "Causal_post" = causal_post, "Gammas" = g_post_mean, 
+                "Sigma2" = sigma2_post, "x" = x, "y" = y)
   
   return(output)
 }
 
-sparse_adjust = function(rbvs_obj, set_active, x){
+rbce_wrapper_sim = function(x, y, a, min.cor = 0.15, max.cor = 0.35, tau_1 = 1){
+  val1 = sum(abs(cor(x,y))>min.cor)
+  val2 = sum(abs(cor(x,y))>max.cor)
   
-  beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  alph_min = min(val1, val2) /ncol(x)
+  alph_max = max(val1, val2) /ncol(x)
   
-  gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
+  alphas = seq(alph_min, alph_max, length.out = 5)
   
-  beta_dss = list()
-  gamma_dss = list()
+  rbvs_obj = ISVS(x, y, a, alphas = alphas, tau_1 = tau_1)
   
-  for (i in 1:length(rbvs_obj$Causal_post)) {
-    beta_dss[[i]] = as.vector(coef(cv.glmnet(x[,set_active], x[,set_active] %*% beta_exp[i,set_active], penalty.factor = 1/abs(beta_exp[i,set_active]), intercept = F), s = "lambda.min")[-1])
-    gamma_dss[[i]] = as.vector(coef(cv.glmnet(x[,set_active], x[,set_active] %*% gamma_exp[i,set_active], penalty.factor = 1/abs(gamma_exp[i,set_active]), intercept = F), s = "lambda.min")[-1])
-  }
+  trt = colMeans(rbvs_obj$Causal_post)
+  IP = rbvs_obj$probs
+  trt_post = rbvs_obj$Causal_post
   
-  return(list("sparse_beta" = beta_dss, "sparse_gamma" = gamma_dss))
+  return(list(each_sim = rbvs_obj, trt = trt, trt_post = trt_post, IP = IP))
 }
-

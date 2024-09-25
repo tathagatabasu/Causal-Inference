@@ -1,5 +1,6 @@
 source("other_causal.R")
 source("causal.R")
+source("mclapply.R")
 
 set.seed(1e8)
 
@@ -7,7 +8,9 @@ set.seed(1e8)
 # data generation
 
 n = 100
+M = 20
 p = 75
+no.of.cores = 10
 
 sig = matrix(nrow=p,ncol = p)
 
@@ -17,70 +20,41 @@ for (i in 1:p) {
   }
 }
 
-x_all = rmvnorm(n, sigma = sig)
+x_all = lapply(1:M, function(i)rmvnorm(n, sigma = sig))
 
 # data with setting 1
 
 beta1 = c(runif(5,-5,-1), runif(5,1,5))
 gamma1 = c(runif(5,-5,-1), runif(5,1,5))
 
-a1_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-a1_all = sapply(1:n, function(j)rbinom(1,1,a1_dum_all[j]))
+a1_dum_all = lapply(1:M, function(i) (1/(1 + exp(-x_all[[i]][,1:length(gamma1)] %*% gamma1))))
+a1_all = lapply(1:M, function(i) (sapply(1:n, function(j)rbinom(1,1,a1_dum_all[[i]][j]))))
 
-y1_all = 4*a1_all + x_all[,1:length(beta1)] %*% beta1 + rnorm(n, sd = .1)
+y1_all = lapply(1:M, function(i) (4*a1_all[[i]] + x_all[[i]][,1:length(beta1)] %*% beta1 + rnorm(n, sd = .1)))
 
 # data with setting 2
 
 beta2 = c(runif(5,-5,-1), runif(10,1,5))
 
-a2_dum_all = 1/(1 + exp(-x_all[,1:length(gamma1)] %*% gamma1))
-a2_all = sapply(1:n, function(j)rbinom(1,1,a2_dum_all[j]))
+a2_dum_all = lapply(1:M, function(i) (1/(1 + exp(-x_all[[i]][,1:length(gamma1)] %*% gamma1))))
+a2_all = lapply(1:M, function(i) (sapply(1:n, function(j)rbinom(1,1,a2_dum_all[[i]][j]))))
 
-y2_all = 4*a2_all + x_all[,1:length(beta2)] %*% beta2 + rnorm(n, sd = .1)
+y2_all = lapply(1:M, function(i) (4*a2_all[[i]] + x_all[[i]][,1:length(beta2)] %*% beta2 + rnorm(n, sd = .1)))
 
 ##############################################################################################
 # For increasing observation
 
 # setting1
 
-if(T){
+if(F){
   
-  for (k in 1:11) { #
+  for (k in c(1,3,5,7,9,11)) { #
     N = 20 + 5*k
-
-    x = x_all[1:N,1:50]
-    y1 = y1_all[1:N]
-    a1 = a1_all[1:N]
-
-    val1 = sum(abs(cor(x,y1))>0.15)
-    val2 = sum(abs(cor(x,y1))>0.35)
-
-    alph_min = min(val1, val2) /p
-    alph_max = max(val1, val2) /p
-
-    rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-
-    prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-    active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-
-    beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-    gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-    causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-
-    assign(paste0("set1_active_", k), active)
-    assign(paste0("set1_casual_", k), causal_exp)
-    assign(paste0("set1_rbvs_obj_",k), rbvs_obj)
-
-    SSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = FALSE)
-    BSSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = TRUE)
-    BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-
-    assign(paste0("set1_SSCE_", k), SSCE.fit)
-    assign(paste0("set1_BSSCE_", k), BSSCE.fit)
-    assign(paste0("set1_BSSL_",k), BSSL.fit)
+    
+    assign(paste0("set1_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:N,1:50], y1_all[[i]][1:N], a1_all[[i]][1:N]), mc.cores = no.of.cores))
+    assign(paste0("set1_SSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:N,1:50], y1_all[[i]][1:N], a1_all[[i]][1:N], M = 2500, burn = 500, Bilevel = FALSE), mc.cores = no.of.cores))
+    assign(paste0("set1_BSSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:N,1:50], y1_all[[i]][1:N], a1_all[[i]][1:N], M = 2500, burn = 500, Bilevel = TRUE), mc.cores = no.of.cores))
+    assign(paste0("set1_BSSL_",k), mclapply.hack(1:M, function(i) BSSL(x_all[[i]][1:N,1:50], y1_all[[i]][1:N], a1_all[[i]][1:N], 2500, 500), mc.cores = no.of.cores))
     print(k)
   }
   
@@ -90,44 +64,15 @@ if(T){
 
 # setting2
 
-if(T){
+if(F){
   
-  for (k in 1:11) { #
+  for (k in c(1,3,5,7,9,11)) { #
     N = 20 + 5*k
     
-    x = x_all[1:N,1:50]
-    y2 = y2_all[1:N]
-    a2 = a2_all[1:N]
-    
-    val1 = sum(abs(cor(x,y2))>0.15)
-    val2 = sum(abs(cor(x,y2))>0.35)
-    
-    alph_min = min(val1, val2) /p
-    alph_max = max(val1, val2) /p
-    
-    rbvs_obj = ISVS(x, y2, a2, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-    
-    prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-    
-    beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    assign(paste0("set2_active_", k), active)
-    assign(paste0("set2_casual_", k), causal_exp)
-    assign(paste0("set2_rbvs_obj_",k), rbvs_obj)
-    
-    SSCE.fit <- SSCE(x, y2, a2, M = 5000, burn = 1, Bilevel = FALSE)
-    BSSCE.fit <- SSCE(x, y2, a2, M = 5000, burn = 1, Bilevel = TRUE)
-    BSSL.fit <-BSSL(x, y2, a2, 5000, 1)
-    
-    assign(paste0("set2_SSCE_", k), SSCE.fit)
-    assign(paste0("set2_BSSCE_", k), BSSCE.fit)
-    assign(paste0("set2_BSSL_",k), BSSL.fit)
+    assign(paste0("set2_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:N,1:50], y2_all[[i]][1:N], a2_all[[i]][1:N]), mc.cores = no.of.cores))
+    assign(paste0("set2_SSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:N,1:50], y2_all[[i]][1:N], a2_all[[i]][1:N], M = 2500, burn = 500, Bilevel = FALSE), mc.cores = no.of.cores))
+    assign(paste0("set2_BSSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:N,1:50], y2_all[[i]][1:N], a2_all[[i]][1:N], M = 2500, burn = 500, Bilevel = TRUE), mc.cores = no.of.cores))
+    assign(paste0("set2_BSSL_",k), mclapply.hack(1:M, function(i) BSSL(x_all[[i]][1:N,1:50], y2_all[[i]][1:N], a2_all[[i]][1:N], 2500, 500), mc.cores = no.of.cores))
     print(k)
   }
   
@@ -138,44 +83,15 @@ if(T){
 
 # setting1
 
-if(T){
+if(F){
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     P = 20 + 5*k
     
-    x = x_all[1:40,1:P]
-    y1 = y1_all[1:40]
-    a1 = a1_all[1:40]
-    
-    val1 = sum(abs(cor(x,y1))>0.15)
-    val2 = sum(abs(cor(x,y1))>0.35)
-    
-    alph_min = min(val1, val2) /P
-    alph_max = max(val1, val2) /P
-    
-    rbvs_obj = ISVS(x, y1, a1, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-    
-    prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-    
-    beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    assign(paste0("set3_active_", k), active)
-    assign(paste0("set3_casual_", k), causal_exp)
-    assign(paste0("set3_rbvs_obj_",k), rbvs_obj)
-    
-    SSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = FALSE)
-    BSSCE.fit <- SSCE(x, y1, a1, M = 5000, burn = 1, Bilevel = TRUE)
-    BSSL.fit <-BSSL(x, y1, a1, 5000, 1)
-    
-    assign(paste0("set3_SSCE_", k), SSCE.fit)
-    assign(paste0("set3_BSSCE_", k), BSSCE.fit)
-    assign(paste0("set3_BSSL_",k), BSSL.fit)
+    assign(paste0("set3_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y1_all[[i]][1:40], a1_all[[i]][1:40]), mc.cores = no.of.cores))
+    assign(paste0("set3_SSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:40,1:P], y1_all[[i]][1:40], a1_all[[i]][1:40], M = 2500, burn = 500, Bilevel = FALSE), mc.cores = no.of.cores))
+    assign(paste0("set3_BSSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:40,1:P], y1_all[[i]][1:40], a1_all[[i]][1:40], M = 2500, burn = 500, Bilevel = TRUE), mc.cores = no.of.cores))
+    assign(paste0("set3_BSSL_",k), mclapply.hack(1:M, function(i) BSSL(x_all[[i]][1:40,1:P], y1_all[[i]][1:40], a1_all[[i]][1:40], 2500, 500), mc.cores = no.of.cores))
     print(k)
   }
 
@@ -186,44 +102,15 @@ if(T){
 # setting2
 
 
-if(T){
+if(F){
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     P = 20 + 5*k
     
-    x = x_all[1:40,1:P]
-    y2 = y2_all[1:40]
-    a2 = a2_all[1:40]
-    
-    val1 = sum(abs(cor(x,y2))>0.15)
-    val2 = sum(abs(cor(x,y2))>0.35)
-    
-    alph_min = min(val1, val2) /P
-    alph_max = max(val1, val2) /P
-    
-    rbvs_obj = ISVS(x, y2, a2, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-    
-    prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-    
-    beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    assign(paste0("set4_active_", k), active)
-    assign(paste0("set4_casual_", k), causal_exp)
-    assign(paste0("set4_rbvs_obj_",k), rbvs_obj)
-    
-    SSCE.fit <- SSCE(x, y2, a2, M = 5000, burn = 1, Bilevel = FALSE)
-    BSSCE.fit <- SSCE(x, y2, a2, M = 5000, burn = 1, Bilevel = TRUE)
-    BSSL.fit <-BSSL(x, y2, a2, 5000, 1)
-    
-    assign(paste0("set4_SSCE_", k), SSCE.fit)
-    assign(paste0("set4_BSSCE_", k), BSSCE.fit)
-    assign(paste0("set4_BSSL_",k), BSSL.fit)
+    assign(paste0("set4_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40]), mc.cores = no.of.cores))
+    assign(paste0("set4_SSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40], M = 2500, burn = 500, Bilevel = FALSE), mc.cores = no.of.cores))
+    assign(paste0("set4_BSSCE_", k), mclapply.hack(1:M, function(i) SSCE(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40], M = 2500, burn = 500, Bilevel = TRUE), mc.cores = no.of.cores))
+    assign(paste0("set4_BSSL_",k), mclapply.hack(1:M, function(i) BSSL(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40], 2500, 500), mc.cores = no.of.cores))
     print(k)
   }
   
@@ -233,39 +120,14 @@ if(T){
 
 #######################################################################################
 
-# setting3
+# setting for checking prior elicitation
 
-if(T){
+if(F){
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     P = 20 + 5*k
     
-    x = x_all[1:40,1:P]
-    y2 = y2_all[1:40]
-    a2 = a2_all[1:40]
-    
-    val1 = sum(abs(cor(x,y2))>0.2)
-    val2 = sum(abs(cor(x,y2))>0.4)
-    
-    alph_min = min(val1, val2) /P
-    alph_max = max(val1, val2) /P
-    
-    rbvs_obj = ISVS(x, y2, a2, alphas = seq(alph_min,alph_max, length.out = 11), tau_1 = 1, n.cores = 11)
-    
-    prob_exp = matrix(unlist(lapply(rbvs_obj$probs, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    active = t(sapply(1:length(rbvs_obj$Causal_post), function(i) (prob_exp[i,] >= 0.5)))
-    
-    beta_exp = matrix(unlist(lapply(rbvs_obj$Betas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    gamma_exp = matrix(unlist(lapply(rbvs_obj$Gammas, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    causal_exp = matrix(unlist(lapply(rbvs_obj$Causal_post, function(x)colMeans(as.matrix(x)))), nrow = length(rbvs_obj$Causal_post), byrow = T)
-    
-    assign(paste0("set5_active_", k), active)
-    assign(paste0("set5_casual_", k), causal_exp)
-    assign(paste0("set5_rbvs_obj_",k), rbvs_obj)
-    
+    assign(paste0("set5_RBCE_",k), mclapply.hack(1:M, function(i) rbce_wrapper_sim(x_all[[i]][1:40,1:P], y2_all[[i]][1:40], a2_all[[i]][1:40], min.cor = 0.2, max.cor = 0.4), mc.cores = no.of.cores))
     print(k)
   }
   
@@ -274,18 +136,18 @@ if(T){
 #######################################################################################
 
 # 
-if(T){
+if(F){
   # # tables
   
   set1_sum_beta_trt = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set1_sum_beta_trt = cbind(set1_sum_beta_trt, rbind(min(range(get(paste0("set1_casual_", k)))), max(range(get(paste0("set1_casual_", k)))), get(paste0("set1_SSCE_", k))$mean.trt.effect, get(paste0("set1_BSSCE_", k))$mean.trt.effect, get(paste0("set1_BSSL_", k))$means[52]))
   }
   
   set1_sum_loss = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set1_sum_loss = rbind(set1_sum_loss, cbind(sum(which(colMeans(get(paste0("set1_active_",k)))==1) > 10),
                                                sum(which(colMeans(get(paste0("set1_active_",k)))==0) <= 10),
                                                sum((colMeans(get(paste0("set1_active_",k)))<1 & colMeans(get(paste0("set1_active_",k)))>0)),
@@ -299,13 +161,13 @@ if(T){
   
   set2_sum_beta_trt = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set2_sum_beta_trt = cbind(set2_sum_beta_trt, rbind(min(range(get(paste0("set2_casual_", k)))), max(range(get(paste0("set2_casual_", k)))), get(paste0("set2_SSCE_", k))$mean.trt.effect, get(paste0("set2_BSSCE_", k))$mean.trt.effect, get(paste0("set2_BSSL_", k))$means[52]))
   }
   
   set2_sum_loss = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set2_sum_loss = rbind(set2_sum_loss, cbind(sum(which(colMeans(get(paste0("set2_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set2_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set2_active_",k)))<1 & colMeans(get(paste0("set2_active_",k)))>0)),
@@ -386,19 +248,19 @@ if(T){
   
   set3_sum_beta_trt = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set3_sum_beta_trt = cbind(set3_sum_beta_trt, rbind(min(range(get(paste0("set3_casual_", k)))), max(range(get(paste0("set3_casual_", k)))), get(paste0("set3_SSCE_", k))$mean.trt.effect, get(paste0("set3_BSSCE_", k))$mean.trt.effect, get(paste0("set3_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set4_sum_beta_trt = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set4_sum_beta_trt = cbind(set4_sum_beta_trt, rbind(min(range(get(paste0("set4_casual_", k)))), max(range(get(paste0("set4_casual_", k)))), get(paste0("set4_SSCE_", k))$mean.trt.effect, get(paste0("set4_BSSCE_", k))$mean.trt.effect, get(paste0("set4_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set3_sum_loss = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set3_sum_loss = rbind(set3_sum_loss, cbind(sum(which(colMeans(get(paste0("set3_active_",k)))==1) > 10),
                                                sum(which(colMeans(get(paste0("set3_active_",k)))==0) <= 10),
                                                sum((colMeans(get(paste0("set3_active_",k)))<1 & colMeans(get(paste0("set3_active_",k)))>0)),
@@ -412,7 +274,7 @@ if(T){
   
   set4_sum_loss = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set4_sum_loss = rbind(set4_sum_loss, cbind(sum(which(colMeans(get(paste0("set4_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set4_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set4_active_",k)))<1 & colMeans(get(paste0("set4_active_",k)))>0)),
@@ -489,13 +351,13 @@ if(T){
   
   set5_sum_beta_trt = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set5_sum_beta_trt = cbind(set5_sum_beta_trt, rbind(min(range(get(paste0("set5_casual_", k)))), max(range(get(paste0("set5_casual_", k)))), get(paste0("set5_SSCE_", k))$mean.trt.effect, get(paste0("set5_BSSCE_", k))$mean.trt.effect, get(paste0("set5_BSSL_", k))$means[(20 + 5*k +2)]))
   }
   
   set5_sum_loss = c()
   
-  for (k in 1:11) {
+  for (k in c(1,3,5,7,9,11)) {
     set5_sum_loss = rbind(set5_sum_loss, cbind(sum(which(colMeans(get(paste0("set5_active_",k)))==1) > 15),
                                                sum(which(colMeans(get(paste0("set5_active_",k)))==0) <= 15),
                                                sum((colMeans(get(paste0("set5_active_",k)))<1 & colMeans(get(paste0("set5_active_",k)))>0)),
@@ -512,7 +374,7 @@ if(T){
   xtable(cbind(set4_sum_loss[,1:3], (set4_sum_loss[,1]+set4_sum_loss[,2] + 0.2 * set4_sum_loss[,3]), set5_sum_loss[,1:3], (set5_sum_loss[,1]+set5_sum_loss[,2] + 0.2 * set5_sum_loss[,3])))
 }
 
-if(T){
+if(F){
   par(mfrow = c(2,1), mar = c(3,3,1,1))
   plot(density(set1_rbvs_obj_1$Causal_post[[1]]), type = "n", ylim = c(0,1.7), xlim = c(2,6), xlab = "", ylab = "", main = "")
   for (k in 1:11) {

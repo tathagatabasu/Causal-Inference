@@ -32,6 +32,7 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   #transform covariates to have mean zero and unit variance
   Xstd <- cbind(t(t(Xorig - matrix(rep(apply(Xorig, 2, mean), nrow(Xorig)), 
                                    nrow(Xorig),byrow=TRUE))*(1/apply(Xorig, 2, sd))), 1, Aorig)
+  
   #initialize beta to zero
   beta <- rep(0, p+2)
   
@@ -88,17 +89,23 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   
   #fit the lasso to the (transformed) outcome model, which now has only p parameters
   ##10 fold cv is used to choose tuning parameter lambda
-  lasso.fit <- adalasso(Xout, Ycent, k = 10, intercept = FALSE)
+  ridge.fit = cv.glmnet(x = Xout, y = Ycent, 
+                        type.measure = "mse",
+                        nfold = 10, alpha = 0)
+  ridge_coef = as.numeric(coef(ridge.fit, s = ridge.fit$lambda.min))[-1]
+  lasso.fit = cv.glmnet(Xout, Ycent, alpha = 1, penalty.factor = 1/abs(ridge_coef), nfold = 10)
+  # lasso.fit <- adalasso(Xout, Ycent, k = 10, intercept = FALSE)
   
   #get estimated lasso coefficients
-  lasso.coef <- lasso.fit$coefficients.lasso
+  lasso.coef = as.numeric(coef(lasso.fit, s = lasso.fit$lambda.min))[-1]
+  # lasso.coef <- lasso.fit$coefficients.lasso
   
   #determine which covariate coefficients are non-zero
   nonzero.lasso.coef <- which(lasso.coef != 0)
   
   #find sigma.2.y_a.x for all covariates that have coefficients equal to zero according to lasso
   temp <-  (1/(n-length(nonzero.lasso.coef)))*sum((Yorig - Xstd[,c(nonzero.lasso.coef, p+1, p+2)]
-                                                   %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Xstd[,c(nonzero.lasso.coef, p+1, p+2)] + diag(1e-5, nrow = (length(nonzero.lasso.coef) + 2)))
+                                                   %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Xstd[,c(nonzero.lasso.coef, p+1, p+2)])
                                                        %*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)])%*%Yorig))^2) 
   
   #set sigma.2.y_a.x to the value above for all covariates (we change the values below for covariates
@@ -109,8 +116,7 @@ SSCE <- function(Xorig, Yorig, Aorig, tau.2 = 1000, M = 5000, burn = 0, Bilevel 
   temp <- unlist(lapply(nonzero.lasso.coef, function(g) 
     (1/(n-length(nonzero.lasso.coef)))*sum((Yorig - Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g]
                                             %*%(solve(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%
-                                                        Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g] + diag(1e-5, nrow = (nrow(t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%
-                                                                                                                                Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g]))))%*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])
+                                                        Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])%*%t(Xstd[,c(nonzero.lasso.coef, p+1, p+2)][,-g])
                                                 %*%Yorig))^2)  ))
   
   #set sigma.2.y_a.x to the values above for the covariates with non-zero coefficients
@@ -384,7 +390,9 @@ BSSL <- function(Xorig, Yorig, Aorig, M, burn){
   upper.limit <- quantile(mat[,p+2], 0.975)
   
   
-  return(list(IP=IP, means = means, lower.limit=lower.limit, upper.limit=upper.limit))
+  return(list(IP=IP, means = means, mean.trt.effect = mean(mat[,p+2]),
+              trt.effect.post = mat[,p+2],
+              lower.limit=lower.limit, upper.limit=upper.limit))
   
 }
 
