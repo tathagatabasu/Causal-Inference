@@ -119,15 +119,12 @@ literature
 This is also the approach that we will follow here, under the
 disclaimer that whether actual causality can be inferred
 remains a subject of interpretation and conjecture specific to the
-sitation being studied. In this regard, we also refer to \citep{imbiens_2022}
+situation being studied. In this regard, we also refer to \citep{imbiens_2022}
 where a detailed discussion on different interpretations of `causality'
 in statistics and econometrics can be found 
 }
 
-%%% MT to TB: removed this phrase for now to make text flow better
-% But this
-% can be problematic in the presence of confounding.
-\begin{figure}
+\begin{figure}[h]
 \begin{center}
 \begin{tikzpicture}[node distance=2cm, auto]
   \node (confounder) at (0,0) [circle,draw,align=center] {biomarker \\(confounder)};
@@ -172,7 +169,7 @@ see for instance \citep{Zigler2014,Hahn2018} among others \added{for
 	\citep{zhang_2018} for a survey of methods for addressing unmeasured confounding.}
 
 In this paper, we take inspiration from the approach of \citet{koch2020}, who proposed a bi-level spike and slab prior for causal effect estimation \added{in high dimensional problems (i.e.~when number of predictors
-	is larger than the number of observation)}. 
+	is larger than the number of observations)}. 
 	They considered a data-driven adaptive approach to
 propose their prior which reduces the variance of the causal estimate. 
 Our approach \added{however focuses on the other aspect of high
@@ -197,8 +194,8 @@ To \added{achieve this cautious paradigm and to} perform a prior sensitivity ana
 based on empirical evidence. 
 This allows us to construct the problem of 
 predictor selection
-in a framework where abstention has a relatively positive gain i.e.~when the cost of further tests/data collection is cheaper than
-\added{incorrect treatment} a subject. 
+in a framework where abstention has a relatively positive gain i.e.~when the cost of further tests/data collection is
+\added{lower than that of incorrectly treating} a subject. 
 
 Our framework considers a set of continuous spike and slab priors 
 \citep{ishwaran2005} for
@@ -250,7 +247,7 @@ Following the usual approach in the literature
 we model the outcome using a linear model%
 }
 \begin{equation}
-	Y_i =  T_i \beta_{T} + X_i\beta + \epsilon_i
+	Y_i =  T_i \beta_{T} + X_i\beta \added{+ \beta_0} + \epsilon_i
 \end{equation}
 where $\epsilon_i\sim \mathcal{N}(0, \sigma^2)$,
 independent of $T_i$ and $X_i$.
@@ -304,7 +301,7 @@ That is, for another vector of regression coefficients
 $\gamma\coloneqq(\gamma_1, \cdots, \gamma_p)^{\top}$ we
 assume
 \begin{align}
-	P(T_i=1\mid X_i) = \Phi(X_i\gamma)
+	P(T_i=1\mid X_i) = \Phi(X_i\gamma\added{+\gamma_0})
 \end{align}
 where $\Phi$ denotes the cumulative distribution function
 of a standard normal distribution.
@@ -319,7 +316,7 @@ to form more complex models if so desired.%
 To incorporate this probit
 link function, we model the $T_i$ as follows \citep{albert93}:
 \begin{align}
-    T_i^* &= X_i\gamma +u_i \\
+    T_i^* &= X_i\gamma\added{+\gamma_0} +u_i \\
     T_i   &= \mathbb{I}(T_i^*>0)
     =
     \begin{cases}
@@ -331,23 +328,23 @@ where $u_i\sim\mathcal{N}(0,1)$.
 With this model, indeed
 \begin{align}
   P(T_i=1\mid X_i)
-  &=P(T_i^*>0)=P(u_i>-X_i\gamma)=1-P(u_i\le -X_i\gamma) \\
-  &=1-\Phi(-X_i\gamma)=\Phi(X_i\gamma).
+  &=P(T_i^*>0)=P(u_i>-X_i\gamma\added{-\gamma_0})=1-P(u_i\le -X_i\gamma\added{-\gamma_0}) \\
+  &=1-\Phi(-X_i\gamma\added{-\gamma_0})=\Phi(X_i\gamma\added{+\gamma_0}).
 \end{align}
 
 Now, to construct the joint likelihood function, we define an extended
 output $2n\times 1$ column vector
 $W\coloneqq\left(\begin{smallmatrix}Y \\ T^*\end{smallmatrix}\right)$
-and corresponding $2n\times(2p+1)$ dimensional design matrix
+and corresponding $2n\times(2p+\added{3})$ dimensional design matrix
 \begin{align}
 	Z &\coloneqq
         \begin{bmatrix}
-           T_1 & X_1 & 0 \\
-           \vdots & \vdots & 0 \\
-           T_n & X_n & 0 \\
-           0 & 0 & X_1 \\
-           \vdots & \vdots & \vdots \\
-           0 & 0 & X_n
+           T_1 & X_1 & \added{1} & 0 & \added{0} \\
+           \vdots & \vdots & \added{\vdots} & 0 & \added{0} \\
+           T_n & X_n & \added{1} & 0 & \added{0} \\
+           0 & 0 & \added{0} & X_1 & \added{1} \\
+           \vdots & \vdots & \added{\vdots} & \vdots & \added{\vdots} \\
+           0 & 0 & \added{0} & X_n & \added{1}
         \end{bmatrix}
         =
 	\begin{bmatrix}
@@ -355,12 +352,12 @@ and corresponding $2n\times(2p+1)$ dimensional design matrix
 		0 & X_T
 	\end{bmatrix}
 \end{align}
-where, $X_O \coloneqq [T, X]$ and $X_T \coloneqq X$. Then, considering the assumption of
+where, $X_O \coloneqq [T, X, \added{\mathbf{1}_n}]$ and $X_T \coloneqq [X, \added{\mathbf{1}_n}]$. Then, considering the assumption of
 Gaussian error terms, we have the following likelihood distribution
 \begin{align}
-	W\mid Z, \beta_T, \beta, \gamma, \sigma^2 \sim\normal\left(Z\nu, \Sigma\right)\label{eq:like:group},
+	W\mid Z, \beta_T, \beta, \added{\beta_0,} \gamma, \added{\gamma_0,} \sigma^2 \sim\normal\left(Z\nu, \Sigma\right)\label{eq:like:group},
 \end{align}
-where $\nu \coloneqq (\beta_T, \beta^{\top}, \gamma^{\top})^{\top}$ and
+where $\nu \coloneqq (\beta_T, \beta^{\top}, \added{\beta_0,} \gamma^{\top}\added{, \gamma_0})^{\top}$ and
 \begin{align}
 	\Sigma &\coloneqq
 	\begin{bmatrix}
@@ -416,6 +413,8 @@ for $1\le j\le p$,
 		0 & 1
 	\end{bmatrix}\right)\\
 	\beta_T\mid \sigma^2 &\sim \normal\left(0, \sigma^2\right)\label{eq:prior:causal}\\
+        \beta_0\mid \sigma^2 &\sim \normal\left(0, \sigma^2\right)\label{eq:prior:int:out}\\
+        \gamma_0 &\sim \normal\left(0, 1\right)\label{eq:prior:int:trt}\\
         \frac{1}{\sigma^2}&\sim \text{Gamma}(a, b)\\
 	\pi_{j} &\sim\text{Beta}\left(sq_j, s(1-q_j)\right).
 \end{align}
@@ -425,9 +424,9 @@ concentrated around zero. Therefore, this represents the spike component of our 
 For the slab component, we consider $\tau_1$ to be large so that $\tau_1\ge 1$. This allows the prior for $(\beta_j,\gamma_j)$ to be flat beyond the spike component at the origin. 
 We illustrate the components of a bivariate spike and slab prior in 
 \cref{fig:ssbl} (with fixed $\sigma=1$). We generate the spike component 
-with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
+with $\tau_0=0.1$ and the slab component with $\tau_1=5$.
 
-\begin{figure}
+\begin{figure}[h]
 	\begin{center}
 \begin{tikzpicture}[scale=0.6]
     \begin{axis}[
@@ -435,6 +434,7 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
         view={60}{30},
         xlabel={$x_1$},
         ylabel={$x_2$},
+        zlabel={pdf},
         ]
         \addplot3[
             surf,
@@ -453,6 +453,7 @@ with $\tau_0=0.001$ and the slab component with $\tau_1=5$.
         view={60}{30},
         xlabel={$x_1$},
         ylabel={$x_2$},
+        zlabel={pdf},
         ]
         \addplot3[
             surf,
@@ -481,8 +482,8 @@ We use a beta prior to
 model our uncertainty about
 the selection probabilities $\pi_j$ where  $q_j$ represents our prior expectation of $\pi_j$ and $s$ acts as 
 a concentration parameter.
-For the causal effect \added{in \cref{eq:prior:causal}}, we want to use a Gaussian distribution that 
-matches the scale of the noise term. Therefore, we consider $\beta_T\added{\mid\sigma^2}\sim \normal(0,\sigma^2)$. 
+For the causal effect \added{in \cref{eq:prior:causal} and intercept term of the outcome model in \cref{eq:prior:int:out}}, we want to use a Gaussian distribution that 
+matches the scale of the noise term. Therefore, we consider $\beta_T\added{, \beta_0\mid\sigma^2}\sim \normal(0,\sigma^2)$. \added{Similarly, for the intercept of the treatment model we match the scale of the probit model and consider $\gamma_0\sim \mathcal{N}(0,1)$}.
 
 In \cref{fig:regress}, we show a probabilistic graphical representation
 of our hierarchical model. In the figure, grey circular nodes represent the
@@ -496,7 +497,7 @@ relationship between different nodes. However, we use a dashed
 edge between $X$ and $T$ as they are related through the latent
 variable $T^*$. 
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\begin{tikzpicture}[params/.style={circle, draw=black!60, very thick, minimum size=7mm},
 		hyper/.style={circle, draw=black!60, fill=black!20, thick, minimum size=7mm},
@@ -507,8 +508,10 @@ variable $T^*$.
 		\node[data] (2) at (3,0) {$X$};
 		\node[data] (3) at (6,0) {$T$};
 		\node[params] (4) at (1.5,1.5) {$\gamma$};
+		\node[params] (15) at (1.5,0) {$\gamma_0$};
 		\node[latent] (5) at (4.5,1.5) {$T^*$};
 		\node[params] (6) at (1.5,-1.5) {$\beta$};
+		\node[params] (16) at (1.5,-3) {$\beta_0$};
 		\node[data] (7) at (3.5,-1.5) {$Y$};
 		\node[params] (8) at (0,-3) {$\sigma^2$};
 		\node[params] (10) at (6,-1.5) {$\beta_T$};
@@ -534,6 +537,8 @@ variable $T^*$.
 		\path (12) edge[->]  (1);
 		\path (13) edge[->]  (8);
 		\path (14) edge[->]  (8);
+		\path (15) edge[->]  (5);
+		\path (16) edge[->]  (7);
 		
 	\end{tikzpicture}
 	\caption{Probabilistic graphical representation for causal inference with \added{our} Bayesian hierarchical model.}
@@ -595,7 +600,7 @@ and thus more robust inferences.%
 Alternatively, we may also use the empirically observed correlations from the data directly. This is particularly common in ultra high
 dimensional problems (when $p\gg n$) for reducing the dimensionality
 of the problem \citep{fan2008}. We can also use this approach
-to have us a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
+to have a better prior judgement since any predictors that are correlated with the outcome are good candidates to be active.
 When doing so, we need
 % \added{
 a prior judgement on what is a reasonable
@@ -761,13 +766,15 @@ For both
 \added{$p=20+ 5k$ for $k=1,2,\dots,11$ and $n=40$}
 subjects.
 
+\added{For all four cases, we consider 20 replicates for an empirical statistical analysis to check the consistency and robustness of our approach.}
+
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}[node distance=2cm, auto]
-			\node (1) at (0,2) [circle,draw,align=center] {increasing \\ observation};
-			\node (2) at (4,2) [circle,draw,align=center] {increasing \\ predictor \\ (predictor)};
-			\node (a) at (0,-2) [circle,draw,align=center] {only \\ confounders};
-			\node (b) at (4,-2) [circle,draw,align=center] {outcome \& \\ confounders};
+			\node (1) at (0,2) [circle,draw,align=center] {Case:\textbf{1}\\increasing \\ observation};
+			\node (2) at (4,2) [circle,draw,align=center] {Case:\textbf{2}\\increasing \\ predictor};
+			\node (a) at (0,-2) [circle,draw,align=center] {Subcase:\textbf{a}\\only \\ confounders};
+			\node (b) at (4,-2) [circle,draw,align=center] {Subcase:\textbf{b}\\outcome \& \\ confounders};
 			\draw[->] (1) to (a);
 			\draw[->] (1) to (b);
 			\draw[->] (2) to (a);
@@ -785,6 +792,28 @@ robust Bayesian causal estimation (our method); SSCE for spike and
 slab causal estimation \citep{koch2020}; BSSCE for bi-level spike and slab causal
 estimation \citep{koch2020}; and BSSL for Bayesian spike and slab LASSO
 \citep{xu2015}. 
+
+
+\paragraph{Metrics}
+
+\added{ 
+	As mentioned earlier, to perform our statistical analyses we use 20
+	replications. To evaluate the accuracy of estimation, we consider
+	mean and median values obtained from these 20 samples. Similarly, to check the
+	dispersion, we use standard deviation (denoted by sd), mean squared 
+	error with respect to the true value (denoted by MSE) and coverage (percentage) of the true value within the
+	95\% posterior credible interval (denoted by CI\%). Finally, 
+	to check the accuracy of variable selection, we evaluate false average positive numbers (denoted by FP), average false negative numbers (denoted
+	by FN) and average number of indeterminate variables (denoted by ID). Clearly
+	for other classical methods ID is equal to zero and therefore 
+	is not presented in the tables. We also define a misspecification loss
+	in the following way for illustration :
+	\begin{equation}
+		\text{Misspecification Loss} = \frac{FP}{TN} + \frac{FN}{TP} + 0.2* \frac{ID}{\text{Total no of predictors}}.
+	\end{equation}
+}
+
+\added{Note that since RBCE gives interval estimates, CI\% is calculated using the minimum of the lower bounds of credible intervals and the maximum of the upper bounds of credible intervals.}
 
 \paragraph{Elicitation}
 
@@ -842,199 +871,584 @@ spike and slab prior.
 %%% MT to TB: where does a=10 come from? can we say something about that?
 For the noise term, we set $a=50$ and $b=1$.
 To perform 
-our Bayesian analysis with \texttt{rjags}, we first consider an adaptive 
-stage with 2000 iterations followed by discarding of 2000 burn in samples 
-to refine the posteriors. We consider 5000 MCMC samples to compute the
+our Bayesian analysis with \texttt{rjags}, \added{we discard 500 burn in samples and consider 2500 MCMC samples} to compute the
 posterior estimates. For the other methods we use the in-built settings 
 to initiate the analyses. \added{We also transform the data so that the data is centred around $0$
 for the outcome model to avoid having an intercept term.}
 
+\begin{table}[ht]
+	\tiny
+	\centering
+	\caption{\added{Comparison of different methods for varying number of observations where all the active variables are confounders.}}
+	\label{tab:causal1a}
+	\subcaption{Accuracy in estimation of causal effect}
+	\begin{tabular}{l|cccc|cc|cc|cc}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{4}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{l|}{Obs}&
+		\multicolumn{2}{c}{Mean}&
+		\multicolumn{2}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c}{Median}\\
+		\hline
+		25 & 2.6 & 3.5 & 2.5 & 3.6 & 20.4 & 20.4 & 20.9 & 20.7 & 15.6 & 19.0 \\ 
+		30 & 3.0 & 3.7 & 2.9 & 3.7 & 18.4 & 19.9 & 20.9 & 21.2 & 10.3 & 4.1 \\ 
+		35 & 3.3 & 3.8 & 3.3 & 3.8 & 15.8 & 18.5 & 19.6 & 19.8 & 7.2 & 4.1 \\ 
+		40 & 3.4 & 3.8 & 3.4 & 3.8 & 11.8 & 10.4 & 16.4 & 18.3 & 4.2 & 4.0 \\ 
+		45 & 3.6 & 3.8 & 3.6 & 3.8 & 8.1 & 4.1 & 11.0 & 11.3 & 4.1 & 4.0 \\ 
+		50 & 3.7 & 3.8 & 3.6 & 3.8 & 7.5 & 4.1 & 7.8 & 4.2 & 4.0 & 4.0 \\ 
+		55 & 3.7 & 3.9 & 3.7 & 3.9 & 4.5 & 4.0 & 4.4 & 4.0 & 4.0 & 4.0 \\ 
+		60 & 3.8 & 3.9 & 3.8 & 3.9 & 4.2 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		65 & 3.8 & 3.9 & 3.8 & 3.9 & 4.1 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		70 & 3.8 & 3.9 & 3.8 & 3.9 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		75 & 3.8 & 3.9 & 3.8 & 3.9 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Dispersion of estimated causal effect: values less than 0.05 are replaced with *}
+	\begin{tabular}{l|rrrrr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{5}{c|}{RBCE}&
+		\multicolumn{3}{c|}{SCCE}&
+		\multicolumn{3}{c|}{BSSCE}&
+		\multicolumn{3}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{l|}{Obs}&
+		\multicolumn{2}{c}{sd}&
+		\multicolumn{2}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c}{CI\%}
+		\\
+		\hline
+		25 & 0.4 & 0.5 & 0.5 & 2.1 & 100 & 3.1 & 277.4 & 0 & 3.0 & 295.1 & 0 & 9.3 & 217.6 & 20 \\ 
+		30 & 0.4 & 0.5 & 0.2 & 1.3 & 100 & 5.9 & 239.9 & 15 & 2.7 & 291.9 & 0 & 8.4 & 107.2 & 60 \\ 
+		35 & 0.3 & 0.4 & 0.1 & 0.7 & 100 & 7.2 & 187.0 & 25 & 4.3 & 261.4 & 10 & 6.7 & 53.7 & 80 \\ 
+		40 & 0.2 & 0.3 & 0.1 & 0.4 & 100 & 7.8 & 118.7 & 45 & 6.4 & 191.7 & 20 & 0.9 & 0.7 & 95 \\ 
+		45 & 0.2 & 0.2 & 0.1 & 0.2 & 100 & 6.0 & 50.7 & 60 & 6.6 & 90.5 & 45 & 0.5 & 0.3 & 95 \\ 
+		50 & 0.1 & 0.2 & * & 0.1 & 100 & 5.3 & 39.6 & 65 & 5.5 & 43.0 & 65 & 0.1 & * & 100 \\ 
+		55 & 0.1 & 0.1 & * & 0.1 & 100 & 1.6 & 2.6 & 95 & 1.6 & 2.5 & 95 & 0.1 & * & 95 \\ 
+		60 & 0.1 & 0.1 & * & 0.1 & 100 & 0.9 & 0.9 & 90 & 0.1 & * & 100 & * & * & 95 \\ 
+		65 & 0.1 & 0.1 & * & * & 100 & 0.5 & 0.3 & 95 & 0.1 & * & 95 & * & * & 95 \\ 
+		70 & 0.1 & 0.1 & * & * & 100 & * & * & 95 & * & * & 95 & * & * & 95 \\ 
+		75 & 0.1 & 0.1 & * & * & 100 & * & * & 95 & * & * & 95 & * & * & 95 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Accuracy of variable selection: all the values are averaged over 20 replications}
+	\begin{tabular}{l|rrr|rr|rr|rr}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{3}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{l|}{Obs}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}&
+		\multicolumn{1}{c|}{ID}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}
+		\\
+		\hline
+		25 & 0.7 & 0.2 & 30.4 & 0 & 9.8 & 0 & 10 & 1.4 & 7.1 \\ 
+		30 & 0 & 0 & 19.2 & 0 & 8.8 & 0 & 10 & 0 & 3.8 \\ 
+		35 & 0 & 0 & 8.1 & 0 & 7.3 & 0 & 9.4 & 0 & 2.0 \\ 
+		40 & 0 & 0 & 3.0 & 0 & 5.1 & 0 & 8.2 & 0 & 0.2 \\ 
+		45 & 0 & 0 & 0.6 & 0 & 2.9 & 0 & 5.0 & 0 & 0 \\ 
+		50 & 0 & 0 & 0.4 & 0 & 2.9 & 0 & 3.0 & 0 & 0 \\ 
+		55 & 0 & 0 & 0 & 0 & 0.6 & 0 & 0.4 & 0 & 0 \\ 
+		60 & 0 & 0 & 0 & 0 & 0.2 & 0 & 0 & 0 & 0 \\ 
+		65 & 0 & 0 & 0 & 0 & 0.2 & 0 & 0 & 0 & 0 \\ 
+		70 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+		75 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
 \paragraph{Results}
-\Cref{tab:causal1} shows the results of estimating the causal effect $\beta_T$
-for \added{case 1a and 1b}.
+\Cref{tab:causal1a} shows the results of estimating the causal effect $\beta_T$
+for \added{case 1a}.
 For reference, recall the true value is $\beta_T=4$. 
 As we perform a sensitivity analysis,
-our method gives an interval estimate for the causal effect:
-\added{column RBCE-l gives the lower bound
-and column RBCE-u gives the upper bound}. We notice that 
-\added{as we increase the number of observation our approach provides more precise estimates which shows that our set of priors is able to learn from the data. We also observe that our method gives an estimate close to the true value} and is more consistent
-in terms of estimating the causal effect in \added{case 1a}. However, this is not the
-case for the analysis with \added{case 1b}. We notice that our method tends to under
-estimate the causal effect \added{observations fewer than $55$}. However, sometimes, other methods produce extreme 
-values which is not the case for our method. This can be observed in \cref{fig:comp:trt} as well. \added{In the figure, the top row
-illustrates the case 1a where the left image shows the estimated
-causal effect with respect to observations and the right image
-shows the same within the range of $[3.8,4.2]$. Similarly, the
-bottom row represents the causal effect estimation for case 1b. In the figure, RBCE bounds are given by red lines; SSCE estimates by blue lines; BSSCE estimates by green lines; BSSL estimates by purple line; and true value by black lines. }
+our method gives an interval estimate for the causal effect.
+\added{So we present mean, median, sd and MSE for RBCE using two columns where the left columns give the lower bounds
+and the right columns give the upper bounds}. We notice that 
+\added{as we increase the number of observation our approach provides more precise estimates which shows that our set of priors is able to learn from the data. We also observe that our method tends to under estimate the causal effect. However, our approach does not produce any extreme values} and is more consistent
+in terms of estimating the causal effect, \added{especially for fewer number of observations which is not the case for SSCE and BSSCE. For BSSL we notice that median value is close to the true value for fewer number of observations but mean value is higher which shows that for some experiments BSSL tend to produce extreme values. This can also be from the table for dispersion in estimation where BSSL tends to have a high MSE and lower CI\% for fewer number of observations.}
 
-\added{We see that for case 1b}, our method tends
-to underestimate the causal effect \added{for fewer number of observations.}
-This suggests that
-we may want to seek for a different value of $a$ based on the sample size
-instead of a fixing $a=50$ for all of our analyses. \added{We also provide the posterior distributions of the causal effect in \cref{fig:post:trt:obs} for different observations. Since we perform
-a prior sensitivity analysis therefore it is not possible to obtain a single value for percentiles. Instead we provide the maximum taken over all $q\in\mathcal{P}$ for 5 (green dotted line) and 25(green solid line) percentile whereas the minimum taken over all $q\in\mathcal{P}$ is provided for 95 (red dotted line) and 75 (red solid line) percentile. We notice that the true value of the causal effect is contained within the 25 and 75 percentile in all the cases except one. We can also see that we have different variability in the posteriors, this can be explained from the fact that we have different number of observations for our analyses.} 
+\added{We also provide the performance in variable selection in \cref{tab:causal1a}. We notice that for fewer number of observations
+our method tends to give many indeterminate variables but this number gradually decreases as we increase the number of observations. However, our elicitation based approach ensures that we have very few false negative and false positive variables which is not the case for other approaches.}
 
-\begin{table}
-\centering
-\tiny
-\caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations. On the left section (1a), we illustrate the results when all the active variables are confounders. On the right section (1b), we present the results when some variables are also related to the outcome model.}}
-\begin{tabular}{c|ccccc|ccccc}
-  \hline
- Case&  &  & \added{1a} &  &  &  &  & \added{1b} &  &  \\ 
-  \hline
-\added{Obs} & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
-  \hline
-25 & 3.74 & 4.13 & 28.71 & 28.78 & 3.82 & 3.66 & 3.96 & 1.04 & 20.38 & 3.10 \\ 
-30 & 3.72 & 4.06 & 3.90 & 28.56 & 3.90 & 3.05 & 3.34 & 20.61 & 20.29 & -2.41 \\ 
-35 & 3.95 & 4.04 & 12.35 & 25.11 & 3.97 & 3.67 & 3.71 & 22.82 & 22.93 & 3.90 \\ 
-40 & 3.98 & 4.02 & 3.97 & 29.78 & 3.98 & 3.72 & 3.77 & 4.75 & 22.83 & 3.93 \\ 
-45 & 4.03 & 4.06 & 4.03 & 28.52 & 4.03 & 3.78 & 3.82 & 4.41 & 4.13 & 3.95 \\ 
-50 & 4.02 & 4.05 & 4.02 & 4.04 & 4.02 & 3.83 & 3.89 & 3.97 & 4.33 & 3.94 \\ 
-55 & 4.03 & 4.05 & 4.04 & 4.19 & 4.04 & 3.99 & 4.01 & 4.15 & 4.09 & 3.93 \\ 
-60 & 4.04 & 4.07 & 4.02 & 4.03 & 4.02 & 3.99 & 4.02 & 3.94 & 3.97 & 3.93 \\ 
-65 & 4.03 & 4.06 & 4.02 & 4.06 & 4.02 & 4.00 & 4.05 & 3.96 & 3.96 & 3.96 \\ 
-70 & 4.04 & 4.06 & 4.01 & 4.06 & 4.01 & 4.00 & 4.03 & 3.95 & 3.97 & 3.95 \\ 
-75 & 4.06 & 4.08 & 4.01 & 4.07 & 4.01 & 4.01 & 4.03 & 3.98 & 3.99 & 3.98 \\ 
-\hline
-\end{tabular}
-\label{tab:causal1}
-\end{table}
-\begin{figure}
-    \centering
-    \includegraphics[width = 0.95\linewidth]{treat_obs_rev.pdf}
-    \caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations. The top (bottom) row
-    represents case 1a (case 1b). The left images show the estimated causal effects and right images show the same within $[3.8,4.2]$ to compare with true value. }}
-    \label{fig:comp:trt}
-\end{figure}
-\begin{figure}
+\begin{table}[ht]
+	\tiny
 	\centering
-	\includegraphics[width = 0.95\linewidth]{treat_post_obs.png}
-	\caption{\added{Posterior of the causal effect for varying number of observations. The top (bottom) row
-			represents the posteriors for case 1a (case 1b). The green dotted (solid) lines represent the maximum of 5 (25) percentile taken over all $q$ and red dotted (solid) lines represent the minimum of 95 (75) percentile taken over all $q$. }}
-	\label{fig:post:trt:obs}
+	\caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations where some variables are only related to the outcome model.}}
+	\label{tab:causal1b}
+	\subcaption{Accuracy in estimation of causal effect}
+	\begin{tabular}{c|cccc|cc|cc|cc}
+		\hline
+		\multicolumn{1}{c|}{}&
+		\multicolumn{4}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Obs}&
+		\multicolumn{2}{c}{Mean}&
+		\multicolumn{2}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c}{Median}\\
+		\hline
+		25 & 2.8 & 3.7 & 2.8 & 3.8 & 25.5 & 25.0 & 26.2 & 25.5 & 20.5 & 24.1 \\ 
+		30 & 3.2 & 4.1 & 3.1 & 4.1 & 25.4 & 25.1 & 26.4 & 26.2 & 15.8 & 10.8 \\ 
+		35 & 3.7 & 4.3 & 3.7 & 4.3 & 22.3 & 25.1 & 26.2 & 26.0 & 10.9 & 4.0 \\ 
+		40 & 3.9 & 4.3 & 3.9 & 4.4 & 21.4 & 24.6 & 26.0 & 25.4 & 4.7 & 4.0 \\ 
+		45 & 3.9 & 4.2 & 3.9 & 4.2 & 18.7 & 23.9 & 22.5 & 25.2 & 4.0 & 4.0 \\ 
+		50 & 3.9 & 4.2 & 3.9 & 4.2 & 9.6 & 4.0 & 13.2 & 6.2 & 4.0 & 4.0 \\ 
+		55 & 4.0 & 4.1 & 3.9 & 4.2 & 7.1 & 4.0 & 9.3 & 4.1 & 4.0 & 4.0 \\ 
+		60 & 4.0 & 4.1 & 4.0 & 4.1 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		65 & 4.0 & 4.1 & 4.0 & 4.1 & 4.6 & 4.0 & 4.5 & 4.0 & 4.0 & 4.0 \\ 
+		70 & 4.0 & 4.1 & 4.0 & 4.1 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		75 & 4.0 & 4.1 & 4.0 & 4.1 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 & 4.0 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Dispersion of estimated causal effect: values less than 0.05 are replaced with *}
+	\begin{tabular}{c|rrrrr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{1}{c|}{}&
+		\multicolumn{5}{c|}{RBCE}&
+		\multicolumn{3}{c|}{SCCE}&
+		\multicolumn{3}{c|}{BSSCE}&
+		\multicolumn{3}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Obs}&
+		\multicolumn{2}{c}{sd}&
+		\multicolumn{2}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c}{CI\%}
+		\\
+		\hline
+		25 & 0.4 & 0.6 & 0.4 & 1.6 & 100 & 5.6 & 492.2 & 10 & 5.2 & 517.1 & 0 & 10.4 & 375.8 & 10 \\ 
+		30 & 0.6 & 0.6 & 0.3 & 0.9 & 100 & 5.8 & 488.8 & 5 & 5.0 & 525.3 & 0 & 12.2 & 280.9 & 50 \\ 
+		35 & 0.6 & 0.6 & 0.3 & 0.5 & 100 & 8.5 & 405.3 & 20 & 4.7 & 514.7 & 0 & 9.4 & 130.9 & 60 \\ 
+		40 & 0.4 & 0.5 & 0.2 & 0.3 & 100 & 9.6 & 390.6 & 20 & 4.4 & 500.1 & 0 & 3.4 & 11.3 & 95 \\ 
+		45 & 0.3 & 0.3 & 0.1 & 0.1 & 100 & 11.0 & 330.5 & 30 & 8.5 & 413.2 & 15 & * & * & 100 \\ 
+		50 & 0.3 & 0.3 & 0.1 & 0.1 & 100 & 9.8 & 123.0 & 70 & 11.0 & 199.1 & 50 & * & * & 100 \\ 
+		55 & 0.2 & 0.3 & * & 0.1 & 100 & 7.5 & 63.4 & 85 & 9.4 & 110.9 & 75 & * & * & 100 \\ 
+		60 & 0.2 & 0.2 & * & 0.1 & 100 & * & * & 100 & * & * & 100 & * & * & 100 \\ 
+		65 & 0.1 & 0.2 & * & * & 100 & 2.4 & 6.0 & 95 & 2.1 & 4.3 & 95 & * & * & 100 \\ 
+		70 & 0.1 & 0.1 & * & * & 100 & * & * & 100 & * & * & 100 & * & * & 100 \\ 
+		75 & 0.1 & 0.1 & * & * & 100 & * & * & 100 & * & * & 100 & * & * & 100 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Accuracy of variable selection: all the values are averaged over 20 replications}
+	\begin{tabular}{c|rrr|rr|rr|rr}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{3}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Obs}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}&
+		\multicolumn{1}{c|}{ID}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}
+		\\
+		\hline
+		25 & 1.8 & 0.6 & 31.8 & 0 & 14.7 & 0 & 14.9 & 2.0 & 11.6 \\ 
+		30 & 0.6 & 0.4 & 27.2 & 0 & 14.8 & 0 & 14.9 & 1.0 & 7.7 \\ 
+		35 & 0.2 & 0.5 & 16.9 & 0 & 13.1 & 0 & 15.0 & 0 & 5.2 \\ 
+		40 & 0 & 0.2 & 10 & 0 & 12.8 & 0 & 15.0 & 0 & 0.6 \\ 
+		45 & 0 & 0 & 2.9 & 0 & 10.2 & 0 & 12.9 & 0 & 0 \\ 
+		50 & 0 & 0 & 0.9 & 0 & 3.9 & 0 & 6.6 & 0 & 0 \\ 
+		55 & 0 & 0 & 0.4 & 0 & 2.0 & 0 & 3.5 & 0 & 0 \\ 
+		60 & 0 & 0 & 0.3 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+		65 & 0 & 0 & 0.3 & 0 & 0.6 & 0 & 0.6 & 0 & 0 \\ 
+		70 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+		75 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+\added{We present our analysis for case 1b in \cref{tab:causal1b}. Similar to our analyses for case 1a, we notice that as we obtain more observations the imprecision in the estimation reduces. However, unlike case 1a, our approach tends to over estimate the causal effect for higher number of observations. This also shows an overall increasing trend of the estimated causal effect similar to case 1a. We also notice that for case 1b number of indeterminate variables is higher than that of case 1a. This happens as some of the variables are only related to the outcome model. This also contributes to higher number of false negative variables in for other methods. We also observe that similar to the previous case, other methods often produces extreme values for the causal effect increasing the sd and MSE of the estimated causal effect.}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = 0.9\linewidth]{treat_obs_rev.pdf}
+	\caption{\added{Comparison of different methods in estimating the causal effect for varying number of observations. The top (bottom) row represents case 1a (case 1b). The left(right) images show the average(median) causal effects obtained from 20 replications. }}
+	\label{fig:comp:trt}
 \end{figure}
 
-We also provide tables for the performance of variable selection in \cref{fig:comp:loss:obs}.
-For variable selection, we use a loss function as described earlier.
-Here, we consider
-$\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
-i.e. we associate a loss of $1$ with false positive and false negative selections,
-and a loss of $0.2$ with indeterminate selections.
-Note that we could also choose more 
-sophisticated loss functions based on \citep{ZAFFALON20121282}.
-We sum these losses together across all predictors
-\added{and divide by the total number of predictors} to obtain the total \added{relative} loss.
-From the \added{figure} it can be seen that for \added{case 1}, our method
-abstains from identifying some variables for 
-$n \le 35$. However,
-later on our method gives more precise results in terms of variable
-selection. We also notice that the SSCE and BSSCE tend to perform poorly
-in terms of variable selection \added{case 1a}. \added{For} case 
-\added{1b, even BSSL performs poorly for fewer number of observation leading to a higher relative loss, unlike case 1a.} 
+\added{We illustrate the estimated causal effect} in \cref{fig:comp:trt} as well. \added{In the figure, the top row
+illustrates the case 1a where the left image shows the average value of the estimated
+causal effect with respect to observations and the right image
+shows the median value. Similarly, the
+bottom row represents the same for case 1b. In the figure, RBCE bounds are given by red lines; SSCE estimates by blue lines; BSSCE estimates by green lines; BSSL estimates by purple line; and true value by black lines. In the figure, we can also notice the increase trend of the estimated causal effect as we obtain more observations and also the estimation becomes more precise.}
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width = 0.95\linewidth]{loss_obs.pdf}
 	\caption{\added{Comparison of different methods in identifying the confounders for varying number of observations. One the left (right) we present case 1a (1b). The red line presents RBCE; blue line presents SSCE; green line presents BSSCE; and purple line
-	presents BSSL}}
+			presents BSSL}}
 	\label{fig:comp:loss:obs}
 \end{figure}
 
 
-We show the result of our analyses with different number of predictors and
-fixed number of sample in \cref{tab:causal2,fig:comp:trt:pred}. Similar to
+We also illustrate the performance of variable selection in \cref{fig:comp:loss:obs}.
+For variable selection, we use a loss function as described earlier.
+Here, we consider
+$\ell_1=\ell_2=1$ and $\ell_3= 0.2$,
+i.e. we associate a loss of $1$ with false positive and false negative selections,
+and a loss of $0.2$ with indeterminate selections. 
+Note that we could also choose more 
+sophisticated loss functions based on \citep{ZAFFALON20121282}.
+We \added{evaluate the misspecification} loss \added{using the equation that we described before}.
+From the \added{figure} it can be seen that for \added{case 1}, our method
+abstains from identifying some variables for 
+$n \le 40$. However,
+later on our method gives more precise results in terms of variable
+selection. We also notice that the SSCE, BSSCE and BSSL tend to perform poorly
+in terms of variable selection. 
+\added{However, BSSL performs better than the rest for higher number of observations} 
+
+\begin{table}[ht]
+	\tiny
+	\centering
+	\caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors where all the active variables are confounders.}}
+	\label{tab:causal2a}
+	\subcaption{Accuracy in estimation of causal effect}
+	\begin{tabular}{c|cccc|cc|cc|cc}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{4}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{2}{c}{Mean}&
+		\multicolumn{2}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c}{Median}\\
+		\hline
+		1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\ 
+		\hline
+		25 & 3.6 & 3.8 & 3.7 & 3.8 & 9.5 & 4.6 & 11.8 & 14.0 & 4.0 & 4.0 \\ 
+		30 & 3.6 & 3.8 & 3.6 & 3.8 & 8.8 & 4.1 & 9.7 & 4.7 & 4.5 & 4.0 \\ 
+		35 & 3.6 & 3.8 & 3.6 & 3.8 & 12.8 & 17.4 & 12.8 & 14.9 & 4.9 & 4.0 \\ 
+		40 & 3.5 & 3.8 & 3.5 & 3.8 & 12.3 & 15.2 & 14.9 & 17.6 & 4.0 & 4.0 \\ 
+		45 & 3.5 & 3.8 & 3.4 & 3.8 & 10.7 & 4.1 & 16.6 & 18.3 & 4.0 & 4.0 \\ 
+		50 & 3.4 & 3.8 & 3.5 & 3.8 & 11.8 & 10.4 & 16.4 & 18.3 & 4.2 & 4.0 \\ 
+		55 & 3.4 & 3.8 & 3.4 & 3.8 & 12.4 & 15.6 & 16.6 & 18.8 & 4.5 & 4.0 \\ 
+		60 & 3.3 & 3.8 & 3.3 & 3.8 & 14.2 & 18.7 & 17.3 & 19.1 & 4.1 & 4.0 \\ 
+		65 & 3.2 & 3.8 & 3.3 & 3.8 & 12.6 & 15.5 & 19.4 & 19.2 & 5.0 & 4.0 \\ 
+		70 & 3.1 & 3.8 & 3.2 & 3.8 & 11.1 & 4.1 & 16.7 & 19.1 & 4.0 & 4.0 \\ 
+		75 & 3.1 & 3.8 & 3.1 & 3.8 & 11.7 & 9.3 & 18.4 & 19.2 & 4.5 & 4.0 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Dispersion of estimated causal effect: values less than 0.05 are replaced with *}
+	\begin{tabular}{c|rrrrr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{5}{c|}{RBCE}&
+		\multicolumn{3}{c|}{SCCE}&
+		\multicolumn{3}{c|}{BSSCE}&
+		\multicolumn{3}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{2}{c}{sd}&
+		\multicolumn{2}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c}{CI\%}
+		\\
+		\hline
+		25 & 0.2 & 0.2 & 0.1 & 0.2 & 100 & 6.6 & 72.1 & 50 & 7.1 & 109.3 & 45 & 0.1 & * & 100 \\ 
+		30 & 0.2 & 0.2 & 0.1 & 0.2 & 100 & 6.6 & 64.4 & 65 & 6.8 & 76.7 & 60 & 2.0 & 3.9 & 95 \\ 
+		35 & 0.2 & 0.2 & 0.1 & 0.2 & 100 & 7.4 & 129.2 & 35 & 7.4 & 130.1 & 40 & 4.1 & 16.6 & 90 \\ 
+		40 & 0.2 & 0.2 & 0.1 & 0.2 & 100 & 7.9 & 129.0 & 45 & 6.7 & 162.0 & 30 & 0.1 & * & 95 \\ 
+		45 & 0.2 & 0.2 & 0.1 & 0.3 & 100 & 7.8 & 102.5 & 55 & 5.7 & 190.4 & 20 & 0.1 & * & 100 \\ 
+		50 & 0.2 & 0.3 & 0.1 & 0.4 & 100 & 7.8 & 118.7 & 45 & 6.4 & 191.7 & 20 & 0.9 & 0.7 & 95 \\ 
+		55 & 0.2 & 0.3 & 0.1 & 0.5 & 100 & 8.0 & 132.4 & 45 & 6.8 & 201.9 & 25 & 2.3 & 5.2 & 95 \\ 
+		60 & 0.2 & 0.3 & 0.1 & 0.6 & 100 & 8.1 & 165.8 & 30 & 6.2 & 214.7 & 15 & 0.6 & 0.4 & 100 \\ 
+		65 & 0.2 & 0.4 & 0.1 & 0.8 & 100 & 8.3 & 139.2 & 40 & 2.8 & 244.0 & 0 & 4.4 & 19.1 & 95 \\ 
+		70 & 0.2 & 0.4 & 0.1 & 0.9 & 100 & 8.2 & 114.9 & 55 & 6.6 & 202.1 & 25 & 0.1 & * & 95 \\ 
+		75 & 0.2 & 0.4 & 0.1 & 1.0 & 100 & 8.0 & 120.2 & 50 & 4.8 & 228.7 & 10 & 3.5 & 11.9 & 85 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Accuracy of variable selection: all the values are averaged over 20 replications}
+	\begin{tabular}{c|rrr|rr|rr|rr}
+		\hline
+		\multicolumn{1}{l|}{}&
+		\multicolumn{3}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}&
+		\multicolumn{1}{c|}{ID}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}
+		\\
+		\hline
+		25 & 0 & 0 & 5.2 & 0 & 4.0 & 0 & 5.5 & 0 & 0 \\ 
+		30 & 0 & 0 & 2.4 & 0 & 3.5 & 0 & 4.1 & 0 & 0.4 \\ 
+		35 & 0 & 0 & 2.0 & 0 & 6.0 & 0 & 6.0 & 0 & 0.5 \\ 
+		40 & 0 & 0 & 2.1 & 0 & 5.4 & 0 & 7.3 & 0 & 0 \\ 
+		45 & 0 & 0 & 2.6 & 0 & 4.4 & 0 & 8.4 & 0 & 0 \\ 
+		50 & 0 & 0 & 3.0 & 0 & 5.1 & 0 & 8.2 & 0 & 0.2 \\ 
+		55 & 0 & 0 & 3.8 & 0 & 5.4 & 0 & 7.9 & 0 & 0.4 \\ 
+		60 & 0 & 0 & 5.0 & 0 & 6.4 & 0 & 8.4 & 0 & 0 \\ 
+		65 & 0 & 0 & 4.4 & 0 & 5.4 & 0 & 9.9 & 0 & 0.5 \\ 
+		70 & 0 & 0 & 4.8 & 0 & 4.4 & 0 & 8.0 & 0 & 0 \\ 
+		75 & 0 & 0 & 6.2 & 0 & 4.9 & 0 & 9.2 & 2.4 & 0.6 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+
+We show the result of our analyses \added{case 2a} in \cref{tab:causal2a}. Similar to
 our analyses with increasing number of observations, we notice that our method 
 is overall in agreement with
-\added{BSSL for case 2a}. However, our method tends to
-underestimate the treatment effect (approximately 8\% in the worst case) for \added{case 2b}. 
-This result is also similar to our
-analyses with increasing number of observations in \cref{tab:causal1}
-\added{especially, for 1b with fewer observations than the predictors}.
-In general, \added{this can be explained from the fact that our prior sensitivity analysis gives us indeterminate variables in some cases and as a result the regression coefficients may not be shrinked close to zero leading to some deviations in the causal effect estimation. Similar to our analyses with varying observations, we also provide the posteriors of the causal effect in \cref{fig:post:trt:pred}. We notice that for case 2a the true value is always contained within 25 to 75 percentiles. However, for case 2b, the true values is not contained within 25 to 75 percentiles in 4 different cases, though they were inside 5 and 95 percentiles bound}. 
+\added{BSSL}. However, \added{similar to case 1a} our method tends to
+underestimate the treatment effect (approximately 5\%) for \added{case 2b}. \added{We also notice that the imprecision in estimation increases as we increase the number of predictors. This happens as observation per predictor reduces. We also notice that BSSL outperforms RBCE in terms of median value of estimated causal effect over 20 replications. However, in very few cases BSSL provides extreme values which can be understood from mean and CI\% as well as MSE. Moreover, for 75 predictors BSSL gives higher number of false positives which is not the case for RBCE. Unlike the case 1a and 1b, SSCE and BSSCE performs poorly for every value of predictors.}
 
-\added{Besides these, we also provide the performance in variable selection for case 2a and 2b in \cref{fig:comp:loss:pred}. We notice that our method performs extremely good and outperforms all the other methods in most cases. Only SSCE and BSSCE is able to match our accuracy in variable selection in few cases. }
+\begin{table}[h]
+	\tiny
+	\centering
+	\caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors where some variables are only to the outcome model.}}
+	\label{tab:causal2b}
+	\subcaption{Accuracy in estimation of causal effect}
+	\begin{tabular}{c|cccc|cc|cc|cc}
+		\hline
+		\multicolumn{1}{c|}{}&
+		\multicolumn{4}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{2}{c}{Mean}&
+		\multicolumn{2}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c|}{Median}&
+		\multicolumn{1}{c}{Mean}&
+		\multicolumn{1}{c}{Median}\\
+		\hline
+		1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\ 
+		\hline
+		25 & 3.8 & 4.1 & 3.8 & 4.1 & 19.0 & 22.3 & 24.0 & 25.3 & 4.0 & 4.0 \\ 
+		30 & 3.9 & 4.2 & 3.9 & 4.1 & 20.6 & 24.6 & 20.9 & 24.5 & 7.4 & 4.0 \\ 
+		35 & 3.9 & 4.3 & 3.9 & 4.2 & 21.9 & 24.7 & 23.7 & 24.8 & 7.3 & 4.0 \\ 
+		40 & 3.9 & 4.3 & 3.9 & 4.3 & 20.9 & 24.4 & 24.7 & 25.5 & 5.1 & 4.0 \\ 
+		45 & 3.8 & 4.3 & 3.9 & 4.3 & 20.2 & 23.9 & 26.1 & 25.4 & 4.8 & 4.0 \\ 
+		50 & 3.9 & 4.3 & 3.9 & 4.3 & 21.4 & 24.6 & 26.0 & 25.4 & 4.7 & 4.0 \\ 
+		55 & 3.8 & 4.4 & 3.9 & 4.4 & 21.8 & 24.8 & 26.0 & 25.1 & 9.5 & 4.0 \\ 
+		60 & 3.8 & 4.4 & 3.9 & 4.4 & 16.6 & 19.7 & 25.1 & 25.5 & 8.4 & 4.0 \\ 
+		65 & 3.7 & 4.4 & 3.8 & 4.4 & 18.7 & 22.8 & 26.2 & 25.6 & 5.4 & 4.0 \\ 
+		70 & 3.7 & 4.5 & 3.8 & 4.4 & 20.4 & 23.9 & 25.5 & 25.2 & 8.5 & 4.0 \\ 
+		75 & 3.7 & 4.5 & 3.7 & 4.4 & 17.7 & 22.8 & 26.0 & 25.2 & 5.0 & 4.0 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Dispersion of estimated causal effect: values less than 0.05 are replaced with *}
+	\begin{tabular}{c|rrrrr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{1}{c|}{}&
+		\multicolumn{5}{c|}{RBCE}&
+		\multicolumn{3}{c|}{SCCE}&
+		\multicolumn{3}{c|}{BSSCE}&
+		\multicolumn{3}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{2}{c}{sd}&
+		\multicolumn{2}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c|}{CI\%}&
+		\multicolumn{1}{c}{sd}&
+		\multicolumn{1}{c}{MSE}&
+		\multicolumn{1}{c}{CI\%}
+		\\
+		\hline
+		25 & 0.2 & 0.3 & 0.1 & 0.1 & 100 & 11.2 & 343.7 & 35 & 8.0 & 459.5 & 10 & 0.1 & * & 100 \\ 
+		30 & 0.3 & 0.4 & 0.1 & 0.1 & 100 & 10.4 & 377.0 & 25 & 10.8 & 397.7 & 25 & 8.3 & 77.9 & 85 \\ 
+		35 & 0.3 & 0.4 & 0.1 & 0.2 & 100 & 9.9 & 412.9 & 20 & 7.4 & 438.6 & 10 & 8.0 & 71.7 & 85 \\ 
+		40 & 0.4 & 0.4 & 0.1 & 0.3 & 100 & 9.3 & 366.8 & 15 & 7.0 & 475.8 & 10 & 4.8 & 23.1 & 95 \\ 
+		45 & 0.4 & 0.4 & 0.2 & 0.3 & 100 & 10.4 & 365.5 & 25 & 4.4 & 504.8 & 0 & 3.4 & 11.3 & 95 \\ 
+		50 & 0.4 & 0.5 & 0.2 & 0.3 & 100 & 9.6 & 390.6 & 20 & 4.4 & 500.1 & 0 & 3.4 & 11.3 & 95 \\ 
+		55 & 0.4 & 0.5 & 0.2 & 0.3 & 100 & 9.9 & 410.6 & 20 & 4.5 & 503.9 & 0 & 9.9 & 123.1 & 75 \\ 
+		60 & 0.5 & 0.5 & 0.2 & 0.4 & 100 & 11.7 & 288.5 & 40 & 6.4 & 484.0 & 5 & 9.3 & 102.4 & 80 \\ 
+		65 & 0.4 & 0.5 & 0.2 & 0.4 & 100 & 11.2 & 334.4 & 30 & 4.5 & 510.0 & 0 & 6.4 & 40.5 & 95 \\ 
+		70 & 0.5 & 0.5 & 0.2 & 0.5 & 100 & 11.1 & 385.3 & 25 & 5.2 & 488.8 & 5 & 9.3 & 102.1 & 80 \\ 
+		75 & 0.5 & 0.5 & 0.2 & 0.5 & 100 & 11.8 & 318.1 & 40 & 4.5 & 502.1 & 0 & 4.0 & 16.3 & 95 \\ 
+		\hline
+	\end{tabular}
+	\subcaption{Accuracy of variable selection: all the values are averaged over 20 replications}
+	\begin{tabular}{c|rrr|rr|rr|rr}
+		\hline
+		\multicolumn{1}{c|}{}&
+		\multicolumn{3}{c|}{RBCE}&
+		\multicolumn{2}{c|}{SCCE}&
+		\multicolumn{2}{c|}{BSSCE}&
+		\multicolumn{2}{c}{BSSL}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}&
+		\multicolumn{1}{c|}{ID}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c|}{FN}&
+		\multicolumn{1}{c}{FP}&
+		\multicolumn{1}{c}{FN}
+		\\
+		\hline
+		25 & 0 & 0 & 7.8 & 0 & 10.2 & 0 & 13.5 & 0 & 0 \\ 
+		30 & 0 & 0 & 8.2 & 0 & 11.6 & 0 & 11.2 & 0 & 2.0 \\ 
+		35 & 0 & 0 & 9.2 & 0 & 12.6 & 0 & 14.0 & 0 & 2.2 \\ 
+		40 & 0 & 0 & 10.1 & 0 & 11.9 & 0 & 13.8 & 0 & 0.8 \\ 
+		45 & 0 & 0.1 & 10.8 & 0 & 11.8 & 0 & 15.0 & 0 & 0.6 \\ 
+		50 & 0 & 0.2 & 10.1 & 0 & 12.8 & 0 & 15.0 & 0 & 0.6 \\ 
+		55 & 0 & 0.3 & 8.9 & 0 & 12.0 & 0 & 15.0 & 0 & 3.5 \\ 
+		60 & 0 & 0.4 & 11.1 & 0 & 9.2 & 0 & 14.4 & 0.5 & 2.9 \\ 
+		65 & 0 & 0.8 & 11.9 & 0 & 10.6 & 0 & 15.0 & 0.4 & 0.8 \\ 
+		70 & 0 & 0.8 & 12.8 & 0 & 10.9 & 0 & 14.8 & 0 & 2.8 \\ 
+		75 & 0 & 1.0 & 12.3 & 0.1 & 9.6 & 0 & 15.0 & 0 & 0.9 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+\added{The result for case 2b is presented in \cref{tab:causal2b}. We notice that for this case the true causal effect is always contained within the estimated bounds unlike the previous cases. For this case, the imprecision in the estimated causal effect increases with respect to predictors similar to case 2a as the observation per predictor reduces. We also see that SSCE and BSSCE performs poorly similar to case 2a and BSSL is mostly consistent in estimation but produces extreme values for some experiments giving a significant differences between mean and median of the estimated causal treatments.}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = 0.85\linewidth]{treat_pred_rev.pdf}
+	\caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors. The top (bottom) row represents case 2a (case 2b). The left(right) images show the average(median) causal effects obtained from 20 replications. }}
+	\label{fig:comp:trt:pred}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = 0.9\linewidth]{loss_pred.pdf}
+	\caption{\added{Comparison of different methods in identifying the confounders for varying number of predictors. One the left (right) we present case 1a (1b). The red line presents RBCE; blue line presents SSCE; green line presents BSSCE; and purple line
+			presents BSSL}}
+	\label{fig:comp:loss:pred}
+\end{figure}
+
+
+\added{We also show the causal effect estimation and performance in variable selection in \cref{fig:comp:trt:pred,fig:comp:loss:pred}. From \cref{fig:comp:trt:pred} we can see the increase in imprecision as we increase then number of predictors. We also see that RBCE performs more consistently than other methods in terms of estimating the causal effect. We also notice that BSSL outperforms RBCE in terms of estimating the causal effect and performs at per in terms of variable selection for case 2a. However, for case 2b, BSSL appears to be less consistent in terms of variable selection. From these two figures we can also see that SSCE and BSSCE performs poorly as we increase the number of predictors and is particularly unstable for case 2a.}
+
 
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
 % Mon Mar 25 10:08:22 2024
-\begin{table}[ht]
-\centering
-\tiny
-\caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors. On the left section (2a), we illustrate the results when all the active variables are confounders. On the right section (2b), we present the results when some variables are also related to the outcome model.}}
-\begin{tabular}{c|ccccc|ccccc}
-  \hline
- Case&  &  & \added{2a} &  &  &  &  & \added{2b} &  &  \\ 
-  \hline
- \added{Pred} & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL & RBCE-l & RBCE-u & SSCE & BSSCE & BSSL \\ 
-  \hline
- 25 & 3.90 & 3.94 & 29.44 & 4.07 & 3.98 & 3.61 & 3.70 & 3.98 & 4.07 & 3.94 \\ 
- 30 & 3.89 & 3.96 & 3.97 & 4.04 & 3.98 & 3.61 & 3.69 & 4.03 & 4.19 & 3.94 \\ 
- 35 & 3.96 & 4.00 & 4.75 & 4.15 & 3.98 & 3.62 & 3.73 & 3.95 & 6.77 & 3.92 \\ 
- 40 & 3.96 & 4.01 & 3.98 & 4.55 & 3.97 & 3.56 & 3.71 & 3.98 & 22.76 & 3.92 \\ 
- 45 & 3.98 & 4.01 & 3.98 & 4.28 & 3.98 & 3.72 & 3.75 & 17.81 & 21.77 & 3.93 \\ 
- 50 & 3.98 & 4.05 & 10.55 & 29.61 & 3.98 & 3.65 & 3.77 & 22.70 & 22.43 & 3.95 \\ 
- 55 & 3.98 & 4.02 & 29.61 & 29.56 & 3.97 & 3.74 & 3.81 & 4.60 & 14.69 & 3.94 \\ 
- 60 & 3.99 & 4.07 & 3.97 & 29.72 & 3.98 & 3.77 & 3.83 & 6.88 & 21.84 & 3.94 \\ 
- 65 & 4.02 & 4.11 & 3.97 & 29.67 & 3.97 & 3.77 & 3.88 & 3.94 & 22.23 & 3.92 \\ 
- 70 & 4.01 & 4.12 & 5.70 & 28.93 & 3.98 & 3.74 & 3.86 & 4.34 & 22.54 & 3.91 \\ 
- 75 & 4.00 & 4.11 & 3.97 & 29.96 & 3.98 & 3.73 & 3.84 & 6.46 & 18.41 & 3.93 \\ 
- \hline
-\end{tabular}
-\label{tab:causal2}
+
+\begin{table}[h]
+	\caption{\added{Effect of elicitation of the inclusion probability of the variables where FP stands for false positive, FN stands for false negative and ID stands for indeterminate. }}
+	\label{tab:comp:elict}\centering
+	\begin{tabular}{c|rrrrr|rrrrr}
+		\hline
+		\multicolumn{1}{c|}{$[\underline{c},\overline{c}]$}&
+		\multicolumn{5}{c|}{$[0.15,0.35]$}&
+		\multicolumn{5}{c}{$[0.2,0.4]$}\\
+		\hline
+		\multicolumn{1}{c|}{Pred}&
+		\multicolumn{2}{c}{Mean} &
+		\multicolumn{1}{c}{FP} &
+		\multicolumn{1}{c}{FN} &
+		\multicolumn{1}{c|}{IDR} &
+		\multicolumn{2}{c}{Mean} &
+		\multicolumn{1}{c}{FP} &
+		\multicolumn{1}{c}{FN} &
+		\multicolumn{1}{c}{IDR}\\
+		\hline
+		25 & 3.8 & 4.1 & 0 & 0 & 7.8 & 3.9 & 4.2 & 0 & 0 & 4.9 \\ 
+		30 & 3.9 & 4.2 & 0 & 0 & 8.2 & 3.9 & 4.3 & 0 & 0 & 4.2 \\ 
+		35 & 3.9 & 4.3 & 0 & 0 & 9.2 & 4.0 & 4.3 & 0 & 0.2 & 3.5 \\ 
+		40 & 3.9 & 4.3 & 0 & 0 & 10.1 & 4.0 & 4.4 & 0 & 0.3 & 3.4 \\ 
+		45 & 3.8 & 4.3 & 0 & 0.1 & 10.8 & 4.0 & 4.4 & 0 & 0.4 & 3.5 \\ 
+		50 & 3.9 & 4.3 & 0 & 0.2 & 10.1 & 4.0 & 4.4 & 0 & 0.6 & 3.0 \\ 
+		55 & 3.8 & 4.4 & 0 & 0.3 & 8.9 & 4.0 & 4.4 & 0 & 0.6 & 3.0 \\ 
+		60 & 3.8 & 4.4 & 0 & 0.4 & 11.1 & 4.0 & 4.5 & 0 & 0.8 & 3.4 \\ 
+		65 & 3.7 & 4.4 & 0 & 0.8 & 11.9 & 4.0 & 4.5 & 0 & 1.0 & 3.8 \\ 
+		70 & 3.7 & 4.5 & 0 & 0.8 & 12.8 & 4.0 & 4.5 & 0 & 1.3 & 3.0 \\ 
+		75 & 3.7 & 4.5 & 0 & 1.0 & 12.3 & 4.0 & 4.5 & 0 & 1.4 & 3.1 \\ 
+		\hline
+	\end{tabular}
 \end{table}
 
-\begin{figure}
-    \centering
-    \includegraphics[width = 0.9\linewidth]{treat_pred_rev.pdf}
-    \caption{\added{Comparison of different methods in estimating the causal effect for varying number of predictors.}}
-    \label{fig:comp:trt:pred}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[width = 0.95\linewidth]{treat_post_pred.png}
-	\caption{\added{Posterior of the causal effect for varying number of predictors. The top (bottom) row
-			represents the posteriors for case 2a (case 2b). The green dotted (solid) lines represent the maximum of 5 (25) percentile taken over all $q$ and red dotted (solid) lines represent the minimum of 95 (75) percentile taken over all $q$. }}
-	\label{fig:post:trt:pred}
-\end{figure}
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width = 0.9\linewidth]{loss_pred.pdf}
-	\caption{\added{Comparison of different methods in identifying the confounders for varying number of predictors.}}
-	\label{fig:comp:loss:pred}
-\end{figure}
 
 \paragraph{\added{Importance of prior elicitation}}\label{sec:importance:elicit}
 \added{Our method relies on expert elicitation and prior sensitivity analysis. So we also explore the effect of prior elicitation in identifying the active variables in our model. As mentioned earlier,
 	we consider $c$ is expected to be lying in the interval $[0.15,0.35]$
 	based on \cref{tab:corr}. However, we might want to choose a different
-	value for $c$. To compare the effect of having different value for $c$, we use the case 2b and set $c\in[0.2,0.4]$. That is we set a higher threshold for the correlation so that $\overline{k}$ becomes smaller and hence the prior expectation of the inclusion probability. We show our results in \cref{tab:comp:elict}. In the left hand side we elicit the expected number of active variables by setting the marginal correlation threshold $c\in[0.15,0.35]$ and the right we set $c\in[0.2,0.4]$. On the left hand side, we see our method tends to give higher number of indeterminate variables for fewer observations than the right hand side. As we increase the observation the higher threshold of marginal correlation plays an important role and we see more cases of false negative variables on the right hand side. }
+	value for $c$. To compare the effect of having different value for $c$, we use the case 2b and set $c\in[0.2,0.4]$. That is we set a higher threshold for the correlation so that $\overline{k}$ becomes smaller and hence the prior expectation of the inclusion probability. We show our results in \cref{tab:comp:elict}. In the left hand side we elicit the expected number of active variables by setting the marginal correlation threshold $c\in[0.15,0.35]$ and the right we set $c\in[0.2,0.4]$. On the left hand side, we see our method tends to give higher number of indeterminate variables for fewer observations than the right hand side. As we increase the predictors the higher threshold of marginal correlation plays an important role and we see more cases of false negative variables on the right hand side. This also results to over estimation of the causal effect as many true active variables are shrinked towards zero. As a result the lower bound of the averaged causal effect is more than four on the right hand side.}
 
-\begin{table}[ht]
-	\centering
-	\begin{tabular}{c|ccc|ccc}
-		\hline
-		$[\underline{c},\overline{c}]$ &  &   $[0.15,0.35]$ &    &  & $[0.2,0.4]$ &    \\
-		\hline
-		Pred & FP & FN & ID & FP & FN & ID  \\ 
-		\hline
-		25 & 0 & 0 & 1 & 0 & 0 & 1  \\ 
-		30 & 0 & 0 & 3 & 0 & 0 & 1  \\ 
-		35 & 0 & 0 & 2 & 0 & 0 & 1  \\ 
-		40 & 0 & 0 & 2 & 0 & 0 & 1  \\ 
-		45 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
-		50 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
-		55 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
-		60 & 0 & 0 & 1 & 0 & 1 & 0  \\ 
-		65 & 0 & 1 & 0 & 0 & 1 & 0  \\ 
-		70 & 0 & 1 & 0 & 0 & 1 & 0  \\ 
-		75 & 0 & 1 & 1 & 0 & 1 & 1  \\ 
-		\hline
-	\end{tabular}
-	\caption{\added{Effect of elicitation of the inclusion probability of the variables where FP stands for false positive, FN stands for false negative and ID stands for indeterminate. }}
-	\label{tab:comp:elict}
-\end{table}
+
+The analyses and simulation studies can be investigated using the code from \url{https://github.com/tathagatabasu/Causal-Inference}.
 
 \section{Conclusion}\label{sec:conc}
 
@@ -1092,8 +1506,8 @@ extension of the model in this paper.%
 
 We also notice with our simulation studies that our
 method tends to underestimate the causal effect
-when some predictors are only associated with the
-outcome model. This suggests that we might want
+when \added{only confounders are present in the}
+model. This suggests that we might want
 to use a correction formula for the causal effect.
 Moreover, in future, we would
 like to investigate different elicitation strategies for different prior parameters and their importance in causal effect estimation. 
